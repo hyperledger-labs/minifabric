@@ -1,0 +1,52 @@
+---
+- name: Query Fabric docker network
+  command: >-
+    docker network ls -f 'name=minifab' -q
+  register: netstat
+
+- name: Create fabric docker network if it does not exist
+  command: "docker network create minifab"
+  when: netstat.stdout == ""
+
+- name: Create volumes for peer and orderer nodes
+  command: >-
+    docker volume create {{ item.fullname }}
+  with_items:
+    - "{{ allpeers + allorderers }}"
+
+- name: Create env file for all nodes
+  template:
+    src: "{{ pjroot }}/playbooks/nodes/templates/{{ item.type }}env.j2"
+    dest: "{{ pjroot }}/vars/run/{{ item.fullname }}.env"
+  with_items: "{{ allpeers + allorderers + allcas }}"
+
+- name: Set absolute mounting path
+  set_fact:
+    mpath: "{{hostroot}}/vars/keyfiles/peerOrganizations"
+
+- name: Start all peer nodes
+  command: >-
+    docker run -d --network minifab --name {{ item.fullname }}
+    --env-file {{ pjroot }}/vars/run/{{ item.fullname }}.env
+    -v /var/run/:/host/var/run
+    -v {{ mpath }}/{{item.org}}/peers/{{item.fullname}}/msp:/etc/hyperledger/fabric/msp
+    -v {{ mpath }}/{{item.org}}/peers/{{item.fullname}}/tls:/etc/hyperledger/fabric/tls
+    -v {{ item.fullname }}:/var/hyperledger/production
+    hyperledger/fabric-peer:{{ fabric.release }} peer node start
+  with_items: "{{ allpeers }}"
+
+- name: Set absolute mounting path
+  set_fact:
+    mpath: "{{hostroot}}/vars/keyfiles/ordererOrganizations"
+
+- name: Start all orderer nodes
+  command: >-
+    docker run -d --network minifab --name {{ item.fullname }}
+    --env-file {{ pjroot }}/vars/run/{{ item.fullname }}.env
+    -v {{ hostroot }}/vars/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
+    -v {{ mpath }}/{{item.org}}/orderers/{{item.fullname}}/msp:/var/hyperledger/orderer/msp
+    -v {{ mpath }}/{{item.org}}/orderers/{{item.fullname}}/tls:/var/hyperledger/orderer/tls
+    -v {{ item.fullname }}:/var/hyperledger/production/orderer
+    hyperledger/fabric-orderer:{{ fabric.release }}
+  with_items: "{{ allorderers }}"
+

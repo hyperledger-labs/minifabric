@@ -11,4 +11,6 @@ fabric:
   - "peer2.org1.example.com"
   orderers:
   - "orderer1.example.com"
+  - "orderer2.example.com"
+  - "orderer3.example.com"
   logging_level: "ERROR"

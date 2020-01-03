@@ -9,15 +9,26 @@
   tasks:
     - set_fact:
         starttime: "{{ ansible_date_time }}"
-    - include_tasks: "playbooks/common/config_{{ mode }}.yaml"
-    - include_tasks: "playbooks/getbin/tasks/{{ mode }}.yaml"
-    - include_tasks: "playbooks/certsetup/tasks/{{ mode }}.yaml"
+    - name: "{{ mode }} configuration"
+      include_tasks: "playbooks/common/config_apply.yaml"
+      tags: "common"
+    - name: "{{ mode }} Fabric binary files"
+      include_tasks: "playbooks/getbin/tasks/{{ mode }}.yaml"
+      tags: "bin"
+    - name: "{{ mode }} certificates and artifacts"
+      include_tasks: "playbooks/certsetup/tasks/{{ mode }}.yaml"
+      tags: "certs"
+    - name: "{{ mode }} Fabric network and nodes"
+      include_tasks: "playbooks/nodes/tasks/{{ mode }}.yaml"
+      tags: "nodes"
 
-- name: inform the installer
+- name: Inform the installer
   hosts: vm
   connection: local
   tasks:
-    - debug:
+    - name: Summary
+      debug:
         msg: >-
-          The work load started at {{ hostvars.vm.starttime.time }},
-          ended at {{ ansible_date_time.time }}
+          The work load started at: {{ hostvars.vm.starttime.time }}.
+          Finished at: {{ ansible_date_time.time }}.
+          Total time took: {{ (ansible_date_time.epoch|int) - (hostvars.vm.starttime.epoch|int) }} seconds
