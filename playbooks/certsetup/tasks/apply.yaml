@@ -1,0 +1,33 @@
+---
+- name: Ensure certificate directory is clean
+  file:
+    path: "{{ pjroot }}/vars/keyfiles"
+    state: "{{ item }}"
+  with_items:
+    - "absent"
+    - "directory"
+
+- name: Create crypto-config file
+  template:
+    src: "{{ pjroot }}/playbooks/certsetup/templates/crypto-config.j2"
+    dest: "{{ pjroot }}/vars/crypto-config.yml"
+
+- name: Create the certificate files
+  command: "{{ pjroot }}/vars/bin/cryptogen generate --config crypto-config.yml --output keyfiles"
+  args:
+    chdir: "{{ pjroot }}/vars"
+
+- name: Create config tx file
+  template:
+    src: "{{ pjroot }}/playbooks/certsetup/templates/configtx.j2"
+    dest: "{{ pjroot }}/vars/configtx.yml"
+
+- name: Create the gensis block and channel transaction
+  shell: >-
+    export FABRIC_CFG_PATH={{ pjroot }}/vars &&
+    {{ pjroot }}/vars/bin/configtxgen -profile OrdererGenesis
+    -outputBlock genesis.block -channelID orderersystemchannel &&
+    {{ pjroot }}/vars/bin/configtxgen -profile OrgChannel
+    -outputCreateChannelTx firstchannel.tx -channelID firstchannel
+  args:
+    chdir: "{{ pjroot }}/vars"

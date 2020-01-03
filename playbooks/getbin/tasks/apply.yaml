@@ -1,0 +1,19 @@
+---
+- stat:
+    path: "{{ pjroot }}/vars/bin/cryptogen"
+  register: binexists
+  tags: "downloadbin"
+
+- name: Get the url path
+  set_fact:
+    binurl: "https://github.com/hyperledger/fabric/releases/download/v{{ fabric.release}}/hyperledger-fabric-linux-amd64-{{ fabric.release }}.tar.gz"
+  tags: "downloadbin"
+
+- name: Download fabric binaries
+  unarchive:
+    src: "{{ binurl }}"
+    dest: "{{ pjroot }}/vars"
+    exclude: ["config"]
+    remote_src: yes
+  when: binexists.stat.exists == false
+  tags: "downloadbin"

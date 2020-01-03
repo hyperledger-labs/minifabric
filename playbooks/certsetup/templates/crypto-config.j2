@@ -1,0 +1,29 @@
+---
+{% if allorderers is defined and (allorderers | length > 0 ) %}
+OrdererOrgs:
+{% for org in ordererorgs %}
+  - Name: {{ org }}
+    Domain: {{ org }}
+    Specs:
+{%    for item in allorderers %}
+{%      if item.org == org %}
+      - Hostname: {{ item.name }}
+{%      endif %}
+{%    endfor %}
+{% endfor %}
+{% endif %}
+
+{% if allpeers is defined and (allpeers | length > 0) %}
+PeerOrgs:
+{% for org in peerorgs %}
+  - Name: {{ org }}
+    Domain: {{ org }}
+    EnableNodeOUs: true
+    Specs:
+{%    for item in allpeers %}
+{%      if item.org == org %}
+      - Hostname: {{ item.name }}
+{%      endif %}
+{%    endfor %}
+{% endfor %}
+{% endif %}
