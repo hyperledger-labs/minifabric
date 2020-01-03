@@ -16,7 +16,7 @@
   command: "{{ pjroot }}/vars/bin/cryptogen generate --config crypto-config.yml --output keyfiles"
   args:
     chdir: "{{ pjroot }}/vars"
-
+    
 - name: Create config tx file
   template:
     src: "{{ pjroot }}/playbooks/certsetup/templates/configtx.j2"

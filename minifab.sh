@@ -17,42 +17,97 @@ export PATH=${PWD}/../bin:${PWD}:$PATH
 export FABRIC_CFG_PATH=${PWD}
 export VERBOSE=false
 
-# Print the usage message
-function printHelp() {
-  echo "Usage: "
-  echo "  minifab.sh <mode> [-c <channel name>] [-t <timeout>] [-d <delay>] [-f <docker-compose-file>] [-s <dbtype>] [-l <language>] [-o <consensus-type>] [-i <imagetag>] [-a] [-n] [-v]"
-  echo "    <mode> - one of 'up', 'down', 'restart', 'generate' or 'upgrade'"
-  echo "      - 'up' - bring up the network with docker-compose up"
-  echo "      - 'down' - clear the network with docker-compose down"
-  echo "      - 'restart' - restart the network"
-  echo "      - 'generate' - generate required certificates and genesis block"
-  echo "      - 'upgrade'  - upgrade the network from version 1.3.x to 1.4.0"
-  echo "    -c <channel name> - channel name to use (defaults to \"mychannel\")"
-  echo "    -t <timeout> - CLI timeout duration in seconds (defaults to 10)"
-  echo "    -d <delay> - delay duration in seconds (defaults to 3)"
-  echo "    -s <dbtype> - the database backend to use: goleveldb (default) or couchdb"
-  echo "    -l <language> - the programming language of the chaincode to deploy: go (default), javascript, or java"
-  echo "    -i <imagetag> - the tag to be used to launch the network (defaults to \"latest\")"
-  echo "    -a - launch certificate authorities (no certificate authorities are launched by default)"
-  echo "    -n - do not deploy chaincode (abstore chaincode is deployed by default)"
-  echo "    -v - verbose mode"
-  echo "  minifab.sh -h (print this message)"
-  echo
-  echo "Typically, one would first generate the required certificates and "
-  echo "genesis block, then bring up the network. e.g.:"
-  echo
-  echo "	minifab.sh generate -c mychannel"
-  echo "	minifab.sh up -c mychannel -s couchdb"
-  echo "        minifab.sh up -c mychannel -s couchdb -i 1.4.0"
-  echo "	minifab.sh up -l javascript"
-  echo "	minifab.sh down -c mychannel"
-  echo "        minifab.sh upgrade -c mychannel"
-  echo
-  echo "Taking all defaults:"
-  echo "	minifab.sh generate"
-  echo "	minifab.sh up"
-  echo "	minifab.sh down"
-}
+. scripts/mainfuncs.sh
 
-docker run --rm -v $(pwd):/home/ubuntu/plays hfrd/ansible:latest \
-  ansible-playbook -i plays/hosts -e "mode=apply" plays/minifabric.yaml
+# timeout duration - the duration the CLI should wait for a response from
+# another container before giving up
+CLI_TIMEOUT=10
+# default for delay between commands
+CLI_DELAY=3
+# channel name defaults to "mychannel"
+CHANNEL_NAME="mychannel"
+# use this as the default docker-compose yaml definition
+COMPOSE_FILE=docker-compose-cli.yaml
+#
+COMPOSE_FILE_COUCH=docker-compose-couch.yaml
+# org3 docker compose file
+COMPOSE_FILE_ORG3=docker-compose-org3.yaml
+# two additional etcd/raft orderers
+COMPOSE_FILE_RAFT2=docker-compose-etcdraft2.yaml
+# certificate authorities compose file
+COMPOSE_FILE_CA=docker-compose-ca.yaml
+#
+# use go as the default language for chaincode
+CC_SRC_LANGUAGE=go
+# default image tag
+IMAGETAG="latest"
+
+MODE=$1
+shift
+# Determine whether starting, stopping, restarting, generating or upgrading
+if [ "$MODE" == "up" ]; then
+  EXPMODE="Starting"
+elif [ "$MODE" == "down" ]; then
+  EXPMODE="Stopping"
+elif [ "$MODE" == "restart" ]; then
+  EXPMODE="Restarting"
+elif [ "$MODE" == "generate" ]; then
+  EXPMODE="Generating certs and genesis block"
+elif [ "$MODE" == "upgrade" ]; then
+  EXPMODE="Upgrading the network"
+else
+  printHelp
+  exit 1
+fi
+
+while getopts "h?c:t:d:s:l:i:anv" opt; do
+  case "$opt" in
+  h | \?)
+    printHelp
+    exit 0
+    ;;
+  c)
+    CHANNEL_NAME=$OPTARG
+    ;;
+  t)
+    CLI_TIMEOUT=$OPTARG
+    ;;
+  d)
+    CLI_DELAY=$OPTARG
+    ;;
+  s)
+    IF_COUCHDB=$OPTARG
+    ;;
+  l)
+    CC_SRC_LANGUAGE=$OPTARG
+    ;;
+  i)
+    IMAGETAG=$(go env GOARCH)"-"$OPTARG
+    ;;
+  a)
+    CERTIFICATE_AUTHORITIES=true
+    ;;
+  n)
+    NO_CHAINCODE=true
+    ;;
+  v)
+    VERBOSE=true
+    ;;
+  esac
+done
+
+if [ "${MODE}" == "up" ]; then
+  networkUp
+elif [ "${MODE}" == "down" ]; then ## Clear the network
+  networkDown
+elif [ "${MODE}" == "generate" ]; then ## Generate Artifacts
+  generateCerts
+elif [ "${MODE}" == "restart" ]; then ## Restart the network
+  networkDown
+  networkUp
+elif [ "${MODE}" == "upgrade" ]; then ## Upgrade the network from version 1.2.x to 1.3.x
+  upgradeNetwork
+else
+  printHelp
+  exit 1
+fi

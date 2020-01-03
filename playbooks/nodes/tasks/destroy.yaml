@@ -1,0 +1,31 @@
+---
+- name: Remove all peer nodes
+  command: >-
+    docker rm -f {{ item.fullname }}
+  with_items: "{{ allpeers }}"
+
+- name: Remove all orderer nodes
+  command: >-
+    docker rm -f {{ item.fullname }}
+  with_items: "{{ allorderers }}"
+
+- name: Remove env file for all nodes
+  file:
+    path: "{{ pjroot }}/vars/run/{{ item.fullname }}.env"
+    state: absent
+  with_items: "{{ allpeers + allorderers + allcas }}"
+
+- name: Remove volumes for each node
+  command: >-
+    docker volume rm -f {{ item.fullname }}
+  with_items:
+    - "{{ allpeers + allorderers }}"
+
+- name: Query Fabric docker network
+  command: >-
+    docker network ls -f 'name=minifab' -q
+  register: netstat
+
+- name: Delete fabric docker network if it exists
+  command: "docker network rm minifab"
+  when: netstat.stdout != ""
