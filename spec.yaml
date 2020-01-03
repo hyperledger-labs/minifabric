@@ -1,0 +1,14 @@
+fabric:
+  release: "1.4.4"
+  peer_db: "goleveldb"
+  cas:
+  - "ca1.org0.example.com"
+  - "ca1.org1.example.com"
+  peers: 
+  - "peer1.org0.example.com"
+  - "peer2.org0.example.com"
+  - "peer1.org1.example.com"
+  - "peer2.org1.example.com"
+  orderers:
+  - "orderer1.example.com"
+  logging_level: "ERROR"

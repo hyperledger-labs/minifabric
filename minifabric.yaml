@@ -1,0 +1,23 @@
+---
+- name: Get start timestamp
+  hosts: vm
+  connection: local
+  vars:
+    pjroot: "{{ playbook_dir }}"
+  vars_files:
+    - "./spec.yaml"
+  tasks:
+    - set_fact:
+        starttime: "{{ ansible_date_time }}"
+    - include_tasks: "playbooks/common/config_{{ mode }}.yaml"
+    - include_tasks: "playbooks/getbin/tasks/{{ mode }}.yaml"
+    - include_tasks: "playbooks/certsetup/tasks/{{ mode }}.yaml"
+
+- name: inform the installer
+  hosts: vm
+  connection: local
+  tasks:
+    - debug:
+        msg: >-
+          The work load started at {{ hostvars.vm.starttime.time }},
+          ended at {{ ansible_date_time.time }}

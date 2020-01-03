@@ -1,0 +1,40 @@
+---
+- name: Make sure that working directory exists
+  file:
+    path: "{{ pjroot }}/vars/run"
+    state: "directory"
+    mode: 0775
+
+- name: Get all ca object list
+  set_fact:
+    allcas: |
+      {{ allcas | default([]) + [{ 'org':item.split('.')[1:] | join("."),
+        'name':item.split('.')[0], 'fullname': item }] }}
+  with_items: "{{ fabric.cas }}"
+
+- name: Get all peer object list
+  set_fact:
+    allpeers: |
+      {{ allpeers | default([]) + [{'org':item.split('.')[1:] | join("."),
+        'name':item.split('.')[0], 'fullname': item }] }}
+  with_items: "{{ fabric.peers }}"
+
+- name: Get all orderer object list
+  set_fact:
+    allorderers: |
+      {{ allorderers | default([]) + [{ 'org':item.split('.')[1:] | join("."),
+        'name':item.split('.')[0], 'fullname': item }] }}
+  with_items: "{{ fabric.orderers }}"
+
+- name: Get ca, peer and orderer orgs
+  set_fact:
+    caorgs: "{{ allcas | default([]) | map(attribute='org') | list  | unique | sort }}"
+    peerorgs: "{{ allpeers | default([]) | map(attribute='org') | list  | unique | sort }}"
+    ordererorgs: "{{ allorderers | default([]) | map(attribute='org') | list  | unique | sort }}"
+
+- name: Create all orgs list
+  set_fact:
+    allorgs: "{{ (caorgs + peerorgs + ordererorgs) | sort | unique }}"
+
+- debug:
+    var: allorgs

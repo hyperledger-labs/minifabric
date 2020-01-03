@@ -1,0 +1,168 @@
+---
+{% if allorgs | length > 0 %}
+Organizations:
+{%   for org in allorgs %}
+{%     set orgid = org.split('.')|join('') %}
+  - &{{ orgid }}
+      Name: {{ orgid }}
+      ID: {{ orgid }}
+{%     if org in peerorgs %}
+      MSPDir: keyfiles/peerOrganizations/{{ org }}/msp
+      Policies:
+        Readers:
+            Type: Signature
+            Rule: "OR('{{ orgid }}.admin', '{{ orgid }}.peer')"
+        Writers:
+            Type: Signature
+            Rule: "OR('{{ orgid }}.admin', '{{ orgid }}.client')"
+        Admins:
+            Type: Signature
+            Rule: "OR('{{ orgid }}.admin')"
+
+      AnchorPeers:
+{%       for peer in allpeers %}
+{%         if peer.org == org %}
+        - Host: {{ peer.fullname }}
+          Port: 7051
+{%         endif %}
+{%       endfor %}
+{%     elif org in ordererorgs %}
+      MSPDir: keyfiles/ordererOrganizations/{{ org }}/msp
+      Policies:
+        Readers:
+            Type: Signature
+            Rule: "OR('{{ orgid }}.member')"
+        Writers:
+            Type: Signature
+            Rule: "OR('{{ orgid }}.member')"
+        Admins:
+            Type: Signature
+            Rule: "OR('{{ orgid }}.admin')"
+{%     endif %}
+{%   endfor %}
+{% endif %}
+
+Capabilities:
+  Global: &ChannelCapabilities
+{% if fabric.release is version_compare('1.4.3','>=') %}
+    V1_4_3: true
+{% elif fabric.release is version_compare('1.4.2','>=') and fabric.release is version_compare('1.4.3','<') %}
+    V1_4_2: true
+{% elif fabric.release is version_compare('1.3.0','>=') and fabric.release is version_compare('1.4.2','<') %}
+    V1_3: true
+{% elif fabric.release is version_compare('1.1.0','>=') and fabric.release is version_compare('1.3.0','<') %}
+    V1_1: true
+{% endif %}
+
+  Orderer: &OrdererCapabilities
+{% if fabric.release is version_compare('1.4.2','>=') %}
+    V1_4_2: true
+{% else %}
+    V1_1: true
+{% endif %}
+
+  Application: &ApplicationCapabilities
+{% if fabric.release is version_compare('1.4.2','>=') %}
+    V1_4_2: true
+{% elif fabric.release is version_compare('1.3.0','>=') and fabric.release is version_compare('1.4.1','<=') %}
+    V1_3: true
+{% elif fabric.release is version_compare('1.2.0','>=') and fabric.release is version_compare('1.3.0','<') %}
+    V1_2: true
+{% elif fabric.release is version_compare('1.1.0','>=') and fabric.release is version_compare('1.2.0','<') %}
+    V1_1: true
+{% endif %}
+
+{% if allorderers is defined and ( allorderers|length > 0) %}
+Orderer: &OrdererDefaults
+  OrdererType: "etcdraft"
+  Addresses:
+{%   for orderer in allorderers %}
+    - {{ orderer.fullname }}:7050
+{%   endfor %}
+
+  EtcdRaft:
+    Consenters:
+{%   for orderer in allorderers %}
+      - Host: {{ orderer.fullname }}
+        Port: 7050
+        ClientTLSCert: keyfiles/ordererOrganizations/{{ orderer.org }}/orderers/{{ orderer.fullname }}/tls/server.crt
+        ServerTLSCert: keyfiles/ordererOrganizations/{{ orderer.org }}/orderers/{{ orderer.fullname }}/tls/server.crt
+{%   endfor %}
+
+  Organizations:
+{%   for org in ordererorgs %}
+    - *{{ org.split('.')|join('') }}
+{%   endfor %}
+
+  Policies:
+      Readers:
+          Type: ImplicitMeta
+          Rule: "ANY Readers"
+      Writers:
+          Type: ImplicitMeta
+          Rule: "ANY Writers"
+      Admins:
+          Type: ImplicitMeta
+          Rule: "MAJORITY Admins"
+      BlockValidation:
+          Type: ImplicitMeta
+          Rule: "ANY Writers"
+
+  Capabilities:
+    <<: *OrdererCapabilities
+{% endif %}
+
+Application: &ApplicationDefaults
+  Organizations:
+{% for org in peerorgs %}
+    - *{{ org.split('.')|join('') }}
+{% endfor %}
+  Policies:
+      Readers:
+          Type: ImplicitMeta
+          Rule: "ANY Readers"
+      Writers:
+          Type: ImplicitMeta
+          Rule: "ANY Writers"
+      Admins:
+          Type: ImplicitMeta
+          Rule: "MAJORITY Admins"
+  Capabilities:
+    <<: *ApplicationCapabilities
+
+Channel: &ChannelDefaults
+    Policies:
+        Readers:
+            Type: ImplicitMeta
+            Rule: "ANY Readers"
+        Writers:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+        Admins:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Admins"
+    Capabilities:
+      <<: *ChannelCapabilities
+
+Profiles:
+  OrgChannel:
+    Consortium: FabricConsortium
+    Application:
+      <<: *ApplicationDefaults
+    <<: *ChannelDefaults
+    Orderer:
+      <<: *OrdererDefaults
+  OrdererGenesis:
+    <<: *ChannelDefaults
+    Capabilities:
+      <<: *ChannelCapabilities
+{% if allorderers is defined and ( allorderers|length > 0) %}
+    Orderer:
+      <<: *OrdererDefaults
+{% endif %}
+    Consortiums:
+      FabricConsortium:
+        Organizations:
+{%   for org in peerorgs %}
+          - *{{ org.split('.')|join('') }}
+{%   endfor %}
