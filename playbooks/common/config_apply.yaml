@@ -32,6 +32,13 @@
     peerorgs: "{{ allpeers | default([]) | map(attribute='org') | list  | unique | sort }}"
     ordererorgs: "{{ allorderers | default([]) | map(attribute='org') | list  | unique | sort }}"
 
+- name: Get all peers for each peer org
+  set_fact:
+    orgpeers: >-
+      {{ orgpeers | default({}) | combine({
+        item: allpeers|selectattr('org','equalto',item)|map(attribute='fullname')|list}) }}
+  with_items: "{{ peerorgs }}"
+
 - name: Create all orgs list
   set_fact:
     allorgs: "{{ (caorgs + peerorgs + ordererorgs) | sort | unique }}"
