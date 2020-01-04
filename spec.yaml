@@ -1,6 +1,4 @@
 fabric:
-  release: "1.4.4"
-  peer_db: "goleveldb"
   cas:
   - "ca1.org0.example.com"
   - "ca1.org1.example.com"
@@ -13,4 +11,3 @@ fabric:
   - "orderer1.example.com"
   - "orderer2.example.com"
   - "orderer3.example.com"
-  logging_level: "ERROR"

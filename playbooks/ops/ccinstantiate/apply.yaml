@@ -4,4 +4,4 @@
     status_flag: "Success"
 
 - debug:
-    msg: "Joining channel {{ CHANNEL_NAME }}"
+    msg: "Instantiate chaincode {{ CC_NAME }}:{{ CC_VERSION }}"
