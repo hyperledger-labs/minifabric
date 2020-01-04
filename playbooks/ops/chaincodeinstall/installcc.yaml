@@ -1,0 +1,4 @@
+---
+- debug:
+    msg: "Ready to install chaincode onto {{ peer.fullname }}"
+

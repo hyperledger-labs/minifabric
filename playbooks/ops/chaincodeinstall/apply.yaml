@@ -1,0 +1,13 @@
+---
+- debug:
+    msg: "Chaincodeinstall"
+
+- debug:
+    var: ccname
+
+- name: "Install chaincode onto {{ peer }}"
+  include_tasks: "installcc.yaml"
+  loop: "{{ allpeers }}"
+  loop_control:
+    loop_var: peer
+  when: status_flag == "Success"

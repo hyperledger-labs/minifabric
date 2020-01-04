@@ -1,0 +1,7 @@
+---
+- name: Initialize the success flag
+  set_fact:
+    status_flag: "Success"
+
+- debug:
+    msg: "Channeljoin"
