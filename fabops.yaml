@@ -1,0 +1,34 @@
+---
+- name: Get start timestamp
+  hosts: vm
+  connection: local
+  vars:
+    pjroot: "{{ playbook_dir }}"
+  vars_files:
+    - "./spec.yaml"
+  tasks:
+    - set_fact:
+        starttime: "{{ ansible_date_time }}"
+        allops: "{{ mode.split(',')|list }}"
+        status_flag: "Success"
+
+    - name: "Process configuration"
+      include_tasks: "playbooks/common/config_apply.yaml"
+
+    - name: Do all the requested fabric operations
+      include_tasks: "playbooks/ops/{{ op }}/apply.yaml"
+      loop: "{{ allops }}"
+      loop_control:
+        loop_var: op
+      when: status_flag == "Success"
+
+- name: Inform the installer
+  hosts: vm
+  connection: local
+  tasks:
+    - name: Summary
+      debug:
+        msg: >-
+          The work load started at: {{ hostvars.vm.starttime.time }}.
+          Finished at: {{ ansible_date_time.time }}.
+          Total time took: {{ (ansible_date_time.epoch|int) - (hostvars.vm.starttime.epoch|int) }} seconds

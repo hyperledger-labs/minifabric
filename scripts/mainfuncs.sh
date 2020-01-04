@@ -59,3 +59,9 @@ function generateCerts() {
     ansible-playbook -i plays/hosts -e "mode=apply" plays/minifabric.yaml \
     --skip-tags "nodes"
 }
+
+function installChaincode() {
+  docker run --rm -v $(pwd):/home/plays hfrd/ansible:latest \
+    ansible-playbook -i plays/hosts -e "mode=chaincodeinstall,channeljoin" \
+    -e "ccname=$CHANNEL_NAME" plays/fabops.yaml
+}

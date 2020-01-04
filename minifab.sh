@@ -55,6 +55,8 @@ elif [ "$MODE" == "generate" ]; then
   EXPMODE="Generating certs and genesis block"
 elif [ "$MODE" == "upgrade" ]; then
   EXPMODE="Upgrading the network"
+elif [ "$MODE" == "installcc" ]; then
+  EXPMODE="Upgrading the network"
 else
   printHelp
   exit 1
@@ -107,6 +109,8 @@ elif [ "${MODE}" == "restart" ]; then ## Restart the network
   networkUp
 elif [ "${MODE}" == "upgrade" ]; then ## Upgrade the network from version 1.2.x to 1.3.x
   upgradeNetwork
+elif [ "${MODE}" == "installcc" ]; then ## Upgrade the network from version 1.2.x to 1.3.x
+  installChaincode
 else
   printHelp
   exit 1
