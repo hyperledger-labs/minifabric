@@ -1,9 +1,6 @@
 ---
 - debug:
-    msg: "Chaincodeinstall"
-
-- debug:
-    var: ccname
+    msg: "Installing chaincode {{ CC_NAME}}:{{ CC_VERSION }}"
 
 - name: "Install chaincode onto {{ peer }}"
   include_tasks: "installcc.yaml"

@@ -1,4 +1,8 @@
 ---
+- name: Set fabric.release based on the passed in parameter
+  set_fact:
+    fabric: "{{ fabric | combine({'release': IMAGETAG|default('1.4.4')}) }}"
+
 - name: Make sure that working directory exists
   file:
     path: "{{ pjroot }}/vars/run"

@@ -4,4 +4,4 @@
     status_flag: "Success"
 
 - debug:
-    msg: "Joining channel {{ CHANNEL_NAME }}"
+    msg: "Creating channel {{ CHANNEL_NAME }}"

@@ -19,50 +19,30 @@ export VERBOSE=false
 
 . scripts/mainfuncs.sh
 
-# timeout duration - the duration the CLI should wait for a response from
-# another container before giving up
-CLI_TIMEOUT=10
-# default for delay between commands
-CLI_DELAY=3
 # channel name defaults to "mychannel"
 CHANNEL_NAME="mychannel"
-# use this as the default docker-compose yaml definition
-COMPOSE_FILE=docker-compose-cli.yaml
-#
-COMPOSE_FILE_COUCH=docker-compose-couch.yaml
-# org3 docker compose file
-COMPOSE_FILE_ORG3=docker-compose-org3.yaml
-# two additional etcd/raft orderers
-COMPOSE_FILE_RAFT2=docker-compose-etcdraft2.yaml
-# certificate authorities compose file
-COMPOSE_FILE_CA=docker-compose-ca.yaml
-#
 # use go as the default language for chaincode
-CC_SRC_LANGUAGE=go
+CC_LANGUAGE=go
 # default image tag
-IMAGETAG="latest"
+IMAGETAG="1.4.4"
+# default chaincode version
+CC_VERSION=1.0
+# default chaincode name
+CC_NAME="chaincode_example02"
+# default peer db set to golevel
+DB_TYPE=golevel
 
 MODE=$1
 shift
+rs=$(isValidateOp $MODE)
+
 # Determine whether starting, stopping, restarting, generating or upgrading
-if [ "$MODE" == "up" ]; then
-  EXPMODE="Starting"
-elif [ "$MODE" == "down" ]; then
-  EXPMODE="Stopping"
-elif [ "$MODE" == "restart" ]; then
-  EXPMODE="Restarting"
-elif [ "$MODE" == "generate" ]; then
-  EXPMODE="Generating certs and genesis block"
-elif [ "$MODE" == "upgrade" ]; then
-  EXPMODE="Upgrading the network"
-elif [ "$MODE" == "installcc" ]; then
-  EXPMODE="Upgrading the network"
-else
+if [ "$rs" == 0 ]; then
   printHelp
   exit 1
 fi
 
-while getopts "h?c:t:d:s:l:i:anv" opt; do
+while getopts "h?c:s:l:i:n:v" opt; do
   case "$opt" in
   h | \?)
     printHelp
@@ -71,32 +51,31 @@ while getopts "h?c:t:d:s:l:i:anv" opt; do
   c)
     CHANNEL_NAME=$OPTARG
     ;;
-  t)
-    CLI_TIMEOUT=$OPTARG
-    ;;
-  d)
-    CLI_DELAY=$OPTARG
-    ;;
   s)
-    IF_COUCHDB=$OPTARG
+    DB_TYPE=$OPTARG
     ;;
   l)
-    CC_SRC_LANGUAGE=$OPTARG
+    CC_LANGUAGE=$OPTARG
     ;;
   i)
-    IMAGETAG=$(go env GOARCH)"-"$OPTARG
-    ;;
-  a)
-    CERTIFICATE_AUTHORITIES=true
+    IMAGETAG=$OPTARG
     ;;
   n)
-    NO_CHAINCODE=true
+    CC_NAME=$OPTARG
     ;;
   v)
-    VERBOSE=true
+    CC_VERSION=$OPTARG
     ;;
   esac
 done
+
+echo "Current settings"
+echo "DB_TYPE: ${DB_TYPE}"
+echo "CHANNEL_NAME: ${CHANNEL_NAME}"
+echo "CC_NAME: ${CC_NAME}"
+echo "CC_VERSION: ${CC_VERSION}"
+echo "CHANNEL_NAME: ${CHANNEL_NAME}"
+echo "IMAGETAG: ${IMAGETAG}"
 
 if [ "${MODE}" == "up" ]; then
   networkUp
@@ -107,10 +86,14 @@ elif [ "${MODE}" == "generate" ]; then ## Generate Artifacts
 elif [ "${MODE}" == "restart" ]; then ## Restart the network
   networkDown
   networkUp
-elif [ "${MODE}" == "upgrade" ]; then ## Upgrade the network from version 1.2.x to 1.3.x
-  upgradeNetwork
-elif [ "${MODE}" == "installcc" ]; then ## Upgrade the network from version 1.2.x to 1.3.x
-  installChaincode
+elif [ "${MODE}" == "install" ]; then ## Chaincode install
+  doOp ccinstall
+elif [ "${MODE}" == "instantiate" ]; then ## Chaincode instantiate
+  doOp ccinstantiate
+elif [ "${MODE}" == "create" ]; then ## Channel create
+  doOp channelcreate
+elif [ "${MODE}" == "join" ]; then ## Channel join
+  doOp channeljoin
 else
   printHelp
   exit 1
