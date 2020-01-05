@@ -8,19 +8,22 @@ This tool requires docker CE 18.03 or newer.
 `
 curl -o minifab -L https://tinyurl.com/twrt8zv && chmod +x minifab
 `
+You can also move script `minifab` into a directory which is part
+of your $PATH such as ~/.local/bin to save time
+
 # To stand up a fabric network:
 `
-./minifab up
+minifab up
 `
 
 When it finishes, you should have a fabric network running on your machine
 
 # To see other available fabric operations
 `
-./minifab
+minifab
 `
 
 # To tear down the fabric network:
 `
-./minifab down
+minifab down
 `
