@@ -31,6 +31,8 @@ CC_VERSION=1.0
 CC_NAME="chaincode_example02"
 # default peer db set to golevel
 DB_TYPE=golevel
+# default instantiate parameters
+CC_PARAMETERS='"init","a","100","b","200"'
 
 MODE=$1
 shift
@@ -42,7 +44,7 @@ if [ "$rs" == 0 ]; then
   exit 1
 fi
 
-while getopts "h?c:s:l:i:n:v" opt; do
+while getopts "h?c:s:l:i:n:v:p" opt; do
   case "$opt" in
   h | \?)
     printHelp
@@ -66,9 +68,13 @@ while getopts "h?c:s:l:i:n:v" opt; do
   v)
     CC_VERSION=$OPTARG
     ;;
+  p)
+    CC_PARAMETERS=$OPTARG
+    ;;
   esac
 done
 
+CC_PARAMETERS=$(echo $CC_PARAMETERS|base64)
 echo "Current settings"
 echo "DB_TYPE: ${DB_TYPE}"
 echo "CHANNEL_NAME: ${CHANNEL_NAME}"
@@ -77,6 +83,7 @@ echo "CC_VERSION: ${CC_VERSION}"
 echo "CC_LANGUAGE: ${CC_LANGUAGE}"
 echo "CHANNEL_NAME: ${CHANNEL_NAME}"
 echo "IMAGETAG: ${IMAGETAG}"
+echo "CC_PARAMETERS: ${CC_PARAMETERS}"
 
 if [ "${MODE}" == "up" ]; then
   networkUp
