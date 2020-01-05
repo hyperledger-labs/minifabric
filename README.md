@@ -38,7 +38,7 @@ minifab down
 
 # To setup a network using a different spec
 Simply download this [spec](spec.yaml) and make changes to what you like, then run the following
-command again:
+command in a directory where your new spec.yaml file is:
 
 ```
 minifab up
