@@ -85,6 +85,9 @@ echo "CHANNEL_NAME: ${CHANNEL_NAME}"
 echo "IMAGETAG: ${IMAGETAG}"
 echo "CC_PARAMETERS: ${CC_PARAMETERS}"
 
+if [ -z "$hostroot" ]; then hostroot=$(pwd); fi
+echo "hostroot: $hostroot"
+
 if [ "${MODE}" == "up" ]; then
   networkUp
 elif [ "${MODE}" == "down" ]; then ## Clear the network
