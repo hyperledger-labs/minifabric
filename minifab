@@ -1,3 +1,9 @@
 #!/bin/bash
-docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd)/vars:/home/vars \
+[ ! -d "$(pwd)/vars" ] && mkdir vars
+if [ -f "$(pwd)/spec.yaml" ]; then
+  docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd)/vars:/home/vars \
+  -v $(pwd)/spec.yaml:/home/spec.yaml -e "hostroot=$(pwd)" hfrd/minifab:latest /home/minifab.sh "$@"
+else
+  docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd)/vars:/home/vars \
   -e "hostroot=$(pwd)" hfrd/minifab:latest /home/minifab.sh "$@"
+fi
