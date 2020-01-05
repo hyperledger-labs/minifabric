@@ -1,4 +1,4 @@
-# minifabric
+# Minifabric
 This project helps Fabric users to deploy a simple fabric network on a single machine
 
 # Prerequsites
