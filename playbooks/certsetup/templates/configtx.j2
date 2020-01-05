@@ -11,7 +11,7 @@ Organizations:
       Policies:
         Readers:
             Type: Signature
-            Rule: "OR('{{ orgid }}.admin', '{{ orgid }}.peer')"
+            Rule: "OR('{{ orgid }}.admin', '{{ orgid }}.client', '{{ orgid }}.peer')"
         Writers:
             Type: Signature
             Rule: "OR('{{ orgid }}.admin', '{{ orgid }}.client')"
@@ -43,11 +43,15 @@ Organizations:
 {% endif %}
 
 Capabilities:
-  Global: &ChannelCapabilities
+  Channel: &ChannelCapabilities
 {% if fabric.release is version_compare('1.4.3','>=') %}
     V1_4_3: true
+    V1_3: false
+    V1_1: false
 {% elif fabric.release is version_compare('1.4.2','>=') and fabric.release is version_compare('1.4.3','<') %}
     V1_4_2: true
+    V1_3: false
+    V1_1: false
 {% elif fabric.release is version_compare('1.3.0','>=') and fabric.release is version_compare('1.4.2','<') %}
     V1_3: true
 {% elif fabric.release is version_compare('1.1.0','>=') and fabric.release is version_compare('1.3.0','<') %}
@@ -57,6 +61,7 @@ Capabilities:
   Orderer: &OrdererCapabilities
 {% if fabric.release is version_compare('1.4.2','>=') %}
     V1_4_2: true
+    V1_1: false
 {% else %}
     V1_1: true
 {% endif %}
@@ -64,105 +69,123 @@ Capabilities:
   Application: &ApplicationCapabilities
 {% if fabric.release is version_compare('1.4.2','>=') %}
     V1_4_2: true
+    V1_3: false
+    V1_2: false
+    V1_1: false
 {% elif fabric.release is version_compare('1.3.0','>=') and fabric.release is version_compare('1.4.1','<=') %}
     V1_3: true
+    V1_2: false
+    V1_1: false
 {% elif fabric.release is version_compare('1.2.0','>=') and fabric.release is version_compare('1.3.0','<') %}
     V1_2: true
+    V1_1: false
 {% elif fabric.release is version_compare('1.1.0','>=') and fabric.release is version_compare('1.2.0','<') %}
     V1_1: true
 {% endif %}
 
-{% if allorderers is defined and ( allorderers|length > 0) %}
-Orderer: &OrdererDefaults
-  OrdererType: "etcdraft"
-  Addresses:
-{%   for orderer in allorderers %}
-    - {{ orderer.fullname }}:7050
-{%   endfor %}
-
-  EtcdRaft:
-    Consenters:
-{%   for orderer in allorderers %}
-      - Host: {{ orderer.fullname }}
-        Port: 7050
-        ClientTLSCert: keyfiles/ordererOrganizations/{{ orderer.org }}/orderers/{{ orderer.fullname }}/tls/server.crt
-        ServerTLSCert: keyfiles/ordererOrganizations/{{ orderer.org }}/orderers/{{ orderer.fullname }}/tls/server.crt
-{%   endfor %}
-
-  Organizations:
-{%   for org in ordererorgs %}
-    - *{{ org.split('.')|join('') }}
-{%   endfor %}
-
-  Policies:
-      Readers:
-          Type: ImplicitMeta
-          Rule: "ANY Readers"
-      Writers:
-          Type: ImplicitMeta
-          Rule: "ANY Writers"
-      Admins:
-          Type: ImplicitMeta
-          Rule: "MAJORITY Admins"
-      BlockValidation:
-          Type: ImplicitMeta
-          Rule: "ANY Writers"
-
-  Capabilities:
-    <<: *OrdererCapabilities
-{% endif %}
-
 Application: &ApplicationDefaults
   Organizations:
-{% for org in peerorgs %}
-    - *{{ org.split('.')|join('') }}
-{% endfor %}
   Policies:
-      Readers:
-          Type: ImplicitMeta
-          Rule: "ANY Readers"
-      Writers:
-          Type: ImplicitMeta
-          Rule: "ANY Writers"
-      Admins:
-          Type: ImplicitMeta
-          Rule: "MAJORITY Admins"
+    Readers:
+      Type: ImplicitMeta
+      Rule: "ANY Readers"
+    Writers:
+      Type: ImplicitMeta
+      Rule: "ANY Writers"
+    Admins:
+      Type: ImplicitMeta
+      Rule: "MAJORITY Admins"
   Capabilities:
     <<: *ApplicationCapabilities
 
+Orderer: &OrdererDefaults
+  OrdererType: etcdraft
+
+  Addresses:
+{%  for orderer in allorderers %}
+  - {{ orderer.fullname }}:7050
+{%  endfor %}
+
+  BatchTimeout: 2s
+
+  BatchSize:
+    MaxMessageCount: 10
+    AbsoluteMaxBytes: 99 MB
+    PreferredMaxBytes: 512 KB
+
+  EtcdRaft:
+    Consenters:
+{%  for orderer in allorderers %}
+    - Host: {{ orderer.fullname }}
+      Port: 7050
+      ClientTLSCert: keyfiles/ordererOrganizations/{{ orderer.org }}/orderers/{{ orderer.fullname }}/tls/server.crt
+      ServerTLSCert: keyfiles/ordererOrganizations/{{ orderer.org }}/orderers/{{ orderer.fullname }}/tls/server.crt
+{%  endfor %}
+
+  Organizations:
+  Policies:
+    Readers:
+      Type: ImplicitMeta
+      Rule: "ANY Readers"
+    Writers:
+      Type: ImplicitMeta
+      Rule: "ANY Writers"
+    Admins:
+      Type: ImplicitMeta
+      Rule: "MAJORITY Admins"
+    BlockValidation:
+      Type: ImplicitMeta
+      Rule: "ANY Writers"
+
 Channel: &ChannelDefaults
-    Policies:
-        Readers:
-            Type: ImplicitMeta
-            Rule: "ANY Readers"
-        Writers:
-            Type: ImplicitMeta
-            Rule: "ANY Writers"
-        Admins:
-            Type: ImplicitMeta
-            Rule: "MAJORITY Admins"
-    Capabilities:
-      <<: *ChannelCapabilities
+  Policies:
+    Readers:
+      Type: ImplicitMeta
+      Rule: "ANY Readers"
+    Writers:
+      Type: ImplicitMeta
+      Rule: "ANY Writers"
+    Admins:
+      Type: ImplicitMeta
+      Rule: "MAJORITY Admins"
+
+  Capabilities:
+    <<: *ChannelCapabilities
 
 Profiles:
   OrgChannel:
-    Consortium: FabricConsortium
+    Consortium: SampleConsortium
+    <<: *ChannelDefaults
     Application:
       <<: *ApplicationDefaults
-    <<: *ChannelDefaults
-    Orderer:
-      <<: *OrdererDefaults
+      Organizations:
+{%    for org in peerorgs %}
+      - *{{ org.split('.')|join('') }}
+{%    endfor %}
+      Capabilities:
+        <<: *ApplicationCapabilities
+
   OrdererGenesis:
     <<: *ChannelDefaults
     Capabilities:
       <<: *ChannelCapabilities
-{% if allorderers is defined and ( allorderers|length > 0) %}
     Orderer:
       <<: *OrdererDefaults
-{% endif %}
+      Organizations:
+{%    for org in ordererorgs %}
+      - *{{ org.split('.')|join('') }}
+{%    endfor %}
+      Capabilities:
+        <<: *OrdererCapabilities
+    Application:
+      <<: *ApplicationDefaults
+      Organizations:
+{%   for org in ordererorgs %}
+      - <<: *{{ org.split('.')|join('') }}
+{%   endfor %}
     Consortiums:
-      FabricConsortium:
+      SampleConsortium:
         Organizations:
 {%   for org in peerorgs %}
-          - *{{ org.split('.')|join('') }}
+        - *{{ org.split('.')|join('') }}
 {%   endfor %}

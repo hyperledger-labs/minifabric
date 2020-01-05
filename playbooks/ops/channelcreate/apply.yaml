@@ -1,7 +1,18 @@
 ---
-- name: Initialize the success flag
-  set_fact:
-    status_flag: "Success"
-
 - debug:
     msg: "Creating channel {{ CHANNEL_NAME }}"
+
+- name: Select an orderer for channel creation.
+  set_fact:
+    peer: "{{ allpeers | random }}"
+    orderer: "{{ allorderers | random }}"
+
+- name: Create channel creation script
+  template:
+    src: "{{ pjroot }}/playbooks/ops/templates/channelcreate.j2"
+    dest: "{{ pjroot }}/vars/run/channelcreate.sh"
+    mode: +x
+
+- name: Run the channel creation script on cli container
+  command: >-
+    docker exec cli /vars/run/channelcreate.sh

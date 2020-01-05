@@ -5,4 +5,4 @@
 
 - name: "Create certs and block artifacts"
   include_tasks: "createcerts.yaml"
-  when: certsexists.stat.exists == false or regcerts == true
+  when: certsexists.stat.exists == false or regcerts == "true"

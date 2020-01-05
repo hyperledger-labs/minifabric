@@ -28,6 +28,6 @@
     {{ pjroot }}/vars/bin/configtxgen -profile OrdererGenesis
     -outputBlock genesis.block -channelID systemchannel &&
     {{ pjroot }}/vars/bin/configtxgen -profile OrgChannel
-    -outputCreateChannelTx firstchannel.tx -channelID firstchannel
+    -outputCreateChannelTx firstchannel.block -channelID firstchannel
   args:
     chdir: "{{ pjroot }}/vars"

@@ -10,4 +10,5 @@
 
 - name: Run the chaincode install script on cli container
   command: >-
-    docker exec cli /scripts/ccinstall.sh
+    docker exec cli /vars/run/ccinstall.sh
+  register: result

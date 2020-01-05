@@ -1,0 +1,16 @@
+#!/bin/bash
+# Script to instantiate chaincode
+export CORE_PEER_TLS_ROOTCERT_FILE=/certs/peerOrganizations/{{ peer.org }}/peers/{{ peer.fullname }}/tls/ca.crt
+export CORE_PEER_TLS_KEY_FILE=/certs/peerOrganizations/{{ peer.org }}/peers/{{ peer.fullname }}/tls/server.key
+export CORE_PEER_LOCALMSPID={{ peer.org.split('.')|join('') }}
+export CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+export CORE_PEER_TLS_CERT_FILE=/certs/peerOrganizations/{{ peer.org }}/peers/{{ peer.fullname }}/tls/server.crt
+export CORE_PEER_TLS_ENABLED=true
+export CORE_PEER_MSPCONFIGPATH=/certs/peerOrganizations/{{ peer.org }}/users/Admin@{{ peer.org }}/msp
+export CORE_PEER_ID=cli
+export CORE_PEER_ADDRESS={{ peer.fullname }}:7051
+export ORDERER_TLS_CA=/certs/ordererOrganizations/{{ orderer.org}}/tlsca/tlsca.{{ orderer.org }}-cert.pem
+export ORDERER_ADDRESS={{ orderer.fullname }}:7050
+
+peer chaincode instantiate -o {{ orderer.fullname }}:7050 --cafile $ORDERER_TLS_CA \
+  -C {{CHANNEL_NAME}} --tls true -n {{ CC_NAME }} -v {{ CC_VERSION }} -c '{"Args":["init"]}'

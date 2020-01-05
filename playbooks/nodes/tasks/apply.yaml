@@ -54,7 +54,7 @@
   command: >-
     docker run -dit --network minifab --name cli
     -v /var/run/docker.sock:/var/run/docker.sock
-    -v {{ hostroot }}/vars/run:/scripts
+    -v {{ hostroot }}/vars:/vars
     -v {{ hostroot }}/chaincode:/opt/gopath/src/github.com/chaincode
     -v {{ hostroot }}/vars/keyfiles:/certs
     hyperledger/fabric-tools:{{ fabric.release }}

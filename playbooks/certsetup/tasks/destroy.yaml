@@ -6,7 +6,7 @@
   with_items:
     - "crypto-config.yml"
     - "configtx.yml"
-    - "firstchannel.tx"
+    - "firstchannel.block"
     - "genesis.block"
     - "keyfiles"
     - "run"
