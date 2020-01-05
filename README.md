@@ -6,7 +6,7 @@ This tool requires docker CE 18.03 or newer.
 
 # Get the script and make it executable
 `
-curl -o minifab https://tinyurl.com/twrt8zv && chmod +x minifab
+curl -o minifab -L https://tinyurl.com/twrt8zv && chmod +x minifab
 `
 # To stand up a fabric network:
 `
