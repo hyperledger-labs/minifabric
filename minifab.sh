@@ -19,8 +19,8 @@ export VERBOSE=false
 
 . scripts/mainfuncs.sh
 
-# channel name defaults to "mychannel"
-CHANNEL_NAME="mychannel"
+# channel name defaults to "firstchannel"
+CHANNEL_NAME="firstchannel"
 # use go as the default language for chaincode
 CC_LANGUAGE=go
 # default image tag

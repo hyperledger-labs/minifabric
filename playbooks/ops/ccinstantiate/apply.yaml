@@ -1,7 +1,18 @@
 ---
-- name: Initialize the success flag
-  set_fact:
-    status_flag: "Success"
-
 - debug:
     msg: "Instantiate chaincode {{ CC_NAME }}:{{ CC_VERSION }}"
+
+- name: Select a peer and orderer for chaincode instantiation.
+  set_fact:
+    peer: "{{ allpeers | random }}"
+    orderer: "{{ allorderers | random }}"
+
+- name: Create chaincode instantiate script
+  template:
+    src: "{{ pjroot }}/playbooks/ops/templates/ccinstantiate.j2"
+    dest: "{{ pjroot }}/vars/run/ccinstantiate.sh"
+    mode: +x
+
+- name: Run the chaincode instantiate script on cli container
+  command: >-
+    docker exec cli /vars/run/ccinstantiate.sh

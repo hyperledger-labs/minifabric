@@ -4,4 +4,11 @@
     status_flag: "Success"
 
 - debug:
-    msg: "Joining channel {{ CHANNEL_NAME }}"
+    msg: "Joining all peers channel {{ CHANNEL_NAME }}"
+
+- name: "Join {{ peer }} to channel {{ CHANNEL_NAME}}"
+  include_tasks: "channeljoin.yaml"
+  loop: "{{ allpeers }}"
+  loop_control:
+    loop_var: peer
+  when: status_flag == "Success"
