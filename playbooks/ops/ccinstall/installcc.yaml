@@ -2,3 +2,12 @@
 - debug:
     msg: "Ready to install chaincode onto {{ peer.fullname }}"
 
+- name: Create chaincode install script
+  template:
+    src: "{{ pjroot }}/playbooks/ops/templates/ccinstall.j2"
+    dest: "{{ pjroot }}/vars/run/ccinstall.sh"
+    mode: +x
+
+- name: Run the chaincode install script on cli container
+  command: >-
+    docker exec cli /scripts/ccinstall.sh

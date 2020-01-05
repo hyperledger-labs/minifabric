@@ -51,7 +51,7 @@ function printHelp() {
 function networkUp() {
   docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd):/home/plays  \
   hfrd/ansible:latest ansible-playbook -i plays/hosts -e "mode=apply"                 \
-  -e "hostroot=$(pwd)" -e "regcerts=false"                                            \
+  -e "hostroot=$(pwd)" -e "regcerts=false" -e "CC_LANGUAGE=$CC_LANGUAGE"              \
   -e "DB_TYPE=$DB_TYPE" -e "CHANNEL_NAME=$CHANNEL_NAME" -e "CC_NAME=$CC_NAME"         \
   -e "CC_VERSION=$CC_VERSION" -e "CHANNEL_NAME=$CHANNEL_NAME" -e "IMAGETAG=$IMAGETAG" \
   plays/minifabric.yaml
@@ -60,7 +60,7 @@ function networkUp() {
 function networkDown() {
   docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd):/home/plays  \
   hfrd/ansible:latest ansible-playbook -i plays/hosts                                 \
-  -e "mode=destroy" -e "removecert=false"                                             \
+  -e "mode=destroy" -e "removecert=false" -e "CC_LANGUAGE=$CC_LANGUAGE"               \
   -e "DB_TYPE=$DB_TYPE" -e "CHANNEL_NAME=$CHANNEL_NAME" -e "CC_NAME=$CC_NAME"         \
   -e "CC_VERSION=$CC_VERSION" -e "CHANNEL_NAME=$CHANNEL_NAME" -e "IMAGETAG=$IMAGETAG" \
   plays/minifabric.yaml
@@ -68,15 +68,16 @@ function networkDown() {
 
 function generateCerts() {
   docker run --rm -v $(pwd):/home/plays hfrd/ansible:latest ansible-playbook          \
-  -i plays/hosts -e "mode=apply" -e "regcerts=true"                                   \
+  -i plays/hosts -e "mode=apply" -e "regcerts=true" -e "CC_LANGUAGE=$CC_LANGUAGE"     \
   -e "DB_TYPE=$DB_TYPE" -e "CHANNEL_NAME=$CHANNEL_NAME" -e "CC_NAME=$CC_NAME"         \
   -e "CC_VERSION=$CC_VERSION" -e "CHANNEL_NAME=$CHANNEL_NAME" -e "IMAGETAG=$IMAGETAG" \
   plays/minifabric.yaml --skip-tags "nodes"
 }
 
 function doOp() {
-  docker run --rm -v $(pwd):/home/plays hfrd/ansible:latest ansible-playbook          \
-  -i plays/hosts -e "mode=$1" -e "hostroot=$(pwd)"                                    \
+  docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd):/home/plays  \
+  hfrd/ansible:latest ansible-playbook -i plays/hosts                                 \
+  -e "mode=$1" -e "hostroot=$(pwd)" -e "CC_LANGUAGE=$CC_LANGUAGE"                     \
   -e "DB_TYPE=$DB_TYPE" -e "CHANNEL_NAME=$CHANNEL_NAME" -e "CC_NAME=$CC_NAME"         \
   -e "CC_VERSION=$CC_VERSION" -e "CHANNEL_NAME=$CHANNEL_NAME" -e "IMAGETAG=$IMAGETAG" \
   plays/fabops.yaml
