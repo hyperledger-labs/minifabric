@@ -87,6 +87,7 @@ echo "CC_PARAMETERS: ${CC_PARAMETERS}"
 
 if [ -z "$hostroot" ]; then hostroot=$(pwd); fi
 echo "hostroot: $hostroot"
+[ ! -d "$(pwd)/vars/chaincode" ] && cp -r $(pwd)/chaincode $(pwd)/vars
 
 if [ "${MODE}" == "up" ]; then
   networkUp

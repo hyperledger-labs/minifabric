@@ -1,6 +1,6 @@
 ---
 - debug:
-    msg: "Instantiate chaincode {{ CC_NAME }}:{{ CC_VERSION }}"
+    msg: "Instantiate chaincode {{ CC_NAME }}:{{ CC_VERSION }} on channel {{ CHANNEL_NAME }}"
 
 - name: Select a peer and orderer for chaincode instantiation.
   set_fact:
