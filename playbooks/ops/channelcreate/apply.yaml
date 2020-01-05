@@ -2,6 +2,15 @@
 - debug:
     msg: "Creating channel {{ CHANNEL_NAME }}"
 
+
+- name: Create the channel transaction
+  shell: >-
+    export FABRIC_CFG_PATH={{ pjroot }}/vars &&
+    {{ pjroot }}/vars/bin/configtxgen -profile OrgChannel
+    -outputCreateChannelTx {{ CHANNEL_NAME }}.tx -channelID {{ CHANNEL_NAME}}
+  args:
+    chdir: "{{ pjroot }}/vars"
+
 - name: Select an orderer for channel creation.
   set_fact:
     peer: "{{ allpeers | random }}"
