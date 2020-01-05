@@ -12,5 +12,6 @@ export CORE_PEER_ADDRESS={{ peer.fullname }}:7051
 export ORDERER_TLS_CA=/certs/ordererOrganizations/{{ orderer.org}}/tlsca/tlsca.{{ orderer.org }}-cert.pem
 export ORDERER_ADDRESS={{ orderer.fullname }}:7050
 
-peer channel create -c {{ CHANNEL_NAME }} -f /vars/{{ CHANNEL_NAME }}.block -o $ORDERER_ADDRESS \
+cd /vars
+peer channel create -c {{ CHANNEL_NAME }} -f {{ CHANNEL_NAME }}.tx -o $ORDERER_ADDRESS \
   --tls --cafile $ORDERER_TLS_CA

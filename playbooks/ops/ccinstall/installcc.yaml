@@ -12,3 +12,7 @@
   command: >-
     docker exec cli /vars/run/ccinstall.sh
   register: result
+
+- name: Set the status flag based on the return value
+  set_fact:
+    status_flag: "{{ (result.rc == 0)|ternary('Success', 'Failure') }}"
