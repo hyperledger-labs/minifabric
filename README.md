@@ -13,18 +13,18 @@ You can also move script `minifab` into a directory which is part
 of your $PATH such as ~/.local/bin to save time
 
 # To stand up a fabric network:
-`
+```
 minifab up
-`
+```
 
 When it finishes, you should have a fabric network running on your machine
 
 # To see other available fabric operations
-`
+```
 minifab
-`
+```
 
 # To tear down the fabric network:
-`
+```
 minifab down
-`
+```
