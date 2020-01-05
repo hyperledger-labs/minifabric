@@ -1,4 +1,8 @@
 ---
+- name: Remove cli container
+  command: >-
+    docker rm -f cli
+
 - name: Remove all peer nodes
   command: >-
     docker rm -f {{ item.fullname }}
