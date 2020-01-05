@@ -1,7 +1,7 @@
 # Minifabric
 This tool helps Fabric users working with fabric network. It currently provides the following functions:
 
-1. Deploy a fabric network based on this spec file
+1. Deploy a fabric network based on this [spec](spec.yaml) file
 2. Tear down the deployed fabric network
 3. Create new channels
 4. Join peers to the new channels
