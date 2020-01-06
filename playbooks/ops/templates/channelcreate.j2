@@ -1,6 +1,8 @@
 #!/bin/bash
 # Script to create channel block 0 and then create channel
+cp $FABRIC_CFG_PATH/core.yaml /vars/core.yaml
 cd /vars
+export FABRIC_CFG_PATH=/vars
 configtxgen -profile OrgChannel \
   -outputCreateChannelTx {{ CHANNEL_NAME }}.tx -channelID {{ CHANNEL_NAME}}
 
