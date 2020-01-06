@@ -2,4 +2,3 @@
 cd $FABRIC_CFG_PATH
 cryptogen generate --config crypto-config.yml --output keyfiles
 configtxgen -profile OrdererGenesis -outputBlock genesis.block -channelID systemchannel
-configtxgen -profile OrgChannel -outputCreateChannelTx {{ CHANNEL_NAME}}.tx -channelID {{ CHANNEL_NAME }}

@@ -17,6 +17,30 @@
     loop_var: item
   when: status_flag == "Success"
 
+- name: List all the chaincode containers
+  command: >-
+    docker ps -a --format
+    '{{ leftbrace }}{{ leftbrace }} .Names {{ rightbrace }}{{ rightbrace }}'
+  register: containers
+
+- name: Remove the container
+  command: >-
+    docker rm -f {{ item }}
+  when: item.startswith('dev-')
+  with_items: "{{ containers.stdout_lines}}"
+
+- name: List all the chaincode container images
+  command: >-
+    docker images --format
+    '{{ leftbrace }}{{ leftbrace }} .Repository {{ rightbrace }}{{ rightbrace }}'
+  register: images
+
+- name: Remove the chaincode container images
+  command: >-
+    docker rmi -f {{ item }}:latest
+  when: item.startswith('dev-')
+  with_items: "{{ images.stdout_lines}}"
+
 - name: Remove env file for all nodes
   file:
     path: "{{ pjroot }}/vars/run/{{ item.fullname }}.env"
@@ -37,15 +61,3 @@
 - name: Delete fabric docker network if it exists
   command: "docker network rm minifab"
   when: netstat.stdout != ""
-
-- name: List all the chaincode containers
-  command: >-
-    docker ps -a --format 
-    '{{ leftbrace }}{{ leftbrace }} .Names {{ rightbrace }}{{ rightbrace }}'
-  register: containers
-
-- name: Remove the container
-  command: >-
-    docker rm -f {{ item }}
-  when: item.startswith('dev-')
-  with_items: "{{ containers.stdout_lines}}"
