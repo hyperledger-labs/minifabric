@@ -1,0 +1,16 @@
+---
+- name: Check if the image already exist
+  command: >-
+    docker images -f reference='hyperledger/fabric-{{ image }}:{{ fabric.release }}' -q
+  register: imagestate
+
+- name: Retrieve the image when it does not already exist
+  command: >-
+    docker pull hyperledger/fabric-{{ image }}:{{ fabric.release }}
+  when: imagestate.stdout == ''
+  register: result
+
+- name: Set the status flag based on the return value
+  set_fact:
+    status_flag: "{{ (result.rc == 0)|ternary('Success', 'Failure') }}"
+  when: imagestate.stdout == ''

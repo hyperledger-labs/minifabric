@@ -1,6 +1,1 @@
 ---
-- name: Remove downloaded binary files
-  file:
-    path: "{{ pjroot }}/vars/bin"
-    state: "absent"
-  when: removebin is defined
