@@ -1,10 +1,11 @@
 ---
-- debug:
-    msg: "Installing chaincode {{ CC_NAME}}:{{ CC_VERSION }}"
+- name: Initialize the success flag
+  set_fact:
+    status_flag: "Success"
 
-- name: "Install chaincode onto {{ peer }}"
+- name: "Install chaincode onto all peers"
   include_tasks: "installcc.yaml"
   loop: "{{ allpeers }}"
   loop_control:
-    loop_var: peer
+    loop_var: installpeer
   when: status_flag == "Success"

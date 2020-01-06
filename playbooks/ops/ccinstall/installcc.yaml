@@ -1,6 +1,6 @@
 ---
 - debug:
-    msg: "Ready to install chaincode onto {{ peer.fullname }}"
+    msg: "Installing  chaincode {{ CC_NAME }}:{{ CC_VERSION }} onto {{ installpeer.fullname }}"
 
 - name: Create chaincode install script
   template:

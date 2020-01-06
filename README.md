@@ -24,7 +24,10 @@ of your $PATH such as ~/.local/bin to save time
 minifab up
 ```
 
-When it finishes, you should have a fabric network running on your machine
+When it finishes, you should have a fabric network running on your machine.
+You will also have an application channel named `firstchannel` created, all
+peers defined in the spec joined into that channel, and a chaincode named
+`chaincode_example02` being installed and instantiated.
 
 # See more available fabric operations
 ```

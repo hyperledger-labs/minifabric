@@ -50,23 +50,34 @@ function printHelp() {
 
 function networkUp() {
   ansible-playbook -i hosts -e "mode=apply"                                           \
-  -e "hostroot=$hostroot" -e "regcerts=false" -e "CC_LANGUAGE=$CC_LANGUAGE"              \
+  -e "hostroot=$hostroot" -e "regcerts=false" -e "CC_LANGUAGE=$CC_LANGUAGE"           \
   -e "DB_TYPE=$DB_TYPE" -e "CHANNEL_NAME=$CHANNEL_NAME" -e "CC_NAME=$CC_NAME"         \
   -e "CC_VERSION=$CC_VERSION" -e "CHANNEL_NAME=$CHANNEL_NAME" -e "IMAGETAG=$IMAGETAG" \
   -e "CC_PARAMETERS=$CC_PARAMETERS" minifabric.yaml
+  ansible-playbook -i hosts                                                           \
+  -e "mode=channelcreate,channeljoin,ccinstall,ccinstantiate"                         \
+  -e "hostroot=$hostroot" -e "CC_LANGUAGE=$CC_LANGUAGE"                               \
+  -e "DB_TYPE=$DB_TYPE" -e "CHANNEL_NAME=$CHANNEL_NAME" -e "CC_NAME=$CC_NAME"         \
+  -e "CC_VERSION=$CC_VERSION" -e "CHANNEL_NAME=$CHANNEL_NAME" -e "IMAGETAG=$IMAGETAG" \
+  -e "CC_PARAMETERS=$CC_PARAMETERS" fabops.yaml
 }
 
 function networkDown() {
-  ansible-playbook -i hosts                                                           \
-  -e "mode=destroy" -e "removecert=false" -e "CC_LANGUAGE=$CC_LANGUAGE"               \
+  ansible-playbook -i hosts -e "mode=destroy"                                         \
+  -e "hostroot=$hostroot"  -e "removecert=false" -e "CC_LANGUAGE=$CC_LANGUAGE"        \
   -e "DB_TYPE=$DB_TYPE" -e "CHANNEL_NAME=$CHANNEL_NAME" -e "CC_NAME=$CC_NAME"         \
   -e "CC_VERSION=$CC_VERSION" -e "CHANNEL_NAME=$CHANNEL_NAME" -e "IMAGETAG=$IMAGETAG" \
   -e "CC_PARAMETERS=$CC_PARAMETERS" minifabric.yaml
 }
 
+function networkRestart() {
+  networkDown
+  networkUp
+}
+
 function generateCerts() {
-  ansible-playbook                                                                    \
-  -i hosts -e "mode=apply" -e "regcerts=true" -e "CC_LANGUAGE=$CC_LANGUAGE"           \
+  ansible-playbook -i hosts -e "mode=apply"                                           \
+  -e "hostroot=$hostroot"  -e "regcerts=true" -e "CC_LANGUAGE=$CC_LANGUAGE"           \
   -e "DB_TYPE=$DB_TYPE" -e "CHANNEL_NAME=$CHANNEL_NAME" -e "CC_NAME=$CC_NAME"         \
   -e "CC_VERSION=$CC_VERSION" -e "CHANNEL_NAME=$CHANNEL_NAME" -e "IMAGETAG=$IMAGETAG" \
   -e "CC_PARAMETERS=$CC_PARAMETERS" minifabric.yaml --skip-tags "nodes"
@@ -74,7 +85,7 @@ function generateCerts() {
 
 function doOp() {
   ansible-playbook -i hosts                                                           \
-  -e "mode=$1" -e "hostroot=$hostroot" -e "CC_LANGUAGE=$CC_LANGUAGE"                     \
+  -e "mode=$1" -e "hostroot=$hostroot" -e "CC_LANGUAGE=$CC_LANGUAGE"                  \
   -e "DB_TYPE=$DB_TYPE" -e "CHANNEL_NAME=$CHANNEL_NAME" -e "CC_NAME=$CC_NAME"         \
   -e "CC_VERSION=$CC_VERSION" -e "CHANNEL_NAME=$CHANNEL_NAME" -e "IMAGETAG=$IMAGETAG" \
   -e "CC_PARAMETERS=$CC_PARAMETERS" fabops.yaml

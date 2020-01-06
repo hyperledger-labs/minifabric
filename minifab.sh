@@ -81,22 +81,21 @@ echo "hostroot: $hostroot"
 [ ! -d "$(pwd)/vars/chaincode" ] && cp -r $(pwd)/chaincode $(pwd)/vars
 
 if [ "${MODE}" == "up" ]; then
-  networkUp
+  time networkUp
 elif [ "${MODE}" == "down" ]; then ## Clear the network
-  networkDown
+  time networkDown
 elif [ "${MODE}" == "generate" ]; then ## Generate Artifacts
-  generateCerts
+  time generateCerts
 elif [ "${MODE}" == "restart" ]; then ## Restart the network
-  networkDown
-  networkUp
+  time networkRestart
 elif [ "${MODE}" == "install" ]; then ## Chaincode install
-  doOp ccinstall
+  time doOp ccinstall
 elif [ "${MODE}" == "instantiate" ]; then ## Chaincode instantiate
-  doOp ccinstantiate
+  time doOp ccinstantiate
 elif [ "${MODE}" == "create" ]; then ## Channel create
-  doOp channelcreate
+  time doOp channelcreate
 elif [ "${MODE}" == "join" ]; then ## Channel join
-  doOp channeljoin
+  time doOp channeljoin
 else
   printHelp
   exit 1
