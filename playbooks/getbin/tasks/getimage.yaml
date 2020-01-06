@@ -4,7 +4,7 @@
     docker images -f reference='hyperledger/fabric-{{ image }}:{{ fabric.release }}' -q
   register: imagestate
 
-- name: Retrieve the image when it does not already exist
+- name: Retrieve the image if it does not already exist
   command: >-
     docker pull hyperledger/fabric-{{ image }}:{{ fabric.release }}
   when: imagestate.stdout == ''
