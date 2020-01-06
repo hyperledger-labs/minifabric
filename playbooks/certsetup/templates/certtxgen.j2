@@ -1,4 +1,4 @@
 #!/bin/bash
 cd $FABRIC_CFG_PATH
-cryptogen generate --config crypto-config.yml --output keyfiles
+cryptogen generate --config crypto-config.yaml --output keyfiles
 configtxgen -profile OrdererGenesis -outputBlock genesis.block -channelID systemchannel

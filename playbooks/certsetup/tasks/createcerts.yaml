@@ -10,12 +10,12 @@
 - name: Create crypto-config file
   template:
     src: "{{ pjroot }}/playbooks/certsetup/templates/crypto-config.j2"
-    dest: "{{ pjroot }}/vars/crypto-config.yml"
+    dest: "{{ pjroot }}/vars/crypto-config.yaml"
 
 - name: Create config tx file
   template:
     src: "{{ pjroot }}/playbooks/certsetup/templates/configtx.j2"
-    dest: "{{ pjroot }}/vars/configtx.yml"    
+    dest: "{{ pjroot }}/vars/configtx.yaml"
 
 - name: Create certs and channel artifacts script
   template:
