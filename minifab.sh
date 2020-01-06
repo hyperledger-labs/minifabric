@@ -75,15 +75,6 @@ while getopts "h?c:s:l:i:n:v:p" opt; do
 done
 
 CC_PARAMETERS=$(echo $CC_PARAMETERS|base64)
-echo "Current settings"
-echo "DB_TYPE: ${DB_TYPE}"
-echo "CHANNEL_NAME: ${CHANNEL_NAME}"
-echo "CC_NAME: ${CC_NAME}"
-echo "CC_VERSION: ${CC_VERSION}"
-echo "CC_LANGUAGE: ${CC_LANGUAGE}"
-echo "CHANNEL_NAME: ${CHANNEL_NAME}"
-echo "IMAGETAG: ${IMAGETAG}"
-echo "CC_PARAMETERS: ${CC_PARAMETERS}"
 
 if [ -z "$hostroot" ]; then hostroot=$(pwd); fi
 echo "hostroot: $hostroot"
