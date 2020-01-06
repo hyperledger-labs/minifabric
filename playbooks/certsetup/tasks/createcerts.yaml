@@ -12,22 +12,20 @@
     src: "{{ pjroot }}/playbooks/certsetup/templates/crypto-config.j2"
     dest: "{{ pjroot }}/vars/crypto-config.yml"
 
-- name: Create the certificate files
-  command: "{{ pjroot }}/vars/bin/cryptogen generate --config crypto-config.yml --output keyfiles"
-  args:
-    chdir: "{{ pjroot }}/vars"
-    
 - name: Create config tx file
   template:
     src: "{{ pjroot }}/playbooks/certsetup/templates/configtx.j2"
-    dest: "{{ pjroot }}/vars/configtx.yml"
+    dest: "{{ pjroot }}/vars/configtx.yml"    
 
-- name: Create the gensis block and channel transaction
-  shell: >-
-    export FABRIC_CFG_PATH={{ pjroot }}/vars &&
-    {{ pjroot }}/vars/bin/configtxgen -profile OrdererGenesis
-    -outputBlock genesis.block -channelID systemchannel &&
-    {{ pjroot }}/vars/bin/configtxgen -profile OrgChannel
-    -outputCreateChannelTx firstchannel.tx -channelID firstchannel
-  args:
-    chdir: "{{ pjroot }}/vars"
+- name: Create certs and channel artifacts script
+  template:
+    src: "{{ pjroot }}/playbooks/certsetup/templates/certtxgen.j2"
+    dest: "{{ pjroot }}/vars/run/certtxgen.sh"
+    mode: +x
+
+- name: Use fabric tools container to create channel artifacts
+  command: >-
+    docker run --rm --name tools
+    -v /var/run/:/host/var/run
+    -v {{ hostroot}}/vars:/etc/hyperledger/fabric
+    hyperledger/fabric-tools:{{ fabric.release }} /etc/hyperledger/fabric/run/certtxgen.sh

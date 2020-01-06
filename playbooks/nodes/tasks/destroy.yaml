@@ -1,17 +1,21 @@
 ---
-- name: Remove cli container
-  command: >-
-    docker rm -f cli
+- name: set two values
+  set_fact:
+    leftbrace: "{"
+    rightbrace: "}"
 
-- name: Remove all peer nodes
-  command: >-
-    docker rm -f {{ item.fullname }}
-  with_items: "{{ allpeers }}"
+- name: Create all the known container list
+  set_fact:
+    allcontainers: >-
+      {{ allcontainers|default([]) + [item.fullname] }}
+  with_items: "{{ [{'fullname': 'cli'}] + allpeers + allorderers }}"
 
-- name: Remove all orderer nodes
-  command: >-
-    docker rm -f {{ item.fullname }}
-  with_items: "{{ allorderers }}"
+- name: "Remove container {{ item }}"
+  include_tasks: "removecontainer.yaml"
+  loop: "{{ allcontainers }}"
+  loop_control:
+    loop_var: item
+  when: status_flag == "Success"
 
 - name: Remove env file for all nodes
   file:
@@ -33,3 +37,15 @@
 - name: Delete fabric docker network if it exists
   command: "docker network rm minifab"
   when: netstat.stdout != ""
+
+- name: List all the chaincode containers
+  command: >-
+    docker ps -a --format 
+    '{{ leftbrace }}{{ leftbrace }} .Names {{ rightbrace }}{{ rightbrace }}'
+  register: containers
+
+- name: Remove the container
+  command: >-
+    docker rm -f {{ item }}
+  when: item.startswith('dev-')
+  with_items: "{{ containers.stdout_lines}}"

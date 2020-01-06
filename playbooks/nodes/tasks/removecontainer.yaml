@@ -1,0 +1,11 @@
+
+- name: Check if the container exists
+  command: >-
+    docker ps -a -f name={{ item }} --format 
+    '{{ leftbrace }}{{ leftbrace }} .Names {{ rightbrace }}{{ rightbrace }}'
+  register: containerstate
+
+- name: Remove the container
+  command: >-
+    docker rm -f {{ item }}
+  when: containerstate.stdout == item
