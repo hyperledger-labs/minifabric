@@ -50,7 +50,7 @@ Create the following directory:
 ```
 mkdir -p $(pwd)/vars/chaincode/<chaincodename>/go
 ```
-where chaincodename should be the name you give to your chaincode
+where <chaincodename> should be the name you give to your chaincode
 
 Place your code in that directory, then do the following
 ```
@@ -61,3 +61,5 @@ If your chaincode is written in node or java, your code should go to the followi
 $(pwd)/vars/chaincode/<chaincodename>/node
 $(pwd)/vars/chaincode/<chaincodename>/java
 ```
+
+If you have no chaincode developed and run `minifab install` command, minifab will install the sample chaincode named chaincode_example02 which comes with minifab.
