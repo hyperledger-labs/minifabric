@@ -54,7 +54,7 @@ where <chaincodename> should be the name you give to your chaincode
 
 Place your code in that directory, then do the following
 ```
-minifab install <chaincodename>
+minifab install -n <chaincodename> -v 1.0
 ```
 If your chaincode is written in node or java, your code should go to the following directories respectively
 ```
