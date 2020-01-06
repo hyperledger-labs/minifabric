@@ -3,12 +3,9 @@
   set_fact:
     status_flag: "Success"
 
-- debug:
-    msg: "Joining all peers channel {{ CHANNEL_NAME }}"
-
-- name: "Join {{ peer }} to channel {{ CHANNEL_NAME}}"
+- name: "Join all peers to channel {{ CHANNEL_NAME}}"
   include_tasks: "channeljoin.yaml"
   loop: "{{ allpeers }}"
   loop_control:
-    loop_var: peer
+    loop_var: joinpeer
   when: status_flag == "Success"

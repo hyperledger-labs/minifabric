@@ -1,4 +1,7 @@
 ---
+- debug:
+    msg: "Joining peer {{ joinpeer.fullname }} to channel {{ CHANNEL_NAME }}"
+
 - name: Select an orderer for peer channel join.
   set_fact:
     orderer: "{{ allorderers | random }}"

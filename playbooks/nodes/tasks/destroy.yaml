@@ -47,12 +47,6 @@
     state: absent
   with_items: "{{ allpeers + allorderers + allcas }}"
 
-- name: Remove volumes for each node
-  command: >-
-    docker volume rm -f {{ item.fullname }}
-  with_items:
-    - "{{ allpeers + allorderers }}"
-
 - name: Query Fabric docker network
   command: >-
     docker network ls -f 'name=minifab' -q
@@ -61,3 +55,7 @@
 - name: Delete fabric docker network if it exists
   command: "docker network rm minifab"
   when: netstat.stdout != ""
+
+- name: Remove volumes not being used
+  command: >-
+    docker volume prune -f

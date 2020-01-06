@@ -1,14 +1,14 @@
 #!/bin/bash
 # Script to install chaincode onto a peer node
-export CORE_PEER_TLS_ROOTCERT_FILE=/vars/keyfiles/peerOrganizations/{{ peer.org }}/peers/{{ peer.fullname }}/tls/ca.crt
-export CORE_PEER_TLS_KEY_FILE=/vars/keyfiles/peerOrganizations/{{ peer.org }}/peers/{{ peer.fullname }}/tls/server.key
-export CORE_PEER_LOCALMSPID={{ peer.org.split('.')|join('') }}
+export CORE_PEER_TLS_ROOTCERT_FILE=/vars/keyfiles/peerOrganizations/{{ installpeer.org }}/peers/{{ installpeer.fullname }}/tls/ca.crt
+export CORE_PEER_TLS_KEY_FILE=/vars/keyfiles/peerOrganizations/{{ installpeer.org }}/peers/{{ installpeer.fullname }}/tls/server.key
+export CORE_PEER_LOCALMSPID={{ installpeer.org.split('.')|join('') }}
 export CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
-export CORE_PEER_TLS_CERT_FILE=/vars/keyfiles/peerOrganizations/{{ peer.org }}/peers/{{ peer.fullname }}/tls/server.crt
+export CORE_PEER_TLS_CERT_FILE=/vars/keyfiles/peerOrganizations/{{ installpeer.org }}/peers/{{ installpeer.fullname }}/tls/server.crt
 export CORE_PEER_TLS_ENABLED=true
-export CORE_PEER_MSPCONFIGPATH=/vars/keyfiles/peerOrganizations/{{ peer.org }}/users/Admin@{{ peer.org }}/msp
+export CORE_PEER_MSPCONFIGPATH=/vars/keyfiles/peerOrganizations/{{ installpeer.org }}/users/Admin@{{ installpeer.org }}/msp
 export CORE_PEER_ID=cli
-export CORE_PEER_ADDRESS={{ peer.fullname }}:7051
+export CORE_PEER_ADDRESS={{ installpeer.fullname }}:7051
 
 {% if CC_LANGUAGE == 'go' %}
 peer chaincode install --tls -l golang -v {{ CC_VERSION }} -n {{ CC_NAME }} \
