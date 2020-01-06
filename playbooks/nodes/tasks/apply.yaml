@@ -50,6 +50,14 @@
     hyperledger/fabric-orderer:{{ fabric.release }}
   with_items: "{{ allorderers }}"
 
+- name: Start all ca nodes
+  command: >-
+    docker run -d --network minifab --name {{ item.fullname }}
+    --env-file {{ pjroot }}/vars/run/{{ item.fullname }}.env
+    -v {{ hostroot }}/vars/keyfiles/{{ (item.org in peerorgs) |ternary('peer', 'orderer') }}Organizations/{{item.org}}:/certs
+    hyperledger/fabric-ca:{{ fabric.release }}
+  with_items: "{{ allcas }}"
+
 - name: Start cli container for all fabric operations
   command: >-
     docker run -dit --network minifab --name cli

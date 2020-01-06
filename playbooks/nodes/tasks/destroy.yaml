@@ -8,7 +8,7 @@
   set_fact:
     allcontainers: >-
       {{ allcontainers|default([]) + [item.fullname] }}
-  with_items: "{{ [{'fullname': 'cli'}] + allpeers + allorderers }}"
+  with_items: "{{ [{'fullname': 'cli'}] + allpeers + allorderers + allcas }}"
 
 - name: "Remove container {{ item }}"
   include_tasks: "removecontainer.yaml"

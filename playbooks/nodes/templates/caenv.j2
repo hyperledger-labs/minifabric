@@ -1,6 +1,8 @@
 FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
 FABRIC_CA_SERVER_CA_NAME={{ item.name}}
+FABRIC_CA_SERVER_CA_KEYFILE=/certs/ca/ca_private.key
+FABRIC_CA_SERVER_CA_CERTFILE=/certs/ca/ca.{{ item.org }}-cert.pem
 FABRIC_CA_SERVER_TLS_ENABLED=true
-FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.org1.example.com-cert.pem
-FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/${BYFN_CA1_PRIVATE_KEY}
+FABRIC_CA_SERVER_TLS_CERTFILE=/certs/tlsca/tlsca.{{ item.org }}-cert.pem
+FABRIC_CA_SERVER_TLS_KEYFILE=/certs/tlsca/tlsca_private.key
 FABRIC_CA_SERVER_PORT=7054

@@ -1,5 +1,5 @@
 ---
-- name: Get start timestamp
+- name: Stand up fabric network
   hosts: vm
   connection: local
   vars:

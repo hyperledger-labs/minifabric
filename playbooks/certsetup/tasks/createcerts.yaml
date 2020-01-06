@@ -29,3 +29,31 @@
     -v /var/run/:/host/var/run
     -v {{ hostroot}}/vars:/etc/hyperledger/fabric
     hyperledger/fabric-tools:{{ fabric.release }} /etc/hyperledger/fabric/run/certtxgen.sh
+
+- name: Rename orderer ca private key
+  shell: >-
+    ls *_sk|cat -n|while read n f; do mv "$f" "ca_private.key"; done
+  args:
+    chdir: "{{ pjroot }}/vars/keyfiles/ordererOrganizations/{{ item }}/ca"
+  with_items: "{{ ordererorgs }}"
+
+- name: Rename peer ca private key
+  shell: >-
+    ls *_sk|cat -n|while read n f; do mv "$f" "ca_private.key"; done
+  args:
+    chdir: "{{ pjroot }}/vars/keyfiles/peerOrganizations/{{ item }}/ca"
+  with_items: "{{ peerorgs }}"
+
+- name: Rename orderer ca tls private key
+  shell: >-
+    ls *_sk|cat -n|while read n f; do mv "$f" "tlsca_private.key"; done
+  args:
+    chdir: "{{ pjroot }}/vars/keyfiles/ordererOrganizations/{{ item }}/tlsca"
+  with_items: "{{ ordererorgs }}"
+
+- name: Rename peer ca tls private key
+  shell: >-
+    ls *_sk|cat -n|while read n f; do mv "$f" "tlsca_private.key"; done
+  args:
+    chdir: "{{ pjroot }}/vars/keyfiles/peerOrganizations/{{ item }}/tlsca"
+  with_items: "{{ peerorgs }}"

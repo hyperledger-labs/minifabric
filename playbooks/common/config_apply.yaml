@@ -2,6 +2,9 @@
 - name: Set fabric.release based on the passed in parameter
   set_fact:
     fabric: "{{ fabric | combine({'release': (IMAGETAG|default('1.4.4')) + ''}) }}"
+    allcas: "{{ [] }}"
+    allpeers: "{{ [] }}"
+    allorderers: "{{ [] }}"
 
 - name: Make sure that working directory exists
   file:
@@ -12,21 +15,21 @@
 - name: Get all ca object list
   set_fact:
     allcas: |
-      {{ allcas | default([]) + [{ 'org':item.split('.')[1:] | join("."),
+      {{ allcas + [{ 'org':item.split('.')[1:] | join("."),
         'name':item.split('.')[0], 'fullname': item, 'type': 'ca' }] }}
   with_items: "{{ fabric.cas }}"
 
 - name: Get all peer object list
   set_fact:
     allpeers: |
-      {{ allpeers | default([]) + [{'org':item.split('.')[1:] | join("."),
+      {{ allpeers + [{'org':item.split('.')[1:] | join("."),
         'name':item.split('.')[0], 'fullname': item, 'type': 'peer' }] }}
   with_items: "{{ fabric.peers }}"
 
 - name: Get all orderer object list
   set_fact:
     allorderers: |
-      {{ allorderers | default([]) + [{ 'org':item.split('.')[1:] | join("."),
+      {{ allorderers + [{ 'org':item.split('.')[1:] | join("."),
         'name':item.split('.')[0], 'fullname': item, 'type': 'orderer' }] }}
   with_items: "{{ fabric.orderers }}"
 
