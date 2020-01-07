@@ -1,0 +1,9 @@
+#!/bin/bash
+#!/bin/bash
+declare XX_CHANNEL_NAME='mychannel'
+declare XX_CC_LANGUAGE='go'
+declare XX_IMAGETAG='2.0'
+declare XX_CC_VERSION='1.0'
+declare XX_CC_NAME='chaincode_example02'
+declare XX_DB_TYPE='golevel'
+declare XX_CC_PARAMETERS='"init","a","200","b","300"'

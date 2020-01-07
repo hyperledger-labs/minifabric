@@ -34,18 +34,38 @@ function printHelp() {
   echo "    -p <instantiate parameters> - chaincode instantiation parameters"
   echo "  minifab.sh -h (print this message)"
   echo
-  echo "Typically, one would first generate the required certificates and "
-  echo "genesis block, then bring up the network. e.g.:"
+  echo "Taking all defaults:"
+  echo "	minifab.sh up"
+  echo "	minifab.sh down"
+  echo "The first command will stand up fabric network, create channel, join channel, install and instantiate chaincode"
+  echo "The second command will destroy everything"
+  echo ""
+  echo "Here are few examples to do things individually"
   echo
   echo "	minifab.sh generate -c mychannel"
   echo "	minifab.sh up -c mychannel"
-  echo "  minifab.sh up -s couchdb -i 1.4.0"
-  echo "	minifab.sh down"
+  echo "  minifab.sh up -i 2.0"
   echo
-  echo "Taking all defaults:"
-  echo "	minifab.sh generate"
-  echo "	minifab.sh up"
-  echo "	minifab.sh down"
+}
+
+function doDefaults() {
+  declare -a params=("CHANNEL_NAME" "CC_LANGUAGE" "IMAGETAG" "CC_VERSION" "CC_NAME" "DB_TYPE" "CC_PARAMETERS")
+  if [ ! -f "./vars/envsettings" ]; then
+    cp envsettings vars/envsettings
+  fi
+  source ./vars/envsettings
+  for value in ${params[@]}; do
+    eval "tt=${!value}"
+    if [ -z ${tt} ]; then
+      tt="$value=$"XX_"$value"
+      eval "$tt"
+    fi
+  done
+  echo "#!/bin/bash"> ./vars/envsettings
+  for value in ${params[@]}; do
+    tt="${!value}"
+    echo 'declare XX_'$value="'"$tt"'" >> ./vars/envsettings
+  done
 }
 
 function networkUp() {
