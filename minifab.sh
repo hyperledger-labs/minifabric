@@ -19,21 +19,6 @@ export VERBOSE=false
 
 . scripts/mainfuncs.sh
 
-# channel name defaults to "firstchannel"
-CHANNEL_NAME="firstchannel"
-# use go as the default language for chaincode
-CC_LANGUAGE=go
-# default image tag
-IMAGETAG="1.4.4"
-# default chaincode version
-CC_VERSION=1.0
-# default chaincode name
-CC_NAME="chaincode_example02"
-# default peer db set to golevel
-DB_TYPE=golevel
-# default instantiate parameters
-CC_PARAMETERS='"init","a","100","b","200"'
-
 MODE=$1
 shift
 rs=$(isValidateOp $MODE)
@@ -73,6 +58,16 @@ while getopts "h?c:s:l:i:n:v:p" opt; do
     ;;
   esac
 done
+
+doDefaults
+echo "Current parameters used in the process:"
+echo "CHANNEL_NAME=$CHANNEL_NAME"
+echo "DB_TYPE=$DB_TYPE"
+echo "IMAGETAG=$IMAGETAG"
+echo "CC_LANGUAGE=$CC_LANGUAGE"
+echo "CC_VERSION=$CC_VERSION"
+echo "CC_NAME=$CC_NAME"
+echo "CC_PARAMETERS=$CC_PARAMETERS"
 
 CC_PARAMETERS=$(echo $CC_PARAMETERS|base64)
 
