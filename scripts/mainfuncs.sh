@@ -15,7 +15,7 @@ function isValidateOp() {
 # Print the usage message
 function printHelp() {
   echo "Usage: "
-  echo "  minifab.sh <mode> [-c <channel name>] [-s <dbtype>] [-l <language>] [-i <imagetag>] [-n <cc name>] [-v <cc version>] [-p <instantiate parameters>]"
+  echo "  minifab <mode> [-c <channel name>] [-s <dbtype>] [-l <language>] [-i <imagetag>] [-n <cc name>] [-v <cc version>] [-p <instantiate parameters>]"
   echo "    <mode> - one of 'up', 'down', 'restart', 'generate', 'install', 'instantiate', 'create' or 'join'"
   echo "      - 'up' - bring up the network with docker-compose up"
   echo "      - 'down' - clear the network with docker-compose down"
@@ -32,19 +32,26 @@ function printHelp() {
   echo "    -n <chaincode name> - chaincode name to be installed"
   echo "    -v <chaincode version> - chaincode version"
   echo "    -p <instantiate parameters> - chaincode instantiation parameters"
-  echo "  minifab.sh -h (print this message)"
+  echo "  minifab -h (print this message)"
   echo
   echo "Taking all defaults:"
-  echo "	minifab.sh up"
-  echo "	minifab.sh down"
-  echo "The first command will stand up fabric network, create channel, join channel, install and instantiate chaincode"
-  echo "The second command will destroy everything"
-  echo ""
-  echo "Here are few examples to do things individually"
   echo
-  echo "	minifab.sh generate -c mychannel"
-  echo "	minifab.sh up -c mychannel"
-  echo "  minifab.sh up -i 2.0"
+  echo "    minifab up"
+  echo "    minifab down"
+  echo
+  echo "The first command will stand up fabric network, create default channel, join the"
+  echo "channel, install and instantiate sample chaincode. The second command will destroy"
+  echo "everything"
+  echo
+  echo "Here are few examples to do other things:"
+  echo
+  echo "    minifab generate -c mychannel"
+  echo "    minifab up -c mychannel"
+  echo "    minifab up -i 2.0"
+  echo "    minifab create -c anotherchannel"
+  echo "    minifab join -c anotherchannel"
+  echo "    minifab install -n anothercc"
+  echo "    minifab instantiate -n anothercc -v 2.0"
   echo
 }
 
