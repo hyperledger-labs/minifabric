@@ -1,5 +1,5 @@
 ---
-- name: Get start timestamp
+- name: Start fabric operations
   hosts: vm
   connection: local
   vars:

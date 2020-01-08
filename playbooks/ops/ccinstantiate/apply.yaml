@@ -6,10 +6,11 @@
   set_fact:
     peer: "{{ allpeers | random }}"
     orderer: "{{ allorderers | random }}"
+    isuffix: "{{ (fabric.release is version('2.0', '>='))|ternary('2', '')}}"
 
 - name: Create chaincode instantiate script
   template:
-    src: "{{ pjroot }}/playbooks/ops/templates/ccinstantiate.j2"
+    src: "{{ pjroot }}/playbooks/ops/templates/ccinstantiate{{ isuffix }}.j2"
     dest: "{{ pjroot }}/vars/run/ccinstantiate.sh"
     mode: +x
 
