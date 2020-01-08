@@ -25,8 +25,8 @@ Organizations:
       AnchorPeers:
 {%       for peer in allpeers %}
 {%         if peer.org == org %}
-        - Host: {{ peer.fullname }}
-          Port: 7051
+      - Host: {{ peer.fullname }}
+        Port: 7051
 {%         endif %}
 {%       endfor %}
 {%     elif org in ordererorgs %}
