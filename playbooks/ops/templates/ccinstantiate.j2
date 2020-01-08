@@ -12,5 +12,11 @@ export CORE_PEER_ADDRESS={{ peer.fullname }}:7051
 export ORDERER_TLS_CA=/vars/keyfiles/ordererOrganizations/{{ orderer.org}}/tlsca/tlsca.{{ orderer.org }}-cert.pem
 export ORDERER_ADDRESS={{ orderer.fullname }}:7050
 
-peer chaincode instantiate -o {{ orderer.fullname }}:7050 --cafile $ORDERER_TLS_CA -C {{CHANNEL_NAME}} \
+ccdone=$(peer chaincode list -C {{CHANNEL_NAME}} --instantiated|grep "Name: {{ CC_NAME }},")
+if [[ -z "$ccdone" ]]; then
+  peer chaincode instantiate -o {{ orderer.fullname }}:7050 --cafile $ORDERER_TLS_CA -C {{CHANNEL_NAME}} \
   --tls true -n {{ CC_NAME }} -v {{ CC_VERSION }} -c '{"Args":[{{ CC_PARAMETERS|b64decode|trim }}]}'
+else
+  peer chaincode upgrade -o {{ orderer.fullname }}:7050 --cafile $ORDERER_TLS_CA -C {{CHANNEL_NAME}} \
+  --tls true -n {{ CC_NAME }} -v {{ CC_VERSION }} -c '{"Args":[{{ CC_PARAMETERS|b64decode|trim }}]}'
+fi

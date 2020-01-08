@@ -12,12 +12,22 @@ export CORE_PEER_ADDRESS={{ peer.fullname }}:7051
 export ORDERER_TLS_CA=/vars/keyfiles/ordererOrganizations/{{ orderer.org}}/tlsca/tlsca.{{ orderer.org }}-cert.pem
 export ORDERER_ADDRESS={{ orderer.fullname }}:7050
 
+SID=$(peer lifecycle chaincode querycommitted -C {{ CHANNEL_NAME }} -n {{ CC_NAME }})
+if [ $? -eq 0 ]
+then
+  SID=$(peer lifecycle chaincode querycommitted -C {{ CHANNEL_NAME }} -n {{ CC_NAME }} | tail -1)
+  SID=$(echo $SID|cut -d ',' -f 2 | cut -d ':' -f 2)
+  SEQUENCE=$((1+$SID))
+else
+  SEQUENCE=1
+fi
+
 peer lifecycle chaincode checkcommitreadiness --channelID {{ CHANNEL_NAME }} \
-  --name {{ CC_NAME }} --version {{ CC_VERSION }} --init-required --sequence 1 \
+  --name {{ CC_NAME }} --version {{ CC_VERSION }} --init-required --sequence $SEQUENCE \
   --tls true --cafile $ORDERER_TLS_CA --output json
 
 peer lifecycle chaincode commit -o $ORDERER_ADDRESS --channelID {{ CHANNEL_NAME }} \
-  --name {{ CC_NAME }} --version {{ CC_VERSION }} --init-required --sequence 1 \
+  --name {{ CC_NAME }} --version {{ CC_VERSION }} --init-required --sequence $SEQUENCE \
 {% for anorg in orgpeers.keys() %}
 {%   set onepeer = (orgpeers[anorg]|random) %}
   --peerAddresses {{ onepeer }}:7051 \
