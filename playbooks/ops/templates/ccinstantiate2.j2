@@ -24,6 +24,7 @@ peer chaincode invoke -o $ORDERER_ADDRESS --isInit --tls true \
   --cafile $ORDERER_TLS_CA -C {{ CHANNEL_NAME }} -n {{ CC_NAME }} \
 {% for anorg in orgpeers.keys() %}
 {%   set onepeer = (orgpeers[anorg]|random) %}
-  --peerAddresses {{ onepeer }}:7051 --tlsRootCertFiles /vars/keyfiles/peerOrganizations/{{ anorg }}/peers/{{ onepeer }}/tls/ca.crt \
+  --peerAddresses {{ onepeer }}:7051 \
+  --tlsRootCertFiles /vars/keyfiles/peerOrganizations/{{ anorg }}/peers/{{ onepeer }}/tls/ca.crt \
 {% endfor %}
-  -c '{"Args":[{{ CC_PARAMETERS|b64decode }}]}' --waitForEvent
+  -c '{"Args":[ {{ CC_PARAMETERS|b64decode|trim }} ]}' --waitForEvent

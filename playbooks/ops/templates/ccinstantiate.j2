@@ -13,4 +13,4 @@ export ORDERER_TLS_CA=/vars/keyfiles/ordererOrganizations/{{ orderer.org}}/tlsca
 export ORDERER_ADDRESS={{ orderer.fullname }}:7050
 
 peer chaincode instantiate -o {{ orderer.fullname }}:7050 --cafile $ORDERER_TLS_CA -C {{CHANNEL_NAME}} \
-  --tls true -n {{ CC_NAME }} -v {{ CC_VERSION }} -c '{"Args":[{{ CC_PARAMETERS|b64decode }}]}'
+  --tls true -n {{ CC_NAME }} -v {{ CC_VERSION }} -c '{"Args":[{{ CC_PARAMETERS|b64decode|trim }}]}'
