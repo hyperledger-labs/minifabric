@@ -4,19 +4,6 @@
     leftbrace: "{"
     rightbrace: "}"
 
-- name: Create all the known container list
-  set_fact:
-    allcontainers: >-
-      {{ allcontainers|default([]) + [item.fullname] }}
-  with_items: "{{ [{'fullname': 'cli'}] + allpeers + allorderers + allcas }}"
-
-- name: "Remove container {{ item }}"
-  include_tasks: "removecontainer.yaml"
-  loop: "{{ allcontainers }}"
-  loop_control:
-    loop_var: item
-  when: status_flag == "Success"
-
 - name: List all the chaincode containers
   command: >-
     docker ps -a --format
@@ -40,6 +27,19 @@
     docker rmi -f {{ item }}:latest
   when: item.startswith('dev-')
   with_items: "{{ images.stdout_lines}}"
+
+- name: Create all the known container list
+  set_fact:
+    allcontainers: >-
+      {{ allcontainers|default([]) + [item.fullname] }}
+  with_items: "{{ [{'fullname': 'cli'}] + allpeers + allorderers + allcas }}"
+
+- name: "Remove container {{ item }}"
+  include_tasks: "removecontainer.yaml"
+  loop: "{{ allcontainers }}"
+  loop_control:
+    loop_var: item
+  when: status_flag == "Success"
 
 - name: Remove env file for all nodes
   file:
