@@ -5,6 +5,11 @@
     '{{ leftbrace }}{{ leftbrace }} .Names {{ rightbrace }}{{ rightbrace }}'
   register: containerstate
 
+- name: Stop the container
+  command: >-
+    docker stop -t 0 {{ item }}
+  when: containerstate.stdout == item
+
 - name: Remove the container
   command: >-
     docker rm -f {{ item }}
