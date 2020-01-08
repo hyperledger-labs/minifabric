@@ -53,7 +53,7 @@ Create the following directory:
 ```
 mkdir -p $(pwd)/vars/chaincode/<chaincodename>/go
 ```
-where <chaincodename> should be the name you give to your chaincode
+where `<chaincodename>` should be the name you give to your chaincode
 
 Place your code in that directory, then do the following
 ```
