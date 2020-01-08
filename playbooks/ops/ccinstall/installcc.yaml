@@ -9,12 +9,12 @@
 - name: Create chaincode install script
   template:
     src: "{{ pjroot }}/playbooks/ops/templates/ccinstall{{isuffix}}.j2"
-    dest: "{{ pjroot }}/vars/run/ccinstall.sh"
+    dest: "{{ pjroot }}/vars/run/ccinstall.{{ installpeer.fullname }}.sh"
     mode: +x
 
 - name: Run the chaincode install script on cli container
   command: >-
-    docker exec cli /vars/run/ccinstall.sh
+    docker exec cli /vars/run/ccinstall.{{installpeer.fullname}}.sh
   register: result
 
 - name: Set the status flag based on the return value

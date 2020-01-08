@@ -9,12 +9,12 @@
 - name: Create chanel join script
   template:
     src: "{{ pjroot }}/playbooks/ops/templates/channeljoin.j2"
-    dest: "{{ pjroot }}/vars/run/channeljoin.sh"
+    dest: "{{ pjroot }}/vars/run/channeljoin.{{ joinpeer.fullname }}.sh"
     mode: +x
 
 - name: Run the channel join script on cli container
   command: >-
-    docker exec cli /vars/run/channeljoin.sh
+    docker exec cli /vars/run/channeljoin.{{ joinpeer.fullname }}.sh
   register: result
 
 - name: Set the status flag based on the return value
