@@ -36,6 +36,12 @@
   with_items: "{{ fabric.orderers }}"
   when: fabric.orderers is defined
 
+- name: Fix possible misconfiguration issues
+  set_fact:
+    allcas: "{{ allcas | rejectattr('fullname', 'equalto', '') | list }}"
+    allpeers: "{{ allpeers | rejectattr('fullname', 'equalto', '') | list }}"
+    allorderers: "{{ allorderers | rejectattr('fullname', 'equalto', '') | list }}"
+
 - name: Get ca, peer and orderer orgs
   set_fact:
     caorgs: "{{ allcas | default([]) | map(attribute='org') | list  | unique | sort }}"
@@ -52,9 +58,3 @@
 - name: Create all orgs list
   set_fact:
     allorgs: "{{ (caorgs + peerorgs + ordererorgs) | sort | unique }}"
-
-- debug:
-    var: caorgs
-
-- debug:
-    var: allorgs
