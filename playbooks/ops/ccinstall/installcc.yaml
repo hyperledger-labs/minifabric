@@ -2,9 +2,13 @@
 - debug:
     msg: "Installing  chaincode {{ CC_NAME }}:{{ CC_VERSION }} onto {{ installpeer.fullname }}"
 
+- name: Select right cc install file
+  set_fact:
+    isuffix: "{{ (fabric.release is version('2.0', '>='))|ternary('2', '')}}"
+
 - name: Create chaincode install script
   template:
-    src: "{{ pjroot }}/playbooks/ops/templates/ccinstall.j2"
+    src: "{{ pjroot }}/playbooks/ops/templates/ccinstall{{isuffix}}.j2"
     dest: "{{ pjroot }}/vars/run/ccinstall.sh"
     mode: +x
 

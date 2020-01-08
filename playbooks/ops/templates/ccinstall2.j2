@@ -1,0 +1,37 @@
+#!/bin/bash
+# Script to install chaincode onto a peer node
+export CORE_PEER_TLS_ROOTCERT_FILE=/vars/keyfiles/peerOrganizations/{{ installpeer.org }}/peers/{{ installpeer.fullname }}/tls/ca.crt
+export CORE_PEER_TLS_KEY_FILE=/vars/keyfiles/peerOrganizations/{{ installpeer.org }}/peers/{{ installpeer.fullname }}/tls/server.key
+export CORE_PEER_LOCALMSPID={{ installpeer.org.split('.')|join('') }}
+export CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+export CORE_PEER_TLS_CERT_FILE=/vars/keyfiles/peerOrganizations/{{ installpeer.org }}/peers/{{ installpeer.fullname }}/tls/server.crt
+export CORE_PEER_TLS_ENABLED=true
+export CORE_PEER_MSPCONFIGPATH=/vars/keyfiles/peerOrganizations/{{ installpeer.org }}/users/Admin@{{ installpeer.org }}/msp
+export CORE_PEER_ID=cli
+export CORE_PEER_ADDRESS={{ installpeer.fullname }}:7051
+export ORDERER_TLS_CA=/vars/keyfiles/ordererOrganizations/{{ orderer.org}}/tlsca/tlsca.{{ orderer.org }}-cert.pem
+export ORDERER_ADDRESS={{ orderer.fullname }}:7050
+
+cd /opt/gopath/src/github.com/chaincode/{{ CC_NAME }}
+
+if [ ! -f "{{ CC_NAME }}_{{ CC_LANGUAGE}}.tar.gz" ]; then
+{% if CC_LANGUAGE == 'go' %}
+  cd {{ CC_LANGUAGE }}
+  GO111MODULE=on
+  go mod vendor
+  cd -
+{% endif %}
+  peer lifecycle chaincode package {{ CC_NAME }}_{{ CC_LANGUAGE }}.tar.gz \
+    -p /opt/gopath/src/github.com/chaincode/{{ CC_NAME}}/{{ CC_LANGUAGE }}/ \
+    --lang {{ CC_LANGUAGE }}{{ langsuffix[CC_LANGUAGE]}} --label {{ CC_NAME }}_{{ CC_VERSION }}
+fi
+
+peer lifecycle chaincode install {{ CC_NAME}}_{{ CC_LANGUAGE }}.tar.gz
+
+{% if installpeer.fullname == orgapprover[installpeer.org].fullname %}
+PKID=$(peer lifecycle chaincode queryinstalled|grep '{{ CC_NAME}}_{{ CC_VERSION}}'| cut -d ',' -f 1|cut -d ':' -f 3)
+
+peer lifecycle chaincode approveformyorg --channelID {{ CHANNEL_NAME}} --name {{ CC_NAME }} \
+  --version {{ CC_VERSION }} --init-required --package-id {{CC_NAME}}_{{CC_VERSION}}:$PKID \
+  --sequence 1 --tls true -o $ORDERER_ADDRESS --cafile $ORDERER_TLS_CA
+{% endif %}
