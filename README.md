@@ -66,3 +66,20 @@ $(pwd)/vars/chaincode/<chaincodename>/java
 ```
 
 If you have no chaincode developed and run `minifab install` command, minifab will install the sample chaincode named simple which comes with minifab.
+
+# To upgrade your chaincode
+If you have changed your chaincode and like to upgrade the chaincode on
+the fabric network, you simply need to do the install with a newer
+version number, for example:
+```
+minifab install -n simple -v 2.0
+```
+Once it is finished successfully, then you just need to call the
+instantiate command again like this
+```
+minifab instantiate
+```
+
+Since you specified the name and version during the install, you
+do not have to specify again, minifab remembers what action was
+take last time.

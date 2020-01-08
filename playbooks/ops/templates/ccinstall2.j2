@@ -14,28 +14,37 @@ export ORDERER_ADDRESS={{ orderer.fullname }}:7050
 
 cd /go/src/github.com/chaincode/{{ CC_NAME }}
 
-if [ ! -f "{{ CC_NAME }}_{{ CC_LANGUAGE}}.tar.gz" ]; then
+if [ ! -f "{{ CC_NAME }}_{{ CC_LANGUAGE}}_{{ CC_VERSION }}.tar.gz" ]; then
 {% if CC_LANGUAGE == 'go' %}
   cd {{ CC_LANGUAGE }}
   GO111MODULE=on
   go mod vendor
   cd -
-  peer lifecycle chaincode package {{ CC_NAME }}_{{ CC_LANGUAGE }}.tar.gz \
+  peer lifecycle chaincode package {{ CC_NAME }}_{{ CC_LANGUAGE }}_{{ CC_VERSION }}.tar.gz \
     -p github.com/chaincode/{{ CC_NAME}}/{{ CC_LANGUAGE }}/ \
     --lang golang --label {{ CC_NAME }}_{{ CC_VERSION }}
 {% else %}
-  peer lifecycle chaincode package {{ CC_NAME }}_{{ CC_LANGUAGE }}.tar.gz \
+  peer lifecycle chaincode package {{ CC_NAME }}_{{ CC_LANGUAGE }}_{{ CC_VERSION }}.tar.gz \
     -p /go/src/github.com/chaincode/{{ CC_NAME}}/{{ CC_LANGUAGE }}/ \
     --lang {{ CC_LANGUAGE }} --label {{ CC_NAME }}_{{ CC_VERSION }}
 {% endif %}
 fi
 
-peer lifecycle chaincode install {{ CC_NAME}}_{{ CC_LANGUAGE }}.tar.gz
+peer lifecycle chaincode install {{ CC_NAME}}_{{ CC_LANGUAGE }}_{{ CC_VERSION }}.tar.gz
 
 {% if installpeer.fullname == orgapprover[installpeer.org].fullname %}
 PKID=$(peer lifecycle chaincode queryinstalled|grep '{{ CC_NAME}}_{{ CC_VERSION}}'| cut -d ',' -f 1|cut -d ':' -f 3)
 
+SID=$(peer lifecycle chaincode querycommitted -C {{ CHANNEL_NAME }} -n {{ CC_NAME }})
+if [ $? -eq 0 ]
+then
+  SID=$(peer lifecycle chaincode querycommitted -C {{ CHANNEL_NAME }} -n {{ CC_NAME }} | tail -1)
+  SID=$(echo $SID|cut -d ',' -f 2 | cut -d ':' -f 2)
+  SEQUENCE=$((1+$SID))
+else
+  SEQUENCE=1
+fi
 peer lifecycle chaincode approveformyorg --channelID {{ CHANNEL_NAME}} --name {{ CC_NAME }} \
   --version {{ CC_VERSION }} --init-required --package-id {{CC_NAME}}_{{CC_VERSION}}:$PKID \
-  --sequence 1 --tls true -o $ORDERER_ADDRESS --cafile $ORDERER_TLS_CA
+  --sequence $SEQUENCE --tls true -o $ORDERER_ADDRESS --cafile $ORDERER_TLS_CA
 {% endif %}
