@@ -18,6 +18,11 @@ peer lifecycle chaincode checkcommitreadiness --channelID {{ CHANNEL_NAME }} \
 
 peer lifecycle chaincode commit -o $ORDERER_ADDRESS --channelID {{ CHANNEL_NAME }} \
   --name {{ CC_NAME }} --version {{ CC_VERSION }} --init-required --sequence 1 \
+{% for anorg in orgpeers.keys() %}
+{%   set onepeer = (orgpeers[anorg]|random) %}
+  --peerAddresses {{ onepeer }}:7051 \
+  --tlsRootCertFiles /vars/keyfiles/peerOrganizations/{{ anorg }}/peers/{{ onepeer }}/tls/ca.crt \
+{% endfor %}
   --tls true --cafile $ORDERER_TLS_CA
 
 peer chaincode invoke -o $ORDERER_ADDRESS --isInit --tls true \
