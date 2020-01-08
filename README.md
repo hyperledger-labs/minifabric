@@ -65,4 +65,4 @@ $(pwd)/vars/chaincode/<chaincodename>/node
 $(pwd)/vars/chaincode/<chaincodename>/java
 ```
 
-If you have no chaincode developed and run `minifab install` command, minifab will install the sample chaincode named chaincode_example02 which comes with minifab.
+If you have no chaincode developed and run `minifab install` command, minifab will install the sample chaincode named simple which comes with minifab.
