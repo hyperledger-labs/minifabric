@@ -12,14 +12,13 @@ export CORE_PEER_ADDRESS={{ peer.fullname }}:7051
 export ORDERER_TLS_CA=/vars/keyfiles/ordererOrganizations/{{ orderer.org}}/tlsca/tlsca.{{ orderer.org }}-cert.pem
 export ORDERER_ADDRESS={{ orderer.fullname }}:7050
 
-SID=$(peer lifecycle chaincode querycommitted -C {{ CHANNEL_NAME }} -n {{ CC_NAME }})
-if [ $? -eq 0 ]
-then
-  SID=$(peer lifecycle chaincode querycommitted -C {{ CHANNEL_NAME }} -n {{ CC_NAME }} | tail -1)
-  SID=$(echo $SID|cut -d ',' -f 2 | cut -d ':' -f 2)
-  SEQUENCE=$((1+$SID))
-else
+SID=$(peer lifecycle chaincode querycommitted -C {{ CHANNEL_NAME }} -O json \
+  | jq -r '.chaincode_definitions|.[]|select(.name=="{{ CC_NAME }}")|.sequence')
+
+if [[ -z $SID ]]; then
   SEQUENCE=1
+else
+  SEQUENCE=$((1+$SID))
 fi
 
 peer lifecycle chaincode checkcommitreadiness --channelID {{ CHANNEL_NAME }} \
