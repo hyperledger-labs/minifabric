@@ -36,8 +36,17 @@ flag like below
 minifab up -i 2.0
 ```
 
-Minifabric supports fabric version 1.4.1 and newer.
+Minifabric supports fabric version 1.4.1 and newer. If you switch between fabric
+versions, you will need to run `minifab generate -i` command between your `minifab up -i`
+commands to ensure certs and channel artifacts regenerated correctly. For example:
 
+```
+minifab up -i 1.4.2
+minifab generate -i 2.0
+minifab up
+```
+
+Notice that there is a `minifab generate` command called between two minifab up commands
 
 # See more available fabric operations
 ```
