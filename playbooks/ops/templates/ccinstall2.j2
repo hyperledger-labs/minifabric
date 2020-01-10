@@ -32,7 +32,6 @@ fi
 
 peer lifecycle chaincode install {{ CC_NAME}}_{{ CC_LANGUAGE }}_{{ CC_VERSION }}.tar.gz
 
-{% if installpeer.fullname == orgapprover[installpeer.org].fullname %}
 PKID=$(peer lifecycle chaincode queryinstalled -O json | jq -r '.installed_chaincodes | .[] | select(.package_id|startswith("{{ CC_NAME}}_{{ CC_VERSION }}:")) | .package_id')
 
 SID=$(peer lifecycle chaincode querycommitted -C {{ CHANNEL_NAME }} -O json \
@@ -43,7 +42,12 @@ else
   SEQUENCE=$((1+$SID))
 fi
 
-peer lifecycle chaincode approveformyorg --channelID {{ CHANNEL_NAME}} --name {{ CC_NAME }} \
-  --version {{ CC_VERSION }} --init-required --package-id $PKID \
-  --sequence $SEQUENCE --tls true -o $ORDERER_ADDRESS --cafile $ORDERER_TLS_CA
-{% endif %}
+approved=$(peer lifecycle chaincode checkcommitreadiness --channelID {{ CHANNEL_NAME }} \
+  --name {{ CC_NAME }} --version {{ CC_VERSION }} --init-required --sequence $SEQUENCE \
+  --tls true --cafile $ORDERER_TLS_CA --output json | jq -r '.approvals.{{ installpeer.org.split('.')|join('') }}')
+
+if [[ "$approved" == "false" ]]; then
+  peer lifecycle chaincode approveformyorg --channelID {{ CHANNEL_NAME}} --name {{ CC_NAME }} \
+    --version {{ CC_VERSION }} --init-required --package-id $PKID \
+    --sequence $SEQUENCE --tls true -o $ORDERER_ADDRESS --cafile $ORDERER_TLS_CA
+fi

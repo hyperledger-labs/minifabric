@@ -8,14 +8,6 @@
     orderer: "{{ allorderers | random }}"
     langsuffix: "{{ {'go': 'lang', 'node':'', 'java':''} }}"
 
-- name: Set approval peer for each org
-  set_fact:
-    orgapprover: >-
-      {{ orgapprover | default({}) | combine({
-        item: allpeers|selectattr('org','equalto',item)|list|random}) }}
-  with_items: "{{ peerorgs }}"
-  when: fabric.release is version('2.0', '>=')
-
 - name: "Install chaincode onto all peers"
   include_tasks: "installcc.yaml"
   loop: "{{ allpeers }}"
