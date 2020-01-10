@@ -47,3 +47,9 @@
   when: item.path.find('/tlsca/') > 0
   with_items: "{{ privatekeys.files }}"
   no_log: yes
+
+- name: Create configuration file
+  template:
+    src: "{{ pjroot }}/playbooks/certsetup/templates/pyprofile.j2"
+    dest: "{{ pjroot }}/vars/network.json"
+  when: certsexists.stat.exists == false or regcerts == "true"
