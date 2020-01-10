@@ -3,7 +3,8 @@
   "description": "Generated network configuration file",
   "version": "0.1",
   "client": {
-    "organization": "{{cryptocfg.PeerOrgs[0].Name}}",
+{% set pypeer=allpeers|random %}
+    "organization": "{{ pypeer.org }}",
     "credentialStore": {
       "path": "/tmp/hfc-kvs",
       "cryptoStore": {
@@ -14,22 +15,22 @@
   },
   "organizations": {
 {% for org in allorgs %}
-{%  set orgelements = allkeys.values() | selectattr("org", "equalto", org.Domain) | list %}
-    "{{org.Domain}}": {
-      "mspid": "{{ org.Name}}MSP",
-{%      set peers = orgelements | selectattr("type", "equalto", "peers") | list | sort(attribute='key') %}
+{%  set orgelements = allkeys.values() | selectattr("org", "equalto", org) | list %}
+    "{{org}}": {
+      "mspid": "{{ org.split('.')|join('') }}",
+{%      set peers = allpeers | selectattr("org", "equalto", org) | list | sort(attribute='fullname') %}
 {%      if peers is defined and (peers|length) > 0 %}
       "peers": [
 {%      for peer in peers %}
-        "{{peer.key}}"{{ '' if loop.last else ',' }}
+        "{{peer.fullname}}"{{ '' if loop.last else ',' }}
 {%      endfor %}
       ],
 {%      endif %}
-{%      set orderers = orgelements | selectattr("type", "equalto", "orderers") | list | sort(attribute='key') %}
+{%      set orderers = allorderers | selectattr("org", "equalto", org) | list | sort(attribute='fullname') %}
 {%      if orderers is defined and (orderers|length) > 0 %}
       "orderers": [
 {%        for orderer in orderers %}
-        "{{orderer.key}}"{{ '' if loop.last else ',' }}
+        "{{orderer.fullname}}"{{ '' if loop.last else ',' }}
 {%        endfor %}
       ],
 {%      endif %}
@@ -56,7 +57,7 @@
         "grpc-max-send-message-length": 15
       },
       "tlsCACerts": {
-        "path": "/crypto-config/ordererOrganizations/{{ item.org }}/tlsca/tlsca.{{ item.org }}-cert.pem"
+        "path": "/keyfiles/ordererOrganizations/{{ item.org }}/tlsca/tlsca.{{ item.org }}-cert.pem"
       }
     }{{ '' if loop.last else ',' }}
 {%   endfor %}
@@ -74,7 +75,7 @@
         "grpc-max-send-message-length": 15
       },
       "tlsCACerts": {
-        "path": "/crypto-config/peerOrganizations/{{ item.org }}/tlsca/tlsca.{{ item.org }}-cert.pem"
+        "path": "/keyfiles/peerOrganizations/{{ item.org }}/tlsca/tlsca.{{ item.org }}-cert.pem"
       }
     }{{ '' if loop.last else ',' }}
 {%   endfor %}
