@@ -24,10 +24,20 @@ of your $PATH such as ~/.local/bin to save time
 minifab up
 ```
 
-When it finishes, you should have a fabric network running on your machine.
+When it finishes, you should have a fabric 1.4.4 network running on your machine.
 You will also have an application channel named `mychannel` created, all
 peers defined in the spec joined into that channel, and a chaincode named
 `simple` being installed and instantiated.
+
+If you like to use different version of fabric, simply specify the version using -i
+flag like below
+
+```
+minifab up -i 2.0
+```
+
+Minifabric supports fabric version 1.4.1 and newer.
+
 
 # See more available fabric operations
 ```
