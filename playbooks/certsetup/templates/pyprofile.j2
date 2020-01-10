@@ -1,0 +1,84 @@
+{
+  "name": "py-network",
+  "description": "Generated network configuration file",
+  "version": "0.1",
+  "client": {
+    "organization": "{{cryptocfg.PeerOrgs[0].Name}}",
+    "credentialStore": {
+      "path": "/tmp/hfc-kvs",
+      "cryptoStore": {
+        "path": "/tmp/hfc-cvs"
+      },
+      "wallet": "wallet-name"
+    }
+  },
+  "organizations": {
+{% for org in allorgs %}
+{%  set orgelements = allkeys.values() | selectattr("org", "equalto", org.Domain) | list %}
+    "{{org.Domain}}": {
+      "mspid": "{{ org.Name}}MSP",
+{%      set peers = orgelements | selectattr("type", "equalto", "peers") | list | sort(attribute='key') %}
+{%      if peers is defined and (peers|length) > 0 %}
+      "peers": [
+{%      for peer in peers %}
+        "{{peer.key}}"{{ '' if loop.last else ',' }}
+{%      endfor %}
+      ],
+{%      endif %}
+{%      set orderers = orgelements | selectattr("type", "equalto", "orderers") | list | sort(attribute='key') %}
+{%      if orderers is defined and (orderers|length) > 0 %}
+      "orderers": [
+{%        for orderer in orderers %}
+        "{{orderer.key}}"{{ '' if loop.last else ',' }}
+{%        endfor %}
+      ],
+{%      endif %}
+      "users": {
+{%      set users = orgelements | selectattr("type", "equalto", "users") | list | sort(attribute='key') %}
+{%      for user in users %}
+        "{{user.key.split('@')[0]}}": {
+          "cert": "/{{ user.pkey.split('/')[0:6]|join('/') }}/signcerts/{{user.key}}-cert.pem",
+          "private_key": "/{{ user.pkey }}"
+        }{{ '' if loop.last else ',' }}
+{%      endfor %}
+      }
+    }{{ '' if loop.last else ',' }}
+{% endfor %}
+  },
+{%  set items = allkeys.values() | selectattr("type", "equalto", "orderers") | list | sort(attribute='key') %}
+{% if items|length >0 %}
+  "orderers": {
+{%   for item in items %}
+    "{{item.key}}": {
+      "url": "{{ item.key}}:7050",
+      "grpcOptions": {
+        "grpc.ssl_target_name_override": "{{ item.key }}",
+        "grpc-max-send-message-length": 15
+      },
+      "tlsCACerts": {
+        "path": "/crypto-config/ordererOrganizations/{{ item.org }}/tlsca/tlsca.{{ item.org }}-cert.pem"
+      }
+    }{{ '' if loop.last else ',' }}
+{%   endfor %}
+  },
+{% endif %}
+{%  set items = allkeys.values() | selectattr("type", "equalto", "peers") | list %}
+{% if items|length >0 %}
+  "peers": {
+{%   for item in items %}
+    "{{item.key}}": {
+      "url": "{{ item.key}}:7051",
+      "eventUrl": "{{ item.key}}:7053",
+      "grpcOptions": {
+        "grpc.ssl_target_name_override": "{{ item.key }}",
+        "grpc-max-send-message-length": 15
+      },
+      "tlsCACerts": {
+        "path": "/crypto-config/peerOrganizations/{{ item.org }}/tlsca/tlsca.{{ item.org }}-cert.pem"
+      }
+    }{{ '' if loop.last else ',' }}
+{%   endfor %}
+  },
+{% endif %}
+  "certificateAuthorities": { }
+}
