@@ -98,6 +98,8 @@ elif [ "${MODE}" == "create" ]; then ## Channel create
   time doOp channelcreate
 elif [ "${MODE}" == "join" ]; then ## Channel join
   time doOp channeljoin
+elif [ "${MODE}" == "cleanup" ]; then ## Channel join
+  time cleanup
 else
   printHelp
   exit 1

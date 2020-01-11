@@ -8,7 +8,7 @@
 # This script defines the main capabilities of this project
 
 function isValidateOp() {
-  ops="up down restart generate install instantiate create join"
+  ops="up down restart generate install instantiate create join cleanup"
   [[ $ops =~ (^|[[:space:]])$1($|[[:space:]]) ]] && echo 1 || echo 0
 }
 
@@ -16,7 +16,7 @@ function isValidateOp() {
 function printHelp() {
   echo "Usage: "
   echo "  minifab <mode> [-c <channel name>] [-s <dbtype>] [-l <language>] [-i <imagetag>] [-n <cc name>] [-v <cc version>] [-p <instantiate parameters>]"
-  echo "    <mode> - one of 'up', 'down', 'restart', 'generate', 'install', 'instantiate', 'create' or 'join'"
+  echo "    <mode> - one of 'up', 'down', 'restart', 'generate', 'install', 'instantiate', 'create', 'join' or cleanup"
   echo "      - 'up' - bring up the network with docker-compose up"
   echo "      - 'down' - clear the network with docker-compose down"
   echo "      - 'restart' - restart the network"
@@ -25,6 +25,7 @@ function printHelp() {
   echo "      - 'instantiate'  - instantiate chaincode"
   echo "      - 'create'  - create application channel"
   echo "      - 'join'  - join all peers currently in the network to a channel"
+  echo "      - 'cleanup'  - remove all the nodes and cleanup runtime files"
   echo "    -c <channel name> - channel name to use (defaults to \"mychannel\")"
   echo "    -s <dbtype> - the database backend to use: goleveldb (default) or couchdb"
   echo "    -l <language> - the programming language of the chaincode to deploy: go (default), node, or java"
@@ -116,4 +117,9 @@ function doOp() {
   -e "DB_TYPE=$DB_TYPE" -e "CHANNEL_NAME=$CHANNEL_NAME" -e "CC_NAME=$CC_NAME"         \
   -e "CC_VERSION=$CC_VERSION" -e "CHANNEL_NAME=$CHANNEL_NAME" -e "IMAGETAG=$IMAGETAG" \
   -e "CC_PARAMETERS=$CC_PARAMETERS" fabops.yaml
+}
+
+function cleanup {
+  networkDown
+  rm -rf vars/*
 }
