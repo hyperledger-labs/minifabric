@@ -24,6 +24,13 @@
   set_fact:
     mpath: "{{hostroot}}/vars/keyfiles/peerOrganizations"
 
+- name: Start couchdb nodes if db type is set to couchdb
+  command: >-
+    docker run -d --network minifab --name {{ item.fullname }}.couchdb
+     hyperledger/fabric-couchdb:latest
+  with_items: "{{ allpeers }}"
+  when: DB_TYPE == "couchdb"
+
 - name: Start all peer nodes
   command: >-
     docker run -d --network minifab --name {{ item.fullname }}

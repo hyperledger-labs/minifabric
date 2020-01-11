@@ -28,6 +28,13 @@
   when: item.startswith('dev-')
   with_items: "{{ images.stdout_lines}}"
 
+- name: Add couchdb containers if couchdb is used
+  set_fact:
+    allcontainers: >-
+      {{ allcontainers|default([]) + [item.fullname + '.couchdb'] }}
+  with_items: "{{ allpeers }}"
+  when: DB_TYPE == "couchdb"
+
 - name: Create all the known container list
   set_fact:
     allcontainers: >-
