@@ -52,7 +52,7 @@
 {%   for item in items %}
     "{{item.key}}": {
 {%     if EXPOSE_ENDPOINTS=='true' %}
-      "url": "{{ ADDRS.split(',')[0] }}:{{ nodeports[item.key+'_7050'] }}"
+      "url": "{{ ADDRS.split(',')[0] }}:{{ nodeports[item.key+'_7050'] }}",
 {%     else %}
       "url": "{{ item.key}}:7050",
 {%     endif %}
@@ -73,7 +73,7 @@
 {%   for item in items %}
     "{{item.key}}": {
 {%     if EXPOSE_ENDPOINTS=='true' %}
-      "url": "{{ ADDRS.split(',')[0] }}:{{ nodeports[item.key+'_7051'] }}"
+      "url": "{{ ADDRS.split(',')[0] }}:{{ nodeports[item.key+'_7051'] }}",
 {%     else %}
       "url": "{{ item.key}}:7051",
 {%     endif %}
