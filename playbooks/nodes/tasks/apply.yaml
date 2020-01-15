@@ -35,6 +35,7 @@
   command: >-
     docker run -d --network minifab --name {{ item.fullname }}
     --env-file {{ pjroot }}/vars/run/{{ item.fullname }}.env
+    {{ (EXPOSE_ENDPOINTS=='true')|ternary('-p '+nodeports[item.fullname + '_' + porttype[item.type]]+':'+porttype[item.type], '') }}
     -v /var/run/:/host/var/run
     -v {{ mpath }}/{{item.org}}/peers/{{item.fullname}}/msp:/etc/hyperledger/fabric/msp
     -v {{ mpath }}/{{item.org}}/peers/{{item.fullname}}/tls:/etc/hyperledger/fabric/tls
@@ -50,6 +51,7 @@
   command: >-
     docker run -d --network minifab --name {{ item.fullname }}
     --env-file {{ pjroot }}/vars/run/{{ item.fullname }}.env
+    {{ (EXPOSE_ENDPOINTS=='true')|ternary('-p '+nodeports[item.fullname + '_' + porttype[item.type]]+':'+porttype[item.type], '') }}
     -v {{ hostroot }}/vars/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
     -v {{ mpath }}/{{item.org}}/orderers/{{item.fullname}}/msp:/var/hyperledger/orderer/msp
     -v {{ mpath }}/{{item.org}}/orderers/{{item.fullname}}/tls:/var/hyperledger/orderer/tls
@@ -61,6 +63,7 @@
   command: >-
     docker run -d --network minifab --name {{ item.fullname }}
     --env-file {{ pjroot }}/vars/run/{{ item.fullname }}.env
+    {{ (EXPOSE_ENDPOINTS=='true')|ternary('-p '+nodeports[item.fullname + '_' + porttype[item.type]]+':'+porttype[item.type], '') }}
     -v {{ hostroot }}/vars/keyfiles/{{ (item.org in peerorgs) |ternary('peer', 'orderer') }}Organizations/{{item.org}}:/certs
     hyperledger/fabric-ca:{{ fabric.release }}
   with_items: "{{ allcas }}"

@@ -29,7 +29,7 @@ if [ "$rs" == 0 ]; then
   exit 1
 fi
 
-while getopts "h?c:s:l:i:n:v:p" opt; do
+while getopts "h?c:s:l:i:n:v:p:e:" opt; do
   case "$opt" in
   h | \?)
     printHelp
@@ -56,10 +56,14 @@ while getopts "h?c:s:l:i:n:v:p" opt; do
   p)
     CC_PARAMETERS=$OPTARG
     ;;
+  e)
+    EXPOSE_ENDPOINTS=$OPTARG
+    ;;
   esac
 done
 
 doDefaults
+
 echo "Current parameters used in the process:"
 echo "CHANNEL_NAME=$CHANNEL_NAME"
 echo "DB_TYPE=$DB_TYPE"
@@ -68,6 +72,8 @@ echo "CC_LANGUAGE=$CC_LANGUAGE"
 echo "CC_VERSION=$CC_VERSION"
 echo "CC_NAME=$CC_NAME"
 echo "CC_PARAMETERS=$CC_PARAMETERS"
+echo "EXPOSE_ENDPOINTS=$EXPOSE_ENDPOINTS"
+echo "ADDRS=$ADDRS"
 
 CC_PARAMETERS=$(echo $CC_PARAMETERS|base64)
 

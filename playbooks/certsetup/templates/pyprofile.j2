@@ -51,7 +51,11 @@
   "orderers": {
 {%   for item in items %}
     "{{item.key}}": {
+{%     if EXPOSE_ENDPOINTS=='true' %}
+      "url": "{{ ADDRS.split(',')[0] }}:{{ nodeports[item.key+'_7050'] }}"
+{%     else %}
       "url": "{{ item.key}}:7050",
+{%     endif %}
       "grpcOptions": {
         "grpc.ssl_target_name_override": "{{ item.key }}",
         "grpc-max-send-message-length": 15
@@ -68,8 +72,11 @@
   "peers": {
 {%   for item in items %}
     "{{item.key}}": {
+{%     if EXPOSE_ENDPOINTS=='true' %}
+      "url": "{{ ADDRS.split(',')[0] }}:{{ nodeports[item.key+'_7051'] }}"
+{%     else %}
       "url": "{{ item.key}}:7051",
-      "eventUrl": "{{ item.key}}:7053",
+{%     endif %}
       "grpcOptions": {
         "grpc.ssl_target_name_override": "{{ item.key }}",
         "grpc-max-send-message-length": 15
