@@ -33,6 +33,7 @@ function printHelp() {
   echo "    -n <chaincode name> - chaincode name to be installed"
   echo "    -v <chaincode version> - chaincode version"
   echo "    -p <instantiate parameters> - chaincode instantiation parameters"
+  echo "    -e - make all the node endpoints available outside of the minifab network"
   echo "  minifab -h (print this message)"
   echo
   echo "Taking all defaults:"
@@ -57,7 +58,7 @@ function printHelp() {
 }
 
 function doDefaults() {
-  declare -a params=("CHANNEL_NAME" "CC_LANGUAGE" "IMAGETAG" "CC_VERSION" "CC_NAME" "DB_TYPE" "CC_PARAMETERS")
+  declare -a params=("CHANNEL_NAME" "CC_LANGUAGE" "IMAGETAG" "CC_VERSION" "CC_NAME" "DB_TYPE" "CC_PARAMETERS" "EXPOSE_ENDPOINTS")
   if [ ! -f "./vars/envsettings" ]; then
     cp envsettings vars/envsettings
   fi
@@ -81,13 +82,17 @@ function networkUp() {
   -e "hostroot=$hostroot" -e "regcerts=false" -e "CC_LANGUAGE=$CC_LANGUAGE"           \
   -e "DB_TYPE=$DB_TYPE" -e "CHANNEL_NAME=$CHANNEL_NAME" -e "CC_NAME=$CC_NAME"         \
   -e "CC_VERSION=$CC_VERSION" -e "CHANNEL_NAME=$CHANNEL_NAME" -e "IMAGETAG=$IMAGETAG" \
-  -e "CC_PARAMETERS=$CC_PARAMETERS" minifabric.yaml
+  -e "CC_PARAMETERS=$CC_PARAMETERS" -e "EXPOSE_ENDPOINTS=$EXPOSE_ENDPOINTS"           \
+  -e "ADDRS=$ADDRS" minifabric.yaml
   ansible-playbook -i hosts                                                           \
   -e "mode=channelcreate,channeljoin,ccinstall,ccinstantiate"                         \
   -e "hostroot=$hostroot" -e "CC_LANGUAGE=$CC_LANGUAGE"                               \
   -e "DB_TYPE=$DB_TYPE" -e "CHANNEL_NAME=$CHANNEL_NAME" -e "CC_NAME=$CC_NAME"         \
   -e "CC_VERSION=$CC_VERSION" -e "CHANNEL_NAME=$CHANNEL_NAME" -e "IMAGETAG=$IMAGETAG" \
-  -e "CC_PARAMETERS=$CC_PARAMETERS" fabops.yaml
+  -e "CC_PARAMETERS=$CC_PARAMETERS" -e "EXPOSE_ENDPOINTS=$EXPOSE_ENDPOINTS"           \
+  -e "ADDRS=$ADDRS" fabops.yaml
+  echo 'Running Nodes:'
+  docker ps -a --format "{{.Names}}:{{.Ports}}"
 }
 
 function networkDown() {
@@ -95,7 +100,8 @@ function networkDown() {
   -e "hostroot=$hostroot"  -e "removecert=false" -e "CC_LANGUAGE=$CC_LANGUAGE"        \
   -e "DB_TYPE=$DB_TYPE" -e "CHANNEL_NAME=$CHANNEL_NAME" -e "CC_NAME=$CC_NAME"         \
   -e "CC_VERSION=$CC_VERSION" -e "CHANNEL_NAME=$CHANNEL_NAME" -e "IMAGETAG=$IMAGETAG" \
-  -e "CC_PARAMETERS=$CC_PARAMETERS" minifabric.yaml
+  -e "CC_PARAMETERS=$CC_PARAMETERS"  -e "EXPOSE_ENDPOINTS=$EXPOSE_ENDPOINTS"          \
+  -e "ADDRS=$ADDRS" minifabric.yaml
 }
 
 function networkRestart() {
@@ -108,7 +114,8 @@ function generateCerts() {
   -e "hostroot=$hostroot"  -e "regcerts=true" -e "CC_LANGUAGE=$CC_LANGUAGE"           \
   -e "DB_TYPE=$DB_TYPE" -e "CHANNEL_NAME=$CHANNEL_NAME" -e "CC_NAME=$CC_NAME"         \
   -e "CC_VERSION=$CC_VERSION" -e "CHANNEL_NAME=$CHANNEL_NAME" -e "IMAGETAG=$IMAGETAG" \
-  -e "CC_PARAMETERS=$CC_PARAMETERS" minifabric.yaml --skip-tags "nodes"
+  -e "CC_PARAMETERS=$CC_PARAMETERS"  -e "EXPOSE_ENDPOINTS=$EXPOSE_ENDPOINTS"          \
+  -e "ADDRS=$ADDRS" minifabric.yaml --skip-tags "nodes"
 }
 
 function doOp() {
@@ -116,7 +123,8 @@ function doOp() {
   -e "mode=$1" -e "hostroot=$hostroot" -e "CC_LANGUAGE=$CC_LANGUAGE"                  \
   -e "DB_TYPE=$DB_TYPE" -e "CHANNEL_NAME=$CHANNEL_NAME" -e "CC_NAME=$CC_NAME"         \
   -e "CC_VERSION=$CC_VERSION" -e "CHANNEL_NAME=$CHANNEL_NAME" -e "IMAGETAG=$IMAGETAG" \
-  -e "CC_PARAMETERS=$CC_PARAMETERS" fabops.yaml
+  -e "CC_PARAMETERS=$CC_PARAMETERS"  -e "EXPOSE_ENDPOINTS=$EXPOSE_ENDPOINTS"          \
+  -e "ADDRS=$ADDRS" fabops.yaml
 }
 
 function cleanup {

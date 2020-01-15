@@ -8,6 +8,12 @@ OrdererOrgs:
 {%    for item in allorderers %}
 {%      if item.org == org %}
       - Hostname: {{ item.name }}
+{%         if EXPOSE_ENDPOINTS == 'true' %}
+        SANS:
+{%            for anIP in ADDRS.split(',') %}
+          - {{ anIP }}
+{%            endfor %}
+{%         endif %}
 {%      endif %}
 {%    endfor %}
 {% endfor %}
@@ -23,6 +29,12 @@ PeerOrgs:
 {%    for item in allpeers %}
 {%      if item.org == org %}
       - Hostname: {{ item.name }}
+{%         if EXPOSE_ENDPOINTS == 'true' %}
+        SANS:
+{%            for anIP in ADDRS.split(',') %}
+          - {{ anIP }}
+{%            endfor %}
+{%         endif %}
 {%      endif %}
 {%    endfor %}
 {% endfor %}

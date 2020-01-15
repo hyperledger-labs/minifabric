@@ -1,9 +1,10 @@
 #!/bin/bash
 [ ! -d "$(pwd)/vars" ] && mkdir vars
+ADDRS=$(ip -4 -o -br -f inet addr|grep -v ".1/"|tr -s ' '|cut -d ' ' -f 3|cut -d '/' -f 1|paste -sd "," -)
 if [ -f "$(pwd)/spec.yaml" ]; then
   docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd)/vars:/home/vars \
-  -v $(pwd)/spec.yaml:/home/spec.yaml -e "hostroot=$(pwd)" hfrd/minifab:latest /home/minifab.sh "$@"
+  -v $(pwd)/spec.yaml:/home/spec.yaml -e "hostroot=$(pwd)" -e "ADDRS=$ADDRS" hfrd/minifab:latest /home/minifab.sh "$@"
 else
   docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd)/vars:/home/vars \
-  -e "hostroot=$(pwd)" hfrd/minifab:latest /home/minifab.sh "$@"
+  -e "hostroot=$(pwd)" -e "ADDRS=$ADDRS" hfrd/minifab:latest /home/minifab.sh "$@"
 fi
