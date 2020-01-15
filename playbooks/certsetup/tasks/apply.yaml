@@ -48,8 +48,11 @@
   with_items: "{{ privatekeys.files }}"
   no_log: yes
 
-- name: Create configuration file
+- name: Create profiles
   template:
-    src: "{{ pjroot }}/playbooks/certsetup/templates/pyprofile.j2"
-    dest: "{{ pjroot }}/vars/network.json"
+    src: "{{ pjroot }}/playbooks/certsetup/templates/{{ item.name }}"
+    dest: "{{ pjroot }}/vars/{{ item.target }}"
+  with_items:
+    - "{{ {'name': 'pyprofile.j2', 'target': 'network.json'} }}"
+    - "{{ {'name': 'goprofile.j2', 'target': 'connection.json'} }}"
   when: certsexists.stat.exists == false or regcerts == "true"
