@@ -5,6 +5,9 @@
   "client": {
 {% set pypeer=allpeers|random %}
     "organization": "{{ pypeer.org }}",
+    "cryptoconfig": {
+      "path": "/keyfiles"
+    },
     "connection": {
       "timeout": {
         "peer": { "endorser": "300", "eventHub": "300", "eventReg": "300"},
@@ -13,12 +16,7 @@
     }
   },
   "channels": {
-    "{{ CC_NAME }}": {
-      "orderers": [
-{% for orderer in allorderers %}
-        "{{ orderer.fullname }}"{{ '' if loop.last else ',' }}
-{% endfor %}
-      ],
+    "{{ CHANNEL_NAME }}": {
       "peers": {
 {% for peer in allpeers %}
         "{{ peer.fullname }}": {
@@ -33,36 +31,29 @@
 {%  set orgelements = allkeys.values() | selectattr("org", "equalto", org) | list %}
     "{{ org }}": {
       "mspid": "{{ org.split('.')|join('') }}",
+      "cryptoPath": "{{ org }}/users/{username}@{{ org }}/msp",
       "peers": [
 {% for peer in allpeers|selectattr('org', 'equalto', org)|list %}
         "{{ peer.fullname }}"{{ '' if loop.last else ',' }}
 {% endfor %}
       ],
-      "users": {
-{%      set users = orgelements | selectattr("type", "equalto", "users") | list | sort(attribute='key') %}
-{%      for user in users %}
-        "{{user.key.split('@')[0]}}": {
-          "cert": "/{{ user.pkey.split('/')[0:6]|join('/') }}/signcerts/{{user.key}}-cert.pem",
-          "private_key": "/{{ user.pkey }}"
-        }{{ '' if loop.last else ',' }}
-{%      endfor %}
-      }
+      "orderers": [
+{% for orderer in allorderers|selectattr('org', 'equalto', org)|list %}
+        "{{ orderer.fullname }}"{{ '' if loop.last else ',' }}
+{% endfor %}
+      ]
     }{{ '' if loop.last else ',' }}
 {% endfor %}
   },
   "orderers": {
 {% for orderer in allorderers %}
     "{{ orderer.fullname }}": {
-{%   if EXPOSE_ENDPOINTS=='true' %}
-      "url": "{{ ADDRS.split(',')[0] }}:{{ nodeports[orderer.fullname+'_7050'] }}",
-{%   else %}
       "url": "{{ orderer.fullname}}:7050",
-{%   endif %}
       "grpcOptions": {
         "ssl-target-name-override": "{{ orderer.fullname }}"
       },
       "tlsCACerts": {
-        "pem": "{{ '/keyfiles/ordererOrganizations/'+orderer.org+'/orderers/'+orderer.fullname+'/tls/ca.crt' }}"
+        "path": "{{ '/keyfiles/ordererOrganizations/'+orderer.org+'/orderers/'+orderer.fullname+'/tls/ca.crt' }}"
       }
     }{{ '' if loop.last else ',' }}
 {% endfor %}
@@ -70,19 +61,42 @@
   "peers": {
 {% for peer in allpeers %}
     "{{ peer.fullname }}": {
-{%   if EXPOSE_ENDPOINTS=='true' %}
-      "url": "{{ ADDRS.split(',')[0] }}:{{ nodeports[peer.fullname+'_7051'] }}",
-{%   else %}
       "url": "{{ peer.fullname }}:7051",
-{%   endif %}
       "grpcOptions": {
         "ssl-target-name-override": "{{ peer.fullname }}"
       },
       "tlsCACerts": {
-        "pem": "{{ '/keyfiles/peerOrganizations/'+peer.org+'/tlsca/tlsca.'+peer.org+'-cert.pem' }}"
+        "path": "{{ '/keyfiles/peerOrganizations/'+peer.org+'/tlsca/tlsca.'+peer.org+'-cert.pem' }}"
       }
     }{{ '' if loop.last else ',' }}
 {% endfor %}
   },
-  "certificateAuthorities": { }
+  "entityMatchers": {
+    "orderer": [
+{% for orderer in allorderers %}
+      { "mappedHost": "{{ orderer.fullname }}",
+        "pattern": "(\\w*){{ orderer.fullname }}(\\w*)",
+        "sslTargetOverrideUrlSubstitutionExp": "{{ orderer.fullname }}",
+{% if EXPOSE_ENDPOINTS=='true' %}
+        "urlSubstitutionExp": "{{ ADDRS.split(',')[0] }}:{{ nodeports[orderer.fullname+'_7050'] }}"
+{% else %}
+        "urlSubstitutionExp": "{{ orderer.fullname }}:7050"
+{% endif %}
+      }{{ '' if loop.last else ',' }}
+{% endfor %}
+    ],
+    "peer": [
+{% for peer in allpeers %}
+      { "mappedHost": "{{ peer.fullname }}",
+        "pattern": "(\\w*){{ peer.fullname }}(\\w*)",
+        "sslTargetOverrideUrlSubstitutionExp": "{{ peer.fullname }}",
+{% if EXPOSE_ENDPOINTS=='true' %}
+        "urlSubstitutionExp": "{{ ADDRS.split(',')[0] }}:{{ nodeports[peer.fullname+'_7051'] }}"
+{% else %}
+        "urlSubstitutionExp": "{{ peer.fullname }}:7051"
+{% endif %}
+      }{{ '' if loop.last else ',' }}
+{% endfor %}
+    ]
+  }
 }

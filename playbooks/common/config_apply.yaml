@@ -63,7 +63,7 @@
   set_fact:
     startport: '7050'
     nodeports: "{{ {} }}"
-    porttype: "{{ {'orderer': '7050', 'peer': '7051', 'ca': '7054'} }}"
+    porttype: "{{ {'orderer': '7050', 'peer': '7051', 'ca': '7054', 'cmdash': '8080'} }}"
 
 - name: Select port for all nodes
   set_fact:
@@ -71,3 +71,10 @@
       {{ nodeports | combine( {item.fullname + '_' + porttype[item.type]: startport} ) }}
     startport: "{{ startport|int + 1 }}"
   with_items: "{{ allcas + allpeers + allorderers | sort(attribute='type') | list }}"
+
+- name: Select port for org dashboard nodes
+  set_fact:
+    nodeports: >-
+      {{ nodeports | combine( {item + '_' + porttype['cmdash']: startport} ) }}
+    startport: "{{ startport|int + 1 }}"
+  with_items: "{{ allorgs | sort | list }}"
