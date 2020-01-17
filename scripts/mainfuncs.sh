@@ -8,7 +8,7 @@
 # This script defines the main capabilities of this project
 
 function isValidateOp() {
-  ops="up down restart generate install instantiate create join cleanup"
+  ops="up down restart generate install instantiate create join dashup dashdown cleanup"
   [[ $ops =~ (^|[[:space:]])$1($|[[:space:]]) ]] && echo 1 || echo 0
 }
 
@@ -16,7 +16,7 @@ function isValidateOp() {
 function printHelp() {
   echo "Usage: "
   echo "  minifab <mode> [-c <channel name>] [-s <dbtype>] [-l <language>] [-i <imagetag>] [-n <cc name>] [-v <cc version>] [-p <instantiate parameters>]"
-  echo "    <mode> - one of 'up', 'down', 'restart', 'generate', 'install', 'instantiate', 'create', 'join' or cleanup"
+  echo "    <mode> - one of 'up', 'down', 'restart', 'generate', 'install', 'instantiate', 'create', 'join', 'dashup', 'dashdown' or 'cleanup'"
   echo "      - 'up' - bring up the network with docker-compose up"
   echo "      - 'down' - clear the network with docker-compose down"
   echo "      - 'restart' - restart the network"
@@ -25,6 +25,8 @@ function printHelp() {
   echo "      - 'instantiate'  - instantiate chaincode"
   echo "      - 'create'  - create application channel"
   echo "      - 'join'  - join all peers currently in the network to a channel"
+  echo "      - 'dashup'  - start up consortium management dashboard"
+  echo "      - 'dashdown'  - shutdown consortium management dashboard"
   echo "      - 'cleanup'  - remove all the nodes and cleanup runtime files"
   echo "    -c <channel name> - channel name to use (defaults to \"mychannel\")"
   echo "    -s <dbtype> - the database backend to use: goleveldb (default) or couchdb"
@@ -33,7 +35,8 @@ function printHelp() {
   echo "    -n <chaincode name> - chaincode name to be installed"
   echo "    -v <chaincode version> - chaincode version"
   echo "    -p <instantiate parameters> - chaincode instantiation parameters"
-  echo "    -e - make all the node endpoints available outside of the minifab network"
+  echo "    -e <true|false> make all the node endpoints available outside of the minifab network"
+  echo "    -o <orgname> organization name to be used for start up or shutdown consortium management dashboard"
   echo "  minifab -h (print this message)"
   echo
   echo "Taking all defaults:"
@@ -58,7 +61,7 @@ function printHelp() {
 }
 
 function doDefaults() {
-  declare -a params=("CHANNEL_NAME" "CC_LANGUAGE" "IMAGETAG" "CC_VERSION" "CC_NAME" "DB_TYPE" "CC_PARAMETERS" "EXPOSE_ENDPOINTS")
+  declare -a params=("CHANNEL_NAME" "CC_LANGUAGE" "IMAGETAG" "CC_VERSION" "CC_NAME" "DB_TYPE" "CC_PARAMETERS" "EXPOSE_ENDPOINTS" "DASH_ORG")
   if [ ! -f "./vars/envsettings" ]; then
     cp envsettings vars/envsettings
   fi
@@ -124,7 +127,7 @@ function doOp() {
   -e "DB_TYPE=$DB_TYPE" -e "CHANNEL_NAME=$CHANNEL_NAME" -e "CC_NAME=$CC_NAME"         \
   -e "CC_VERSION=$CC_VERSION" -e "CHANNEL_NAME=$CHANNEL_NAME" -e "IMAGETAG=$IMAGETAG" \
   -e "CC_PARAMETERS=$CC_PARAMETERS"  -e "EXPOSE_ENDPOINTS=$EXPOSE_ENDPOINTS"          \
-  -e "ADDRS=$ADDRS" fabops.yaml
+  -e "ADDRS=$ADDRS" -e "DASH_ORG=$DASH_ORG" fabops.yaml
 }
 
 function cleanup {

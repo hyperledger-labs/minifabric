@@ -13,7 +13,7 @@
 - name: Remove the container
   command: >-
     docker rm -f {{ item }}
-  when: item.startswith('dev-')
+  when: item.startswith('dev-') or item.startswith('dashboard.')
   with_items: "{{ containers.stdout_lines}}"
 
 - name: List all the chaincode container images

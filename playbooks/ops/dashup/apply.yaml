@@ -1,0 +1,32 @@
+---
+- name: Set the path variable
+  set_fact:
+    certpath: "/keyfiles/peerOrganizations/{{ DASH_ORG }}/users/Admin@{{ DASH_ORG }}/msp"
+
+- name: Find Admin user private key
+  find:
+    paths: "{{ pjroot }}/vars/keyfiles/peerOrganizations/{{ DASH_ORG }}/users/Admin@{{ DASH_ORG }}/msp/keystore"
+    patterns: '*_sk'
+    recurse: no
+    file_type: file
+  register: privatekey
+
+- name: Get the private key file name
+  set_fact:
+    keyfilename: "{{ privatekey.files[0].path.split('/')[-1] }}"
+
+- name: Start up consortium dashboard container
+  command: >-
+    docker run -d --network minifab --name dashboard.{{ DASH_ORG }}
+    -v {{hostroot}}/vars/keyfiles:/keyfiles
+    -v {{hostroot}}/vars/connection.json:/cmdash/connection.json
+    -e org={{ DASH_ORG }} -e profile=/cmdash/connection.json
+    -e channel={{ CHANNEL_NAME }} -e chaincode=cmcc -e port=8080
+    -e cert={{ certpath }}/signcerts/Admin@{{ DASH_ORG }}-cert.pem
+    -e key={{ certpath }}/keystore/{{ keyfilename }}
+    -p {{ nodeports[DASH_ORG+'_8080'] }}:8080
+    hfrd/cmdash:latest
+
+- set_stats:
+    data:
+      dashboard_port: "{{ nodeports[DASH_ORG+'_8080'] }}"
