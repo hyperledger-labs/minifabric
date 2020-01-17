@@ -17,6 +17,11 @@
   },
   "channels": {
     "{{ CHANNEL_NAME }}": {
+      "orderers": [
+{% for orderer in allorderers %}
+        "{{ orderer.fullname }}"{{ '' if loop.last else ',' }}
+{% endfor %}
+      ],
       "peers": {
 {% for peer in allpeers %}
         "{{ peer.fullname }}": {

@@ -16,6 +16,10 @@
       "orderer": "300"
 "channels":
   "{{ CHANNEL_NAME }}":
+    "orderers":
+{% for orderer in allorderers %}
+    - "{{ orderer.fullname }}"
+{% endfor %}
     "peers":
 {% for peer in allpeers %}
       "{{ peer.fullname }}":
