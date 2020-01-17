@@ -29,7 +29,7 @@ if [ "$rs" == 0 ]; then
   exit 1
 fi
 
-while getopts "h?c:s:l:i:n:v:p:e:" opt; do
+while getopts "h?c:s:l:i:n:v:p:e:o:" opt; do
   case "$opt" in
   h | \?)
     printHelp
@@ -58,6 +58,9 @@ while getopts "h?c:s:l:i:n:v:p:e:" opt; do
     ;;
   e)
     EXPOSE_ENDPOINTS=$OPTARG
+    ;;
+  o)
+    DASH_ORG=$OPTARG
     ;;
   esac
 done
@@ -105,6 +108,10 @@ elif [ "${MODE}" == "create" ]; then ## Channel create
   time doOp channelcreate
 elif [ "${MODE}" == "join" ]; then ## Channel join
   time doOp channeljoin
+elif [ "${MODE}" == "dashup" ]; then ## Channel join
+  time doOp dashup
+elif [ "${MODE}" == "dashdown" ]; then ## Channel join
+  time doOp dashdown
 elif [ "${MODE}" == "cleanup" ]; then ## Channel join
   time cleanup
 else

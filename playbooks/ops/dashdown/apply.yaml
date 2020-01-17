@@ -1,0 +1,4 @@
+---
+- name: Run the chaincode instantiate script on cli container
+  command: >-
+    docker rm -f dashboard.{{ DASH_ORG }}
