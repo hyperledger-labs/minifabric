@@ -2,3 +2,8 @@
 cd $FABRIC_CFG_PATH
 cryptogen generate --config crypto-config.yaml --output keyfiles
 configtxgen -profile OrdererGenesis -outputBlock genesis.block -channelID systemchannel
+
+declare -a params=({{ peerorgmsplist }})
+for value in ${params[@]}; do
+  configtxgen -printOrg $value > JoinRequest_$value.json
+done
