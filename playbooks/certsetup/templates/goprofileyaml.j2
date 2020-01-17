@@ -1,0 +1,84 @@
+---
+"name": "fabric-network"
+"x-type": "hlfv1"
+"version": "1.0.0"
+"client":
+{% set pypeer=allpeers|random %}
+  "organization": "{{ pypeer.org }}"
+  "cryptoconfig":
+    "path": "/keyfiles"
+  "connection":
+    "timeout":
+      "peer":
+        "endorser": "300"
+        "eventHub": "300"
+        "eventReg": "300"
+      "orderer": "300"
+"channels":
+  "{{ CHANNEL_NAME }}":
+    "peers":
+{% for peer in allpeers %}
+      "{{ peer.fullname }}":
+        "endorsingPeer": true
+        "chaincodeQuery": true
+        "eventSource": true
+{% endfor %}
+
+"organizations":
+{% for org in allorgs %}
+{%  set orgelements = allkeys.values() | selectattr("org", "equalto", org) | list %}
+  "{{ org }}":
+    "mspid": "{{ org.split('.')|join('') }}"
+    "cryptoPath": "{{ org }}/users/{username}@{{ org}}/msp"
+    "peers":
+{%   for peer in allpeers|selectattr('org', 'equalto', org)|list %}
+    - "{{ peer.fullname }}"
+{%   endfor %}
+    "orderers":
+{%   for orderer in allorderers|selectattr('org', 'equalto', org)|list %}
+    - "{{ orderer.fullname }}"
+{%   endfor %}
+{% endfor %}
+
+"orderers":
+{% for orderer in allorderers %}
+  "{{ orderer.fullname }}":
+    "url": "{{ orderer.fullname}}:7050"
+    "grpcOptions":
+      "ssl-target-name-override": "{{ orderer.fullname }}"
+    "tlsCACerts":
+      "path": "{{ '/keyfiles/ordererOrganizations/'+orderer.org+'/orderers/'+orderer.fullname+'/tls/ca.crt' }}"
+{% endfor %}
+"peers":
+{% for peer in allpeers %}
+  "{{ peer.fullname }}":
+    "url": "{{ peer.fullname }}:7051"
+    "grpcOptions":
+      "ssl-target-name-override": "{{ peer.fullname }}"
+    "tlsCACerts":
+      "path": "{{ '/keyfiles/peerOrganizations/'+peer.org+'/tlsca/tlsca.'+peer.org+'-cert.pem' }}"
+{% endfor %}
+
+"entityMatchers":
+  "orderer":
+{% for orderer in allorderers %}
+  - "mappedHost": "{{ orderer.fullname }}"
+    "pattern": "(\\w*){{ orderer.fullname }}(\\w*)"
+    "sslTargetOverrideUrlSubstitutionExp": "{{ orderer.fullname }}"
+{% if EXPOSE_ENDPOINTS=='true' %}
+    "urlSubstitutionExp": "{{ ADDRS.split(',')[0] }}:{{ nodeports[orderer.fullname+'_7050'] }}"
+{% else %}
+    "urlSubstitutionExp": "{{ orderer.fullname }}:7050"
+{% endif %}
+{% endfor %}
+  "peer":
+{% for peer in allpeers %}
+  - "mappedHost": "{{ peer.fullname }}"
+    "pattern": "(\\w*){{ peer.fullname }}(\\w*)"
+    "sslTargetOverrideUrlSubstitutionExp": "{{ peer.fullname }}"
+{% if EXPOSE_ENDPOINTS=='true' %}
+    "urlSubstitutionExp": "{{ ADDRS.split(',')[0] }}:{{ nodeports[peer.fullname+'_7051'] }}"
+{% else %}
+    "urlSubstitutionExp": "{{ peer.fullname }}:7051"
+{% endif %}
+{% endfor %}
