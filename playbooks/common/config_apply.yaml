@@ -77,4 +77,4 @@
     nodeports: >-
       {{ nodeports | combine( {item + '_' + porttype['cmdash']: startport} ) }}
     startport: "{{ startport|int + 1 }}"
-  with_items: "{{ allorgs | sort | list }}"
+  with_items: "{{ allorgs | sort | list }}"  

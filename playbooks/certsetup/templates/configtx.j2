@@ -117,12 +117,7 @@ Application: &ApplicationDefaults
     <<: *ApplicationCapabilities
 
 Orderer: &OrdererDefaults
-  OrdererType: etcdraft
-
-  Addresses:
-{%  for orderer in allorderers %}
-  - {{ orderer.fullname }}:7050
-{%  endfor %}
+  OrdererType: {{ (allorderers|length > 0)|ternary('etcdraft', 'solo') }}
 
   BatchTimeout: 2s
 
@@ -130,6 +125,12 @@ Orderer: &OrdererDefaults
     MaxMessageCount: 10
     AbsoluteMaxBytes: 99 MB
     PreferredMaxBytes: 512 KB
+
+{% if allorderers | length > 0 %}
+  Addresses:
+{%  for orderer in allorderers %}
+  - {{ orderer.fullname }}:7050
+{%  endfor %}
 
   EtcdRaft:
     Consenters:
@@ -139,7 +140,7 @@ Orderer: &OrdererDefaults
       ClientTLSCert: keyfiles/ordererOrganizations/{{ orderer.org }}/orderers/{{ orderer.fullname }}/tls/server.crt
       ServerTLSCert: keyfiles/ordererOrganizations/{{ orderer.org }}/orderers/{{ orderer.fullname }}/tls/server.crt
 {%  endfor %}
-
+{% endif %}
   Organizations:
   Policies:
     Readers:
