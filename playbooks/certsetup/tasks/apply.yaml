@@ -57,3 +57,11 @@
     - "{{ {'name': 'goprofile.j2', 'target': 'connection.json'} }}"
     - "{{ {'name': 'goprofileyaml.j2', 'target': 'connection.yaml'} }}"
   when: certsexists.stat.exists == false or regcerts == "true"
+
+- name: Create profiles
+  template:
+    src: "{{ pjroot }}/playbooks/certsetup/templates/{{ item.name }}"
+    dest: "{{ pjroot }}/vars/{{ item.target }}"
+  with_items:
+    - "{{ {'name': 'ordererendpoints.j2', 'target': 'orderendpoints.yaml'} }}"
+  when: (certsexists.stat.exists == false or regcerts == "true") and (allorderers|length) > 0
