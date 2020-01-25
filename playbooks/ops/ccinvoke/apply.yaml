@@ -18,3 +18,9 @@
 - name: Run the chaincode invoke script on cli container
   command: >-
     docker exec cli /vars/run/ccinvoke.sh
+  register: theresult
+
+- set_stats:
+    data:
+      execution_results: "{{ theresult.stderr_lines }}"
+
