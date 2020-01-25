@@ -1,12 +1,14 @@
 # Minifabric
 This tool helps Fabric users working with fabric network. It currently provides the following functions:
 
-1. Deploy a fabric network based on this [spec](spec.yaml) or your own customized spec
+1. Deploy a fabric network based on this [spec](spec.yaml) or your own spec
 2. Tear down the deployed fabric network
 3. Create channel
 4. Join peers to a channel
 5. Install sample chaincode or your own chaincode
-6. Instantiate chaincode
+6. Upgrade chaincode
+7. Instantiate chaincode
+8. Invoke chaincode methods
 
 # Prerequsites
 This tool requires docker CE 18.03 or newer.
