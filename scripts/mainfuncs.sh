@@ -8,7 +8,7 @@
 # This script defines the main capabilities of this project
 
 function isValidateOp() {
-  ops="up down restart generate install instantiate create join dashup dashdown cleanup"
+  ops="up down restart generate install instantiate invoke create join dashup dashdown cleanup"
   [[ $ops =~ (^|[[:space:]])$1($|[[:space:]]) ]] && echo 1 || echo 0
 }
 
@@ -16,13 +16,14 @@ function isValidateOp() {
 function printHelp() {
   echo "Usage: "
   echo "  minifab <mode> [-c <channel name>] [-s <dbtype>] [-l <language>] [-i <imagetag>] [-n <cc name>] [-v <cc version>] [-p <instantiate parameters>]"
-  echo "    <mode> - one of 'up', 'down', 'restart', 'generate', 'install', 'instantiate', 'create', 'join', 'dashup', 'dashdown' or 'cleanup'"
+  echo "    <mode> - one of 'up', 'down', 'restart', 'generate', 'install', 'instantiate', 'invoke', 'create', 'join', 'dashup', 'dashdown' or 'cleanup'"
   echo "      - 'up' - bring up the network with docker-compose up"
   echo "      - 'down' - clear the network with docker-compose down"
   echo "      - 'restart' - restart the network"
   echo "      - 'generate' - generate required certificates and genesis block"
   echo "      - 'install'  - install chaincode"
   echo "      - 'instantiate'  - instantiate chaincode"
+  echo "      - 'invoke'  - invoke a chaincode method"
   echo "      - 'create'  - create application channel"
   echo "      - 'join'  - join all peers currently in the network to a channel"
   echo "      - 'dashup'  - start up consortium management dashboard"
