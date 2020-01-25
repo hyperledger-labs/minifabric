@@ -1,0 +1,20 @@
+---
+- name: Initialize the success flag
+  set_fact:
+    status_flag: "Success"
+
+- name: Select an orderer for chaincode install
+  set_fact:
+    orderer: "{{ allorderers | random }}"
+    peer: "{{ allpeers | random }}"
+    isuffix: "{{ (fabric.release is version('2.0', '>='))|ternary('2', '')}}"
+
+- name: Create chaincode invocation script
+  template:
+    src: "{{ pjroot }}/playbooks/ops/templates/ccinvoke.j2"
+    dest: "{{ pjroot }}/vars/run/ccinvoke.sh"
+    mode: +x
+
+- name: Run the chaincode invoke script on cli container
+  command: >-
+    docker exec cli /vars/run/ccinvoke.sh

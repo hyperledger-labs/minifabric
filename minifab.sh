@@ -104,6 +104,8 @@ elif [ "${MODE}" == "install" ]; then ## Chaincode install
   time doOp ccinstall
 elif [ "${MODE}" == "instantiate" ]; then ## Chaincode instantiate
   time doOp ccinstantiate
+elif [ "${MODE}" == "invoke" ]; then ## Chaincode invoke
+  time doOp ccinvoke
 elif [ "${MODE}" == "create" ]; then ## Channel create
   time doOp channelcreate
 elif [ "${MODE}" == "join" ]; then ## Channel join
