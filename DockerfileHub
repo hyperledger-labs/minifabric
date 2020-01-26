@@ -18,6 +18,6 @@ RUN apt update -y                                     && \
     apt install -y apt-transport-https ca-certificates gnupg-agent && \
     apt install -y ansible docker-ce docker-ce-cli containerd.io
 
-COPY --from=build /tmp/minifabric . /home
+COPY --from=build /tmp/minifabric ./home
 ENV PATH $PATH:/home/bin
 WORKDIR /home
