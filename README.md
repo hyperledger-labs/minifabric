@@ -1,7 +1,7 @@
 # Minifabric
 This tool helps Fabric users working with fabric network. It currently provides the following functions:
 
-1. Deploy a fabric network based on this [spec](spec.yaml) or your own spec
+1. Deploy a fabric network based on this [spec](https://github.com/litong01/minifabric/blob/master/spec.yaml) or your own spec
 2. Tear down the deployed fabric network
 3. Create channel
 4. Join peers to a channel
@@ -61,7 +61,7 @@ minifab down
 ```
 
 # Setup a network using a different spec
-Simply download this [spec](spec.yaml) and make changes to what you like, then run the following
+Simply download this [spec](https://github.com/litong01/minifabric/blob/master/spec.yaml) and make changes to what you like, then run the following
 command in a directory where your new spec.yaml file is:
 
 ```
