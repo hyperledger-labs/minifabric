@@ -1,0 +1,23 @@
+# Dockerfile for hyperledger minifabric
+#
+# @see https://github.com/litong01/minifabric
+#
+FROM alpine/git AS BUILD
+
+RUN cd /tmp && git init minifabric && cd minifabric                && \
+    git remote add origin https://github.com/litong01/minifabric   && \
+    git pull --depth=1 origin master
+
+FROM ubuntu:latest
+LABEL maintainer="litong01@us.ibm.com"
+RUN apt update -y                                     && \
+    apt install -y software-properties-common curl    && \
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - && \
+    add-apt-repository --yes "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" && \
+    apt-add-repository --yes --update ppa:ansible/ansible && \
+    apt install -y apt-transport-https ca-certificates gnupg-agent && \
+    apt install -y ansible docker-ce docker-ce-cli containerd.io
+
+COPY --from=build /tmp/. /home
+ENV PATH $PATH:/home/bin
+WORKDIR /home
