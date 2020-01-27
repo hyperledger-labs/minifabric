@@ -93,7 +93,7 @@ function networkUp() {
 # Only do the following operations when there is at least one orderer node exists  
   if [ -f "./vars/orderendpoints.yaml" ]; then
   ansible-playbook -i hosts                                                           \
-  -e "mode=channelcreate,channeljoin,ccinstall,ccinstantiate,channelupdate"           \
+  -e "mode=channelcreate,channeljoin,channelupdate,ccinstall,ccinstantiate"           \
   -e "hostroot=$hostroot" -e "CC_LANGUAGE=$CC_LANGUAGE"                               \
   -e "DB_TYPE=$DB_TYPE" -e "CHANNEL_NAME=$CHANNEL_NAME" -e "CC_NAME=$CC_NAME"         \
   -e "CC_VERSION=$CC_VERSION" -e "CHANNEL_NAME=$CHANNEL_NAME" -e "IMAGETAG=$IMAGETAG" \
