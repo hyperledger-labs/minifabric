@@ -66,6 +66,7 @@ Capabilities:
   Orderer: &OrdererCapabilities
 {% if fabric.release is version_compare('2.0','>=') %}
     V2_0: true
+    V1_4_2: true
 {% elif fabric.release is version_compare('1.4.2','>=') and  fabric.release is version_compare('2.0','<') %}
     V1_4_2: true
     V1_1: false
@@ -76,6 +77,7 @@ Capabilities:
   Application: &ApplicationCapabilities
 {% if fabric.release is version_compare('2.0','>=') %}
     V2_0: true
+    V1_4_2: true
 {% elif fabric.release is version_compare('1.4.2','>=') and fabric.release is version_compare('2.0','<') %}
     V1_4_2: true
     V1_3: false
