@@ -1,0 +1,19 @@
+---
+- debug:
+    msg: "Channel query on channel {{ CHANNEL_NAME }}"
+
+- name: Select a peer and orderer for channel query.
+  set_fact:
+    peer: "{{ allpeers | random }}"
+    orderer: "{{ allorderers | random }}"
+    isuffix: "{{ (fabric.release is version('2.0', '>='))|ternary('2', '')}}"
+
+- name: Create channel query script
+  template:
+    src: "{{ pjroot }}/playbooks/ops/templates/channelquery.j2"
+    dest: "{{ pjroot }}/vars/run/channelquery.sh"
+    mode: +x
+
+- name: Run the channel query script on cli container
+  command: >-
+    docker exec cli /vars/run/channelquery.sh

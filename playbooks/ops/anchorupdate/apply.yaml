@@ -1,0 +1,6 @@
+---
+- name: "Update channel anchor peers"
+  include_tasks: "anchorupdate.yaml"
+  loop: "{{ peerorgs }}"
+  loop_control:
+    loop_var: updatingorg

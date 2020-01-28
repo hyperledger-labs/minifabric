@@ -1,0 +1,61 @@
+#!/bin/bash
+# Script to instantiate chaincode
+cp $FABRIC_CFG_PATH/core.yaml /vars/core.yaml
+cd /vars
+export FABRIC_CFG_PATH=/vars
+
+export CORE_PEER_TLS_ROOTCERT_FILE=/vars/keyfiles/peerOrganizations/{{ peer.org }}/peers/{{ peer.fullname }}/tls/ca.crt
+export CORE_PEER_TLS_KEY_FILE=/vars/keyfiles/peerOrganizations/{{ peer.org }}/peers/{{ peer.fullname }}/tls/server.key
+export CORE_PEER_LOCALMSPID={{ peer.org.split('.')|join('') }}
+export CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+export CORE_PEER_TLS_CERT_FILE=/vars/keyfiles/peerOrganizations/{{ peer.org }}/peers/{{ peer.fullname }}/tls/server.crt
+export CORE_PEER_TLS_ENABLED=true
+export CORE_PEER_MSPCONFIGPATH=/vars/keyfiles/peerOrganizations/{{ peer.org }}/users/Admin@{{ peer.org }}/msp
+export CORE_PEER_ID=cli
+export CORE_PEER_ADDRESS={{ peer.fullname }}:7051
+export ORDERER_TLS_CA=/vars/keyfiles/ordererOrganizations/{{ orderer.org}}/tlsca/tlsca.{{ orderer.org }}-cert.pem
+export ORDERER_ADDRESS={{ orderer.fullname }}:7050
+
+# 1. Fetch the channel configuration
+peer channel fetch config config_block.pb -o $ORDERER_ADDRESS \
+  --cafile $ORDERER_TLS_CA -c {{CHANNEL_NAME}} --tls
+
+# 2. Translate the configuration into json format
+configtxlator proto_decode --input config_block.pb --type common.Block \
+  | jq .data.data[0].payload.data.config > {{ CHANNEL_NAME }}_config.json
+
+# 3. Translate the current config in json format to protobuf format
+configtxlator proto_encode --input {{ CHANNEL_NAME }}_config.json \
+  --type common.Config --output config.pb
+
+# 4. Translate the desired config in json format to protobuf format
+configtxlator proto_encode --input New_{{ CHANNEL_NAME }}_config.json \
+  --type common.Config --output modified_config.pb
+
+# 5. Calculate the delta of the current config and desired config
+configtxlator compute_update --channel_id {{ CHANNEL_NAME }} \
+  --original config.pb --updated modified_config.pb \
+  --output {{ CHANNEL_NAME }}_update.pb
+
+# 6. Decode the delta of the config to json format
+configtxlator proto_decode --input {{ CHANNEL_NAME }}_update.pb \
+  --type common.ConfigUpdate | jq . > {{ CHANNEL_NAME }}_update.json
+
+# 7. Now wrap of the delta config to fabric envelop block
+echo '{"payload":{"header":{"channel_header":{"channel_id":"{{ CHANNEL_NAME }}", "type":2}},"data":{"config_update":'$(cat {{CHANNEL_NAME}}_update.json)'}}}' | jq . > {{CHANNEL_NAME}}_update_envelope.json
+
+# 8. Encode the json format into protobuf format
+configtxlator proto_encode --input {{ CHANNEL_NAME }}_update_envelope.json \
+  --type common.Envelope --output {{ CHANNEL_NAME }}_update_envelope.pb
+
+# 9. Need to sign channel update envelop by each org admin
+{% for org in peerorgs %}
+{% set signpeer = allpeers|selectattr('org', 'equalto', org)|list|random %}
+export CORE_PEER_LOCALMSPID={{ signpeer.org.split('.')|join('') }}
+export CORE_PEER_TLS_ROOTCERT_FILE=/vars/keyfiles/peerOrganizations/{{ signpeer.org }}/peers/{{ signpeer.fullname }}/tls/ca.crt
+export CORE_PEER_MSPCONFIGPATH=/vars/keyfiles/peerOrganizations/{{ signpeer.org }}/users/Admin@{{ signpeer.org }}/msp
+export CORE_PEER_ADDRESS={{ signpeer.fullname }}:7051
+
+peer channel signconfigtx -f {{ CHANNEL_NAME }}_update_envelope.pb
+
+{% endfor %}

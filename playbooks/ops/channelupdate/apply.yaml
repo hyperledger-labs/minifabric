@@ -1,6 +1,19 @@
 ---
-- name: "Update channel anchor peers"
-  include_tasks: "channelupdate.yaml"
-  loop: "{{ peerorgs }}"
-  loop_control:
-    loop_var: updatingorg
+- debug:
+    msg: "Channel update on channel {{ CHANNEL_NAME }}"
+
+- name: Select a peer and orderer for channel query.
+  set_fact:
+    peer: "{{ allpeers | random }}"
+    orderer: "{{ allorderers | random }}"
+    isuffix: "{{ (fabric.release is version('2.0', '>='))|ternary('2', '')}}"
+
+- name: Create channel update script
+  template:
+    src: "{{ pjroot }}/playbooks/ops/templates/channelupdate.j2"
+    dest: "{{ pjroot }}/vars/run/channelupdate.sh"
+    mode: +x
+
+- name: Run the channel update script on cli container
+  command: >-
+    docker exec cli /vars/run/channelupdate.sh

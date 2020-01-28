@@ -110,9 +110,15 @@ elif [ "${MODE}" == "create" ]; then ## Channel create
   time doOp channelcreate
 elif [ "${MODE}" == "join" ]; then ## Channel join
   time doOp channeljoin
-elif [ "${MODE}" == "dashup" ]; then ## Channel join
+elif [ "${MODE}" == "channelquery" ]; then ## Channel query
+  time doOp channelquery
+elif [ "${MODE}" == "channelsign" ]; then ## Channel query
+  time doOp channelsign
+elif [ "${MODE}" == "channelupdate" ]; then ## Channel update
+  time doOp channelupdate
+elif [ "${MODE}" == "dashup" ]; then ## Start up org dashboard
   time doOp dashup
-elif [ "${MODE}" == "dashdown" ]; then ## Channel join
+elif [ "${MODE}" == "dashdown" ]; then ## Stop org dashboard
   time doOp dashdown
 elif [ "${MODE}" == "cleanup" ]; then ## Channel join
   time cleanup

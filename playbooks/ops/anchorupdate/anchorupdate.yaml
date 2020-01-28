@@ -1,0 +1,16 @@
+---
+- name: Select an orderer and peer for channel update.
+  set_fact:
+    orderer: "{{ allorderers | random }}"
+    peer: "{{ allpeers | selectattr('org','equalto',updatingorg) | list | random }}"
+
+- name: Create anchor update script
+  template:
+    src: "{{ pjroot }}/playbooks/ops/templates/anchorupdate.j2"
+    dest: "{{ pjroot }}/vars/run/anchorupdate.{{ updatingorg }}.sh"
+    mode: +x
+
+- name: Run the anchor update script on cli container
+  command: >-
+    docker exec cli /vars/run/anchorupdate.{{ updatingorg }}.sh
+

@@ -8,7 +8,7 @@
 # This script defines the main capabilities of this project
 
 function isValidateOp() {
-  ops="up down restart generate install instantiate invoke create join dashup dashdown cleanup"
+  ops="up down restart generate install instantiate invoke create join channelquery channelsign channelupdate dashup dashdown cleanup"
   [[ $ops =~ (^|[[:space:]])$1($|[[:space:]]) ]] && echo 1 || echo 0
 }
 
@@ -27,6 +27,8 @@ function printHelp() {
   echo "       - 'invoke'  - invoke a chaincode method"
   echo "       - 'create'  - create application channel"
   echo "       - 'join'  - join all peers currently in the network to a channel"
+  echo "       - 'channelquery'  - do channel query and produce a channel configuration json file"
+  echo "       - 'channelupdate'  - do channel update with a given new channel configuration json file" 
   echo "       - 'dashup'  - start up consortium management dashboard"
   echo "       - 'dashdown'  - shutdown consortium management dashboard"
   echo "       - 'cleanup'  - remove all the nodes and cleanup runtime files"
@@ -93,7 +95,7 @@ function networkUp() {
 # Only do the following operations when there is at least one orderer node exists  
   if [ -f "./vars/orderendpoints.yaml" ]; then
   ansible-playbook -i hosts                                                           \
-  -e "mode=channelcreate,channeljoin,channelupdate,ccinstall,ccinstantiate"           \
+  -e "mode=channelcreate,channeljoin,anchorupdate,ccinstall,ccinstantiate"           \
   -e "hostroot=$hostroot" -e "CC_LANGUAGE=$CC_LANGUAGE"                               \
   -e "DB_TYPE=$DB_TYPE" -e "CHANNEL_NAME=$CHANNEL_NAME" -e "CC_NAME=$CC_NAME"         \
   -e "CC_VERSION=$CC_VERSION" -e "CHANNEL_NAME=$CHANNEL_NAME" -e "IMAGETAG=$IMAGETAG" \
