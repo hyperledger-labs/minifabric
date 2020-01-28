@@ -1,0 +1,19 @@
+---
+- debug:
+    msg: "Config change sign on channel {{ CHANNEL_NAME }}"
+
+- name: Select a peer and orderer for signing off configuration changes.
+  set_fact:
+    peer: "{{ allpeers | random }}"
+    orderer: "{{ allorderers | random }}"
+    isuffix: "{{ (fabric.release is version('2.0', '>='))|ternary('2', '')}}"
+
+- name: Create channel sign off script
+  template:
+    src: "{{ pjroot }}/playbooks/ops/templates/channelsignoff.j2"
+    dest: "{{ pjroot }}/vars/run/channelsignoff.sh"
+    mode: +x
+
+- name: Run the channel signing off script on cli container
+  command: >-
+    docker exec cli /vars/run/channelsignoff.sh
