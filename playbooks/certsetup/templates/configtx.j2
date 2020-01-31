@@ -47,26 +47,26 @@ Organizations:
 
 Capabilities:
   Channel: &ChannelCapabilities
-{% if fabric.release is version_compare('2.0','>=') %}
+{% if truerelease is version('2.0','>=') %}
     V2_0: true
-{% elif fabric.release is version_compare('1.4.3','>=') and fabric.release is version_compare('2.0','<') %}
+{% elif truerelease is version('1.4.3','>=') and truerelease is version('2.0','<') %}
     V1_4_3: true
     V1_3: false
     V1_1: false
-{% elif fabric.release is version_compare('1.4.2','>=') and fabric.release is version_compare('1.4.3','<') %}
+{% elif truerelease is version('1.4.2','>=') and truerelease is version('1.4.3','<') %}
     V1_4_2: true
     V1_3: false
     V1_1: false
-{% elif fabric.release is version_compare('1.3.0','>=') and fabric.release is version_compare('1.4.2','<') %}
+{% elif truerelease is version('1.3.0','>=') and truerelease is version('1.4.2','<') %}
     V1_3: true
-{% elif fabric.release is version_compare('1.1.0','>=') and fabric.release is version_compare('1.3.0','<') %}
+{% elif truerelease is version('1.1.0','>=') and truerelease is version('1.3.0','<') %}
     V1_1: true
 {% endif %}
 
   Orderer: &OrdererCapabilities
-{% if fabric.release is version_compare('2.0','>=') %}
+{% if truerelease is version('2.0','>=') %}
     V2_0: true
-{% elif fabric.release is version_compare('1.4.2','>=') and  fabric.release is version_compare('2.0','<') %}
+{% elif truerelease is version('1.4.2','>=') and  truerelease is version('2.0','<') %}
     V1_4_2: true
     V1_1: false
 {% else %}
@@ -74,21 +74,21 @@ Capabilities:
 {% endif %}
 
   Application: &ApplicationCapabilities
-{% if fabric.release is version_compare('2.0','>=') %}
+{% if truerelease is version('2.0','>=') %}
     V2_0: true
-{% elif fabric.release is version_compare('1.4.2','>=') and fabric.release is version_compare('2.0','<') %}
+{% elif truerelease is version('1.4.2','>=') and truerelease is version('2.0','<') %}
     V1_4_2: true
     V1_3: false
     V1_2: false
     V1_1: false
-{% elif fabric.release is version_compare('1.3.0','>=') and fabric.release is version_compare('1.4.1','<=') %}
+{% elif truerelease is version('1.3.0','>=') and truerelease is version('1.4.1','<=') %}
     V1_3: true
     V1_2: false
     V1_1: false
-{% elif fabric.release is version_compare('1.2.0','>=') and fabric.release is version_compare('1.3.0','<') %}
+{% elif truerelease is version('1.2.0','>=') and truerelease is version('1.3.0','<') %}
     V1_2: true
     V1_1: false
-{% elif fabric.release is version_compare('1.1.0','>=') and fabric.release is version_compare('1.2.0','<') %}
+{% elif truerelease is version('1.1.0','>=') and truerelease is version('1.2.0','<') %}
     V1_1: true
 {% endif %}
 
@@ -104,7 +104,7 @@ Application: &ApplicationDefaults
     Admins:
       Type: ImplicitMeta
       Rule: "MAJORITY Admins"
-{% if fabric.release is version('2.0','>=') %}
+{% if truerelease is version('2.0','>=') %}
     LifecycleEndorsement:
       Type: ImplicitMeta
       Rule: "MAJORITY Endorsement"
