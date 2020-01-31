@@ -59,13 +59,17 @@
     hyperledger/fabric-orderer:{{ fabric.release }}
   with_items: "{{ allorderers }}"
 
+- name: Set ca image release
+  set_fact:
+    desiredrelease: "{{ fabric.release is version('2.0', '<') | ternary(fabric.release, '1.4') }}"
+
 - name: Start all ca nodes
   command: >-
     docker run -d --network minifab --name {{ item.fullname }}
     --env-file {{ pjroot }}/vars/run/{{ item.fullname }}.env
     {{ (EXPOSE_ENDPOINTS=='true')|ternary('-p '+nodeports[item.fullname + '_' + porttype[item.type]]+':'+porttype[item.type], '') }}
     -v {{ hostroot }}/vars/keyfiles/{{ (item.org in peerorgs) |ternary('peer', 'orderer') }}Organizations/{{item.org}}:/certs
-    hyperledger/fabric-ca:{{ fabric.release }}
+    hyperledger/fabric-ca:{{ desiredrelease }}
   with_items: "{{ allcas }}"
 
 - name: Set tool gopath
