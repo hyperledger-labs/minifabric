@@ -1,12 +1,16 @@
 ---
+- name: Set ca image release
+  set_fact:
+    desiredrelease: "{{ (fabric.release is version('2.0', '<') or image!='ca') | ternary(fabric.release, '1.4') }}"
+
 - name: Check if the image already exist
   command: >-
-    docker images -f reference='hyperledger/fabric-{{ image }}:{{ fabric.release }}' -q
+    docker images -f reference='hyperledger/fabric-{{ image }}:{{ desiredrelease }}' -q
   register: imagestate
 
 - name: Retrieve the image if it does not already exist
   command: >-
-    docker pull hyperledger/fabric-{{ image }}:{{ fabric.release }}
+    docker pull hyperledger/fabric-{{ image }}:{{ desiredrelease }}
   when: imagestate.stdout == ''
   register: result
 

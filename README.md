@@ -26,7 +26,7 @@ of your $PATH such as ~/.local/bin to save time
 minifab up
 ```
 
-When it finishes, you should have a fabric 1.4.4 network running on your machine.
+When it finishes, you should have a fabric 2.0.0 network running on your machine.
 You will also have an application channel named `mychannel` created, all
 peers defined in the spec joined into that channel, and a chaincode named
 `simple` being installed and instantiated.
@@ -35,7 +35,7 @@ If you like to use different version of fabric, simply specify the version using
 flag like below
 
 ```
-minifab up -i 2.0
+minifab up -i 1.4.4
 ```
 
 Minifabric supports fabric version 1.4.1 and newer. If you switch between fabric
@@ -44,7 +44,8 @@ commands to ensure certs and channel artifacts regenerated correctly. For exampl
 
 ```
 minifab up -i 1.4.2
-minifab generate -i 2.0
+minifab down
+minifab generate -i 2.0.0
 minifab up
 ```
 
