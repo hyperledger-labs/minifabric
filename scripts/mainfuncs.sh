@@ -8,7 +8,7 @@
 # This script defines the main capabilities of this project
 
 function isValidateOp() {
-  ops="up down restart generate install instantiate invoke create join channelquery channelsign channelupdate dashup dashdown cleanup"
+  ops="up down restart generate install instantiate invoke create join blockquery channelquery channelsign channelupdate dashup dashdown cleanup"
   [[ $ops =~ (^|[[:space:]])$1($|[[:space:]]) ]] && echo 1 || echo 0
 }
 
@@ -27,6 +27,7 @@ function printHelp() {
   echo "       - 'invoke'  - invoke a chaincode method"
   echo "       - 'create'  - create application channel"
   echo "       - 'join'  - join all peers currently in the network to a channel"
+  echo "       - 'blockquery'  - do channel block query and produce a channel tx json file"
   echo "       - 'channelquery'  - do channel query and produce a channel configuration json file"
   echo "       - 'channelupdate'  - do channel update with a given new channel configuration json file" 
   echo "       - 'dashup'  - start up consortium management dashboard"
@@ -38,6 +39,7 @@ function printHelp() {
   echo "    -l <language> - the programming language of the chaincode to deploy: go (default), node, or java"
   echo "    -i <imagetag> - the tag to be used to launch the network (defaults to \"1.4.4\")"
   echo "    -n <chaincode name> - chaincode name to be installed"
+  echo "    -b <block number> - block number to be queried"
   echo "    -v <chaincode version> - chaincode version"
   echo "    -p <instantiate parameters> - chaincode instantiation parameters"
   echo "    -e <true|false> make all the node endpoints available outside of the minifab network"
@@ -66,7 +68,7 @@ function printHelp() {
 }
 
 function doDefaults() {
-  declare -a params=("CHANNEL_NAME" "CC_LANGUAGE" "IMAGETAG" "CC_VERSION" "CC_NAME" "DB_TYPE" "CC_PARAMETERS" "EXPOSE_ENDPOINTS" "DASH_ORG")
+  declare -a params=("CHANNEL_NAME" "CC_LANGUAGE" "IMAGETAG" "BLOCK_NUMBER" "CC_VERSION" "CC_NAME" "DB_TYPE" "CC_PARAMETERS" "EXPOSE_ENDPOINTS" "DASH_ORG")
   if [ ! -f "./vars/envsettings" ]; then
     cp envsettings vars/envsettings
   fi
@@ -135,7 +137,7 @@ function doOp() {
   -e "DB_TYPE=$DB_TYPE" -e "CHANNEL_NAME=$CHANNEL_NAME" -e "CC_NAME=$CC_NAME"         \
   -e "CC_VERSION=$CC_VERSION" -e "CHANNEL_NAME=$CHANNEL_NAME" -e "IMAGETAG=$IMAGETAG" \
   -e "CC_PARAMETERS=$CC_PARAMETERS"  -e "EXPOSE_ENDPOINTS=$EXPOSE_ENDPOINTS"          \
-  -e "ADDRS=$ADDRS" -e "DASH_ORG=$DASH_ORG" fabops.yaml
+  -e "ADDRS=$ADDRS" -e "DASH_ORG=$DASH_ORG" -e "BLOCK_NUMBER=$BLOCK_NUMBER" fabops.yaml
 }
 
 function cleanup {
