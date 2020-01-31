@@ -12,6 +12,10 @@
     src: "{{ pjroot }}/playbooks/certsetup/templates/crypto-config.j2"
     dest: "{{ pjroot }}/vars/crypto-config.yaml"
 
+- name: Set effecctive release
+  set_fact:
+    truerelease: "{{ (fabric.release == '1.4') | ternary('1.4.4', fabric.release) }}"
+
 - name: Create config tx file
   template:
     src: "{{ pjroot }}/playbooks/certsetup/templates/configtx.j2"
