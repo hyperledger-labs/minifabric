@@ -1,0 +1,24 @@
+---
+- debug:
+    msg: "Channel block query on channel {{ CHANNEL_NAME }}"
+
+- name: Select a peer and orderer for channel block query.
+  set_fact:
+    peer: "{{ allpeers | random }}"
+    orderer: "{{ allorderers | random }}"
+    isuffix: "{{ (fabric.release is version('2.0', '>='))|ternary('2', '')}}"
+
+- name: Create channel block query script
+  template:
+    src: "{{ pjroot }}/playbooks/ops/templates/blockquery.j2"
+    dest: "{{ pjroot }}/vars/run/blockquery.sh"
+    mode: +x
+
+- name: Run the block query script on cli container
+  command: >-
+    docker exec cli /vars/run/blockquery.sh
+  register: theresult
+
+- set_stats:
+    data:
+      execution_results: "{{ theresult.stdout }}"

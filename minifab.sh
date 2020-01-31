@@ -29,11 +29,14 @@ if [ "$rs" == 0 ]; then
   exit 1
 fi
 
-while getopts "h?c:s:l:i:n:v:p:e:o:" opt; do
+while getopts "h?c:b:s:l:i:n:v:p:e:o:" opt; do
   case "$opt" in
   h | \?)
     printHelp
     exit 0
+    ;;
+  b)
+    BLOCK_NUMBER=$OPTARG
     ;;
   c)
     CHANNEL_NAME=$OPTARG
@@ -70,6 +73,7 @@ doDefaults
 echo "Current parameters used in the process:"
 echo "CHANNEL_NAME=$CHANNEL_NAME"
 echo "DB_TYPE=$DB_TYPE"
+echo "BLOCK_NUMBER=$BLOCK_NUMBER"
 echo "IMAGETAG=$IMAGETAG"
 echo "CC_LANGUAGE=$CC_LANGUAGE"
 echo "CC_VERSION=$CC_VERSION"
@@ -110,6 +114,8 @@ elif [ "${MODE}" == "create" ]; then ## Channel create
   time doOp channelcreate
 elif [ "${MODE}" == "join" ]; then ## Channel join
   time doOp channeljoin
+elif [ "${MODE}" == "blockquery" ]; then ## Channel query
+  time doOp blockquery
 elif [ "${MODE}" == "channelquery" ]; then ## Channel query
   time doOp channelquery
 elif [ "${MODE}" == "channelsign" ]; then ## Channel query
