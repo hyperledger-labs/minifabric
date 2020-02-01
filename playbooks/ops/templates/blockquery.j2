@@ -19,11 +19,16 @@ export ORDERER_ADDRESS={{ orderer.fullname }}:7050
 peer channel fetch {{ BLOCK_NUMBER }} -o $ORDERER_ADDRESS \
   --cafile $ORDERER_TLS_CA -c {{ CHANNEL_NAME }} --tls
 
+{% if fabric.release is version('2.0', '>=') %}
 configtxlator proto_decode --input {{ CHANNEL_NAME }}_{{ BLOCK_NUMBER }}.block --type common.Block \
-  | jq .data.data[0].payload.data.actions > {{ CHANNEL_NAME }}_{{ BLOCK_NUMBER }}_txs.json
+  | jq -c '[.data.data[].payload]' | \
+  jq '[{tx_id:.[].header.channel_header.tx_id,cc_id:.[].data.actions[].payload.chaincode_proposal_payload.input.chaincode_spec.chaincode_id.name,args:[.[].data.actions[].payload.chaincode_proposal_payload.input.chaincode_spec.input.args[]|@base64d] }]' \
+  > {{ CHANNEL_NAME }}_{{ BLOCK_NUMBER }}_txs.json
+{% else %}
+configtxlator proto_decode --input {{ CHANNEL_NAME }}_{{ BLOCK_NUMBER }}.block --type common.Block \
+  | jq -c '[.data.data[].payload]' | \
+  jq '[{tx_id:.[].header.channel_header.tx_id,cc_id:.[].data.actions[].payload.chaincode_proposal_payload.input.chaincode_spec.chaincode_id.name,args:.[].data.actions[].payload.chaincode_proposal_payload.input.chaincode_spec.input.args }]' \
+  > {{ CHANNEL_NAME }}_{{ BLOCK_NUMBER }}_txs.json
+{% endif %}
 
-cat {{ CHANNEL_NAME }}_{{ BLOCK_NUMBER }}_txs.json | jq -c \
-  '.[] | [{ nonce:.header.nonce, cc_id:.payload.chaincode_proposal_payload.input.chaincode_spec.chaincode_id.name, args:[.payload.chaincode_proposal_payload.input.chaincode_spec.input.args[]|@base64d]}]' > \
-  {{ CHANNEL_NAME }}_{{ BLOCK_NUMBER }}_txs_final.json
-
-cat {{ CHANNEL_NAME }}_{{ BLOCK_NUMBER }}_txs_final.json
+cat {{ CHANNEL_NAME }}_{{ BLOCK_NUMBER }}_txs.json
