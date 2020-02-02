@@ -87,13 +87,7 @@ CC_PARAMETERS=$(echo $CC_PARAMETERS|base64)
 if [ -z "$hostroot" ]; then hostroot=$(pwd); fi
 echo "hostroot: $hostroot"
 if [ ! -d "$(pwd)/vars/chaincode" ]; then
-  mkdir -p $(pwd)/vars/chaincode/simple $(pwd)/vars/chaincode/cmcc
-  cp -r $(pwd)/chaincode/cmcc/* $(pwd)/vars/chaincode/cmcc
-  if [[ "$IMAGETAG" = "2.0" ]] || [[ "$IMAGETAG" > "2.0" ]]; then
-    cp -r $(pwd)/chaincode/simple2/* $(pwd)/vars/chaincode/simple
-  else
-    cp -r $(pwd)/chaincode/simple/* $(pwd)/vars/chaincode/simple
-  fi
+  cp -r $(pwd)/chaincode $(pwd)/vars/
 fi
 
 if [ "${MODE}" == "up" ]; then
