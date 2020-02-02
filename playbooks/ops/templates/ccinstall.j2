@@ -15,7 +15,7 @@ cd /opt/gopath/src/github.com/chaincode/{{ CC_NAME }}
 if [ -f 'go/go.mod' ] && [ ! -d 'go/vendor' ]; then
   cd go
   export GO111MODULE=on
-{% if fabric.release is version('1.4.3','<=') %}
+{% if fabric.release is version('1.4.3','<=') and fabric.release != '1.4' %}
   export GOCACHE=on
 {% endif %}
   go mod vendor
