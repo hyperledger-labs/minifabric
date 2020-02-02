@@ -17,8 +17,19 @@
 - name: Run the block query script on cli container
   command: >-
     docker exec cli /vars/run/blockquery.sh
-  register: theresult
 
+- set_fact:
+    jsonVar: "{{ lookup('file', pjroot + '/vars/'+ CHANNEL_NAME+'_'+BLOCK_NUMBER+'_txs.json') | from_json }}"
+    newVar: []
+- name: Decode the chaincode operation arguments
+  set_fact:
+    newVar: >-
+      {{ newVar + [{'tx_id':item['tx_id'], 'chaincode_id':item['chaincode_id'], 'args': item['args']|map('b64decode')|list}] }}
+  with_items: "{{ jsonVar }}"
+- name: Produce the new file
+  copy:
+    dest: "{{ pjroot }}/vars/{{CHANNEL_NAME}}_{{BLOCK_NUMBER}}_txs.json"
+    content: "{{ newVar | to_nice_json(indent=2) }}"
 - set_stats:
     data:
-      execution_results: "{{ theresult.stdout }}"
+      execution_results: "./vars/{{CHANNEL_NAME}}_{{BLOCK_NUMBER}}_txs.json"
