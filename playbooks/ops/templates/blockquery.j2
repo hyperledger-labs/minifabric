@@ -19,6 +19,6 @@ export ORDERER_ADDRESS={{ orderer.fullname }}:7050
 peer channel fetch {{ BLOCK_NUMBER }} -o $ORDERER_ADDRESS \
   --cafile $ORDERER_TLS_CA -c {{ CHANNEL_NAME }} --tls
 
-configtxlator proto_decode --input {{ CHANNEL_NAME }}_{{ BLOCK_NUMBER }}.block --type common.Block |\
-  jq '{'number':.header.number,'hash':.header.data_hash,'previous_hash':.header.previous_hash,'txs': [.data.data[].payload]|[ .[]|{tx_id:.header.channel_header.tx_id,chaincode_id:.data.actions[0].payload.chaincode_proposal_payload.input.chaincode_spec.chaincode_id.name,args:.data.actions[0].payload.chaincode_proposal_payload.input.chaincode_spec.input.args }]}' \
+configtxlator proto_decode --input {{ CHANNEL_NAME }}_{{ BLOCK_NUMBER }}.block \
+  --type common.Block | jq -f run/blockquery.jq \
   > {{ CHANNEL_NAME }}_{{ BLOCK_NUMBER }}_txs.json
