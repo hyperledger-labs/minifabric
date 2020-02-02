@@ -25,11 +25,16 @@
   set_fact:
     newVar: >-
       {{ newVar + [{'tx_id':item['tx_id'], 'chaincode_id':item['chaincode_id'], 'args': item['args']|map('b64decode')|list}] }}
-  with_items: "{{ jsonVar }}"
+  with_items: "{{ jsonVar['txs'] }}"
+- name: Construct the new json document
+  set_fact:
+    newJSON: >-
+      {{ {'number': jsonVar['number'], 'hash': jsonVar['hash'], 'previous_hash':jsonVar['previous_hash'],
+          'txs': newVar} }}
 - name: Produce the new file
   copy:
     dest: "{{ pjroot }}/vars/{{CHANNEL_NAME}}_{{BLOCK_NUMBER}}_txs.json"
-    content: "{{ newVar | to_nice_json(indent=2) }}"
+    content: "{{ newJSON | to_nice_json(indent=2) }}"
 - set_stats:
     data:
-      execution_results: "./vars/{{CHANNEL_NAME}}_{{BLOCK_NUMBER}}_txs.json"
+      results: "./vars/{{CHANNEL_NAME}}_{{BLOCK_NUMBER}}_txs.json"

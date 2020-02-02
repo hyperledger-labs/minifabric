@@ -22,5 +22,5 @@
 
 - set_stats:
     data:
-      execution_results: "{{ theresult.stderr_lines }}"
+      results: "{{ theresult.stderr_lines }}"
 
