@@ -1,14 +1,8 @@
-FROM ubuntu:latest
-
+FROM docker:latest
 LABEL maintainer="litong01@us.ibm.com"
-
-RUN apt update -y                                     && \
-    apt install -y software-properties-common curl    && \
-    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - && \
-    add-apt-repository --yes "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" && \
-    apt-add-repository --yes --update ppa:ansible/ansible && \
-    apt install -y apt-transport-https ca-certificates gnupg-agent && \
-    apt install -y ansible docker-ce docker-ce-cli containerd.io
+RUN apk add bash ansible python3
+ADD https://raw.githubusercontent.com/dlitz/pycrypto/master/lib/Crypto/Random/Fortuna/FortunaGenerator.py \
+    /usr/lib/python3.8/site-packages/Crypto/Random/Fortuna/FortunaGenerator.py
 
 COPY . /home
 ENV PATH $PATH:/home/bin
