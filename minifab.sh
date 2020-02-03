@@ -85,7 +85,7 @@ echo "ADDRS=$ADDRS"
 CC_PARAMETERS=$(echo $CC_PARAMETERS|base64)
 
 if [ -z "$hostroot" ]; then hostroot=$(pwd); fi
-echo "hostroot: $hostroot"
+echo "HOSTROOTDIR: $hostroot"
 if [ ! -d "$(pwd)/vars/chaincode" ]; then
   cp -r $(pwd)/chaincode $(pwd)/vars/
 fi
