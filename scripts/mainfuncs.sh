@@ -8,7 +8,7 @@
 # This script defines the main capabilities of this project
 
 function isValidateOp() {
-  ops="up down restart generate install instantiate invoke create join blockquery channelquery channelsign channelupdate dashup dashdown cleanup"
+  ops="up netup down restart generate install instantiate invoke create join blockquery channelquery channelsign channelupdate dashup dashdown cleanup"
   [[ $ops =~ (^|[[:space:]])$1($|[[:space:]]) ]] && echo 1 || echo 0
 }
 
@@ -18,7 +18,8 @@ function printHelp() {
   echo "  minifab <mode> [-c <channel name>] [-s <dbtype>] [-l <language>] [-i <imagetag>] [-n <cc name>] [-v <cc version>] [-p <instantiate parameters>]"
   echo "    <mode> - one of operations"
   echo ""
-  echo "       - 'up' - bring up the network"
+  echo "       - 'up' - bring up the network and do all other default channel and chaincode operations"
+  echo "       - 'netup' - bring up the network pnly"
   echo "       - 'down' - tear down the network"
   echo "       - 'restart' - restart the network"
   echo "       - 'generate' - generate required certificates and genesis block"
@@ -86,6 +87,17 @@ function doDefaults() {
     echo 'declare XX_'$value="'"$tt"'" >> ./vars/envsettings
   done
 }
+
+function netUp() {
+  ansible-playbook -i hosts -e "mode=apply"                                           \
+  -e "hostroot=$hostroot" -e "regcerts=false" -e "CC_LANGUAGE=$CC_LANGUAGE"           \
+  -e "DB_TYPE=$DB_TYPE" -e "CHANNEL_NAME=$CHANNEL_NAME" -e "CC_NAME=$CC_NAME"         \
+  -e "CC_VERSION=$CC_VERSION" -e "CHANNEL_NAME=$CHANNEL_NAME" -e "IMAGETAG=$IMAGETAG" \
+  -e "CC_PARAMETERS=$CC_PARAMETERS" -e "EXPOSE_ENDPOINTS=$EXPOSE_ENDPOINTS"           \
+  -e "ADDRS=$ADDRS" minifabric.yaml
+  docker ps -a --format "{{.Names}}:{{.Ports}}"
+}
+
 
 function networkUp() {
   ansible-playbook -i hosts -e "mode=apply"                                           \

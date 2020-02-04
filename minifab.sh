@@ -92,6 +92,8 @@ fi
 
 if [ "${MODE}" == "up" ]; then
   time networkUp
+elif [ "${MODE}" == "netup" ]; then ## Clear the network
+  time netUp
 elif [ "${MODE}" == "down" ]; then ## Clear the network
   time networkDown
 elif [ "${MODE}" == "generate" ]; then ## Generate Artifacts
