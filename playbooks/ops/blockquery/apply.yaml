@@ -40,6 +40,7 @@
   copy:
     dest: "{{ pjroot }}/vars/{{CHANNEL_NAME}}_{{BLOCK_NUMBER}}_txs.json"
     content: "{{ newJSON | to_nice_json(indent=2) }}"
-- set_stats:
-    data:
-      results: "./vars/{{CHANNEL_NAME}}_{{BLOCK_NUMBER}}_txs.json"
+- name: "Execution results"
+  debug:
+    msg: "Query results: ./vars/{{CHANNEL_NAME}}_{{BLOCK_NUMBER}}_txs.json"
+  tags: [print_action]
