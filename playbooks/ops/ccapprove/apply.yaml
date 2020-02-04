@@ -1,0 +1,17 @@
+---
+- name: Select a peer and orderer for signing off configuration changes.
+  set_fact:
+    peer: "{{ allpeers | random }}"
+    orderer: "{{ allorderers | random }}"
+
+- name: Create channel sign off script
+  template:
+    src: "{{ pjroot }}/playbooks/ops/templates/ccapprove.j2"
+    dest: "{{ pjroot }}/vars/run/ccapprove.sh"
+    mode: +x
+  when: fabric.release is version('2.0', '>=')
+
+- name: Run the channel signing off script on cli container
+  command: >-
+    docker exec cli /vars/run/ccapprove.sh
+  when: fabric.release is version('2.0', '>=')

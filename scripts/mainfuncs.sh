@@ -8,7 +8,7 @@
 # This script defines the main capabilities of this project
 
 function isValidateOp() {
-  ops="up netup down restart generate install instantiate invoke create join blockquery channelquery channelsign channelupdate anchorupdate dashup dashdown cleanup"
+  ops="up netup down restart generate install approve instantiate invoke create join blockquery channelquery channelsign channelupdate anchorupdate dashup dashdown cleanup"
   [[ $ops =~ (^|[[:space:]])$1($|[[:space:]]) ]] && echo 1 || echo 0
 }
 
@@ -24,6 +24,7 @@ function printHelp() {
   echo "       - 'restart' - restart the network"
   echo "       - 'generate' - generate required certificates and genesis block"
   echo "       - 'install'  - install chaincode"
+  echo "       - 'approve'  - approve chaincode"
   echo "       - 'instantiate'  - instantiate chaincode"
   echo "       - 'invoke'  - invoke a chaincode method"
   echo "       - 'create'  - create application channel"
@@ -110,7 +111,7 @@ function networkUp() {
 # Only do the following operations when there is at least one orderer node exists  
   if [ -f "./vars/orderendpoints.yaml" ]; then
   ansible-playbook -i hosts                                                           \
-  -e "mode=channelcreate,channeljoin,anchorupdate,ccinstall,ccinstantiate"           \
+  -e "mode=channelcreate,channeljoin,anchorupdate,ccinstall,ccapprove,ccinstantiate"  \
   -e "hostroot=$hostroot" -e "CC_LANGUAGE=$CC_LANGUAGE"                               \
   -e "DB_TYPE=$DB_TYPE" -e "CHANNEL_NAME=$CHANNEL_NAME" -e "CC_NAME=$CC_NAME"         \
   -e "CC_VERSION=$CC_VERSION" -e "CHANNEL_NAME=$CHANNEL_NAME" -e "IMAGETAG=$IMAGETAG" \

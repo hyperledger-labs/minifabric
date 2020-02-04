@@ -31,23 +31,3 @@ if [ ! -f "{{ CC_NAME }}_{{ CC_LANGUAGE}}_{{ CC_VERSION }}.tar.gz" ]; then
 fi
 
 peer lifecycle chaincode install {{ CC_NAME}}_{{ CC_LANGUAGE }}_{{ CC_VERSION }}.tar.gz
-
-PKID=$(peer lifecycle chaincode queryinstalled -O json | jq -r '.installed_chaincodes | .[] | select(.package_id|startswith("{{ CC_NAME}}_{{ CC_VERSION }}:")) | .package_id')
-
-SID=$(peer lifecycle chaincode querycommitted -C {{ CHANNEL_NAME }} -O json \
-  | jq -r '.chaincode_definitions|.[]|select(.name=="{{ CC_NAME }}")|.sequence')
-if [[ -z $SID ]]; then
-  SEQUENCE=1
-else
-  SEQUENCE=$((1+$SID))
-fi
-
-approved=$(peer lifecycle chaincode checkcommitreadiness --channelID {{ CHANNEL_NAME }} \
-  --name {{ CC_NAME }} --version {{ CC_VERSION }} --init-required --sequence $SEQUENCE \
-  --tls true --cafile $ORDERER_TLS_CA --output json | jq -r '.approvals.{{ installpeer.org.split('.')|join('') }}')
-
-if [[ "$approved" == "false" ]]; then
-  peer lifecycle chaincode approveformyorg --channelID {{ CHANNEL_NAME}} --name {{ CC_NAME }} \
-    --version {{ CC_VERSION }} --init-required --package-id $PKID \
-    --sequence $SEQUENCE --tls true -o $ORDERER_ADDRESS --cafile $ORDERER_TLS_CA
-fi

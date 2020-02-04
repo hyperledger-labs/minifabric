@@ -1,5 +1,5 @@
 #!/bin/bash
-# Script to instantiate chaincode
+# Script to approve chaincode
 export CORE_PEER_TLS_ROOTCERT_FILE=/vars/keyfiles/peerOrganizations/{{ peer.org }}/peers/{{ peer.fullname }}/tls/ca.crt
 export CORE_PEER_TLS_KEY_FILE=/vars/keyfiles/peerOrganizations/{{ peer.org }}/peers/{{ peer.fullname }}/tls/server.key
 export CORE_PEER_LOCALMSPID={{ peer.org.split('.')|join('') }}
@@ -12,33 +12,31 @@ export CORE_PEER_ADDRESS={{ peer.fullname }}:7051
 export ORDERER_TLS_CA=/vars/keyfiles/ordererOrganizations/{{ orderer.org}}/tlsca/tlsca.{{ orderer.org }}-cert.pem
 export ORDERER_ADDRESS={{ orderer.fullname }}:7050
 
+PKID=$(peer lifecycle chaincode queryinstalled -O json | jq -r '.installed_chaincodes | .[] | select(.package_id|startswith("{{ CC_NAME}}_{{ CC_VERSION }}:")) | .package_id')
+
 SID=$(peer lifecycle chaincode querycommitted -C {{ CHANNEL_NAME }} -O json \
   | jq -r '.chaincode_definitions|.[]|select(.name=="{{ CC_NAME }}")|.sequence' || true)
-
 if [[ -z $SID ]]; then
   SEQUENCE=1
 else
   SEQUENCE=$((1+$SID))
 fi
 
-peer lifecycle chaincode checkcommitreadiness --channelID {{ CHANNEL_NAME }} \
-  --name {{ CC_NAME }} --version {{ CC_VERSION }} --init-required --sequence $SEQUENCE \
-  --tls true --cafile $ORDERER_TLS_CA --output json
+{% for org in peerorgs %}
+{% set approvepeer = allpeers|selectattr('org', 'equalto', org)|list|random %}
 
-peer lifecycle chaincode commit -o $ORDERER_ADDRESS --channelID {{ CHANNEL_NAME }} \
-  --name {{ CC_NAME }} --version {{ CC_VERSION }} --init-required --sequence $SEQUENCE \
-{% for anorg in orgpeers.keys() %}
-{%   set onepeer = (orgpeers[anorg]|random) %}
-  --peerAddresses {{ onepeer }}:7051 \
-  --tlsRootCertFiles /vars/keyfiles/peerOrganizations/{{ anorg }}/peers/{{ onepeer }}/tls/ca.crt \
-{% endfor %}
-  --tls true --cafile $ORDERER_TLS_CA
+export CORE_PEER_LOCALMSPID={{ approvepeer.org.split('.')|join('') }}
+export CORE_PEER_TLS_ROOTCERT_FILE=/vars/keyfiles/peerOrganizations/{{ approvepeer.org }}/peers/{{ approvepeer.fullname }}/tls/ca.crt
+export CORE_PEER_MSPCONFIGPATH=/vars/keyfiles/peerOrganizations/{{ approvepeer.org }}/users/Admin@{{ approvepeer.org }}/msp
+export CORE_PEER_ADDRESS={{ approvepeer.fullname }}:7051
 
-peer chaincode invoke -o $ORDERER_ADDRESS --isInit --tls true \
-  --cafile $ORDERER_TLS_CA -C {{ CHANNEL_NAME }} -n {{ CC_NAME }} \
-{% for anorg in orgpeers.keys() %}
-{%   set onepeer = (orgpeers[anorg]|random) %}
-  --peerAddresses {{ onepeer }}:7051 \
-  --tlsRootCertFiles /vars/keyfiles/peerOrganizations/{{ anorg }}/peers/{{ onepeer }}/tls/ca.crt \
+approved=$(peer lifecycle chaincode checkcommitreadiness --channelID {{ CHANNEL_NAME }} \
+  --name {{ CC_NAME }} --version {{ CC_VERSION }} --init-required --sequence $SEQUENCE \
+  --tls true --cafile $ORDERER_TLS_CA --output json | jq -r '.approvals.{{ approvepeer.org.split('.')|join('') }}')
+
+if [[ "$approved" == "false" ]]; then
+  peer lifecycle chaincode approveformyorg --channelID {{ CHANNEL_NAME}} --name {{ CC_NAME }} \
+    --version {{ CC_VERSION }} --init-required --package-id $PKID \
+    --sequence $SEQUENCE --tls true -o $ORDERER_ADDRESS --cafile $ORDERER_TLS_CA
+fi
 {% endfor %}
-  -c '{"Args":[ {{ CC_PARAMETERS|b64decode|trim }} ]}' --waitForEvent
