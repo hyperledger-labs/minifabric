@@ -102,6 +102,8 @@ elif [ "${MODE}" == "restart" ]; then ## Restart the network
   time networkRestart
 elif [ "${MODE}" == "install" ]; then ## Chaincode install
   time doOp ccinstall
+elif [ "${MODE}" == "approve" ]; then ## Chaincode approve
+  time doOp ccapprove
 elif [ "${MODE}" == "instantiate" ]; then ## Chaincode instantiate
   time doOp ccinstantiate
 elif [ "${MODE}" == "invoke" ]; then ## Chaincode invoke
