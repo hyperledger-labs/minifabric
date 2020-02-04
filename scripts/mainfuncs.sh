@@ -8,7 +8,7 @@
 # This script defines the main capabilities of this project
 
 function isValidateOp() {
-  ops="up netup down restart generate install instantiate invoke create join blockquery channelquery channelsign channelupdate dashup dashdown cleanup"
+  ops="up netup down restart generate install instantiate invoke create join blockquery channelquery channelsign channelupdate anchorupdate dashup dashdown cleanup"
   [[ $ops =~ (^|[[:space:]])$1($|[[:space:]]) ]] && echo 1 || echo 0
 }
 
@@ -31,6 +31,7 @@ function printHelp() {
   echo "       - 'blockquery'  - do channel block query and produce a channel tx json file"
   echo "       - 'channelquery'  - do channel query and produce a channel configuration json file"
   echo "       - 'channelupdate'  - do channel update with a given new channel configuration json file" 
+  echo "       - 'anchorupdate'  - do channel update which makes all peer nodes anchors for the all orgs"
   echo "       - 'dashup'  - start up consortium management dashboard"
   echo "       - 'dashdown'  - shutdown consortium management dashboard"
   echo "       - 'cleanup'  - remove all the nodes and cleanup runtime files"
