@@ -20,7 +20,8 @@
     docker exec cli /vars/run/ccinvoke.sh
   register: theresult
 
-- set_stats:
-    data:
-      results: "{{ theresult.stderr_lines }}"
+- name: "Chaincode invocation results"
+  debug:
+    msg: "{{ theresult.stderr_lines }}"
+  tags: [print_action]
 

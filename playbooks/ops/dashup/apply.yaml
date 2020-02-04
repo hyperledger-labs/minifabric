@@ -28,6 +28,7 @@
     -p {{ nodeports[DASH_ORG+'_8080'] }}:8080
     hfrd/cmdash:latest
 
-- set_stats:
-    data:
-      dashboard_port: "{{ nodeports[DASH_ORG+'_8080'] }}"
+- name: "{{ DASH_ORG }} dashboard"
+  debug:
+    msg: "Dashboard port: {{ nodeports[DASH_ORG+'_8080'] }}"
+  tags: [print_action]

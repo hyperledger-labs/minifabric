@@ -1,1 +1,1 @@
-vm ansible_host=127.0.0.1 ansible_python_interpreter=/usr/bin/python3
+minifab ansible_host=127.0.0.1 ansible_python_interpreter=python

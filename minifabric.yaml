@@ -1,12 +1,16 @@
 ---
 - name: Stand up fabric network
-  hosts: vm
+  hosts: minifab
   connection: local
   vars:
     pjroot: "{{ playbook_dir }}"
   vars_files:
     - "./spec.yaml"
   tasks:
+    - name: "Fabric network"
+      debug:
+        msg: "{{ mode | title }}"
+      tags: [print_action]
     - set_fact:
         status_flag: "Success"
     - name: "{{ mode }} configuration"
