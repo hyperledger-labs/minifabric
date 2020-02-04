@@ -118,6 +118,8 @@ elif [ "${MODE}" == "channelsign" ]; then ## Channel query
   time doOp channelsign
 elif [ "${MODE}" == "channelupdate" ]; then ## Channel update
   time doOp channelupdate
+elif [ "${MODE}" == "anchorupdate" ]; then ## Channel anchor update
+  time doOp anchorupdate
 elif [ "${MODE}" == "dashup" ]; then ## Start up org dashboard
   time doOp dashup
 elif [ "${MODE}" == "dashdown" ]; then ## Stop org dashboard
