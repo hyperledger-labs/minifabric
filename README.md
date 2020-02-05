@@ -110,7 +110,7 @@ do not have to specify again, minifab remembers what action was
 take last time.
 
 # To invoke chaincode methods
-Minifab utilize the -p parameter to invoke a chaincode method. The -p parameter should include the method name and its parameters, its format is like the following:
+Minifab utilizes the -p parameter to invoke a chaincode method. The -p parameter should include the method name and its parameters, its format is like the following:
 
 ```
 minifab invoke -n chaincode_name -p '"methodname","p1","p2",...'
