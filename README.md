@@ -11,8 +11,7 @@ This tool helps Fabric users working with fabric network. It currently provides 
 8. Invoke chaincode methods
 9. Query blocks and transactions
 10. Channel configuration query, configuration update and configuration signing
-11. Transaction query
-12. Consortium management dashboard
+11. Consortium management dashboard
 
 # Prerequsites
 This tool requires docker CE 18.03 or newer.
