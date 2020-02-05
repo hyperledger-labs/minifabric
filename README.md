@@ -57,11 +57,6 @@ minifab up
 
 Notice that there is a `minifab generate` command called between two minifab up commands
 
-# See more available fabric commands
-```
-minifab
-```
-
 # Tear down the fabric network:
 ```
 minifab down
@@ -148,3 +143,8 @@ Minifab uses many settings throughout all the operations. These settings can be 
 All the default values are set by [envsettings](https://github.com/litong01/minifabric/blob/master/envsettings). Each of the values get updated if specified in commands and saved back to `./vars/envsettings`. Users strongly discouraged to manually change that file since it is basically a program. Changes to that file should have been made by minifab.
 
 Because of the execution context, when you execute a command, you do not really have to specify all the parameters necessary if the context do not need to be changed. For example, if you just executed a chaincode invoke command, and you like to execute invoke again, then you do not really need to specify the -n parameter since it is already in the current execution context. Same thing applies to every parameter listed in that file. You do not need to specify the parameter in a command unless you intend to use a new value in your command, once you do, the new value becomes part of the current execution context. 
+
+# See more available fabric commands
+```
+minifab
+```
