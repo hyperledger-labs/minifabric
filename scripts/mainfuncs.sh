@@ -31,6 +31,7 @@ function printHelp() {
   echo "       - 'join'  - join all peers currently in the network to a channel"
   echo "       - 'blockquery'  - do channel block query and produce a channel tx json file"
   echo "       - 'channelquery'  - do channel query and produce a channel configuration json file"
+  echo "       - 'channelsign'  - do channel config update signoff"
   echo "       - 'channelupdate'  - do channel update with a given new channel configuration json file" 
   echo "       - 'anchorupdate'  - do channel update which makes all peer nodes anchors for the all orgs"
   echo "       - 'dashup'  - start up consortium management dashboard"
