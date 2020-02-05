@@ -7,11 +7,12 @@ This tool helps Fabric users working with fabric network. It currently provides 
 4. Join peers to a channel
 5. Install sample chaincode or your own chaincode
 6. Upgrade chaincode
-7. Instantiate chaincode
+7. Approve and instantiate chaincode
 8. Invoke chaincode methods
-9. Channel configuration query, configuration update and configuration signing
-10. Transaction query
-11. Consortium management dashboard
+9. Query blocks and transactions
+10. Channel configuration query, configuration update and configuration signing
+11. Transaction query
+12. Consortium management dashboard
 
 # Prerequsites
 This tool requires docker CE 18.03 or newer.
