@@ -24,6 +24,8 @@ curl -o minifab -L https://tinyurl.com/twrt8zv && chmod +x minifab
 You can also move script `minifab` into a directory which is part
 of your $PATH such as ~/.local/bin to save time
 
+Create a directory and change to that directory. This directory becomes your working directory, all minifab command should be executed in this directory.
+
 # Stand up a fabric network:
 ```
 minifab up
