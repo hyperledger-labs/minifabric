@@ -1,5 +1,4 @@
 #!/bin/bash
-#!/bin/bash
 declare XX_CHANNEL_NAME='mychannel'
 declare XX_CC_LANGUAGE='go'
 declare XX_IMAGETAG='2.0'
