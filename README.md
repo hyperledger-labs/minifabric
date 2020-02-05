@@ -112,11 +112,15 @@ take last time.
 # To invoke chaincode methods
 Minifab utilize the -p parameter to invoke a chaincode method. The -p parameter should include the method name and its parameters, its format is like the following:
 
-` minifab invoke -n chaincode_name -p '"methodname","p1","p2",...'`
+```
+minifab invoke -n chaincode_name -p '"methodname","p1","p2",...'
+```
 
 Since chaincode invocation very much depends on how the chaincode methods were developed, it is important to know the method before you actually try to invoke it. The following two examples invoke the `simple` chaincode `invoke` and `query` methods:
 
-`minifab invoke -n simple -p '"invoke","a","b","5"'`
-`minifab invoke -p '"query","a"'`
+```
+minifab invoke -n simple -p '"invoke","a","b","5"'
+minifab invoke -p '"query","a"'
+```
 
 Notice that the second invoke missing the chaincode -n parameter, that command will still work because the current context for chaincode is still simple. If you intend to invoke a different chaincode from the current context for chaincode, then you will need to specify the -n parameter, once it executes, that chaincode becomes the current context for chaincode.
