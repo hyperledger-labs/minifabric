@@ -123,4 +123,9 @@ minifab invoke -n simple -p '"invoke","a","b","5"'
 minifab invoke -p '"query","a"'
 ```
 
-Notice that the second invoke missing the chaincode -n parameter, that command will still work because the current chaincode context is still simple. If you intend to invoke a different chaincode, then you will need to specify the -n parameter, once it executes, that chaincode becomes the current context for chaincode.
+# Execution context
+Minifab uses many settings throughout all the operations. These settings can be changed any time you run a minifab command and these settings will be saved in the vars/envsetting file. Each time a command is executed, that file will be loaded and settings specified in the command line will be written into that file. All the settings saved and specified in the command  make the current execution context. They include chaincode name, chaincode invocation parameter, chaincode version, chaincode language, channel name, fabric release, endpoint exposure and block query number. 
+
+All the default values are set by [envsettings](https://github.com/litong01/minifabric/blob/master/envsettings). Each of the values get updated if specified in commands and saved back to `./vars/envsettings`. Users strongly discouraged to manually change that file since it is basically a program. Changes to that file should have been made by minifab.
+
+Because of the execution context, when you execute a command, you do not really have to specify all the parameters necessary if the context do not need to be changed. For example, if you just executed a chaincode invoke command, and you like to execute invoke again, then you do not really need to specify the -n parameter since it is already in the current execution context.
