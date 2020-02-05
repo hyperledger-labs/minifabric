@@ -57,7 +57,7 @@ minifab up
 
 Notice that there is a `minifab generate` command called between two minifab up commands
 
-# See more available fabric operations
+# See more available fabric commands
 ```
 minifab
 ```
@@ -65,18 +65,19 @@ minifab
 # Tear down the fabric network:
 ```
 minifab down
+minifab cleanup
 ```
+The first command simply removes all the docker containers which make up the fabric network. The seoncd command remove all the containers and cleanup the working directory
 
 # Setup a network using a different spec
-Simply download this [spec](https://github.com/litong01/minifabric/blob/master/spec.yaml) and make changes to what you like, then run the following
-command in a directory where your new spec.yaml file is:
+Simply download this [spec](https://github.com/litong01/minifabric/blob/master/spec.yaml) and make changes to what you like, then run the following command in a directory where your new spec.yaml file is:
 
 ```
 minifab up
 ```
 
 # To install your own chaincode
-Create the following directory:
+Create the following subdirectory in your working directory:
   
 ```
 mkdir -p $(pwd)/vars/chaincode/<chaincodename>/go
@@ -93,11 +94,11 @@ $(pwd)/vars/chaincode/<chaincodename>/node
 $(pwd)/vars/chaincode/<chaincodename>/java
 ```
 
-If you have no chaincode developed and run `minifab install` command, minifab will install the sample chaincode named simple which comes with minifab.
+If you have no chaincode developed and run `minifab install` command, minifab will install the sample chaincode named `simple` which comes with minifab.
 
 # To upgrade your chaincode
 If you have changed your chaincode and like to upgrade the chaincode on
-the fabric network, you simply need to do the install with a newer
+this fabric network, you simply need to do the install with a newer
 version number, for example:
 ```
 minifab install -n simple -v 2.0
@@ -110,7 +111,11 @@ minifab instantiate
 
 Since you specified the name and version during the install, you
 do not have to specify again, minifab remembers what action was
-take last time.
+take last time. In 2.0.0 or newer release, you will also need to approve the chaincode before you instantiate like this:
+
+```
+minifab approve
+```
 
 # To invoke chaincode methods
 Minifab utilizes the -p parameter to invoke a chaincode method. The -p parameter should include the method name and its parameters, minifab invoke command should follow this format:
