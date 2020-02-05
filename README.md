@@ -123,6 +123,17 @@ minifab invoke -n simple -p '"invoke","a","b","5"'
 minifab invoke -p '"query","a"'
 ```
 
+# Query blocks
+Minifab allows you easily query your ledger. To get the latest block and contained transactions, you just need to run the following commands:
+
+```
+minifab blockquery
+minifab blockquery -b newest
+minifab blockquery -b 6
+```
+
+The first two commands do the same thing and will retrieve the latest block. The last command will retrieve the block number 7 (notice the first block is 0)
+
 # Execution context
 Minifab uses many settings throughout all the operations. These settings can be changed any time you run a minifab command and these settings will be saved in the vars/envsetting file. Each time a command is executed, that file will be loaded and settings specified in the command line will be written into that file. All the settings saved and specified in the command  make the current execution context. They include chaincode name, chaincode invocation parameter, chaincode version, chaincode language, channel name, fabric release, endpoint exposure and block query number. 
 
