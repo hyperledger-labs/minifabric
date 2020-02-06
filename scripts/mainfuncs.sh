@@ -23,8 +23,8 @@ function printHelp() {
   echo "  minifab <mode> [-c <channel name>] [-s <dbtype>] [-l <language>] [-i <imagetag>] [-n <cc name>] [-v <cc version>] [-p <instantiate parameters>]"
   echo "    <mode> - one of operations"
   echo ""
-  echo "       - 'up' - bring up the network and do all other default channel and chaincode operations"
-  echo "       - 'netup' - bring up the network pnly"
+  echo "       - 'up' - bring up the network and do all default channel and chaincode operations"
+  echo "       - 'netup' - bring up the network only"
   echo "       - 'down' - tear down the network"
   echo "       - 'restart' - restart the network"
   echo "       - 'generate' - generate required certificates and genesis block"
@@ -169,29 +169,34 @@ funcname=''
 funcparams=''
 
 function isValidateOp() {
+  if [ -z $MODE ]; then
+    printHelp
+    exit
+  fi
   readarray -td, cmds < <(printf '%s' "$MODE")
+  hasNet=0;hasOp=0
   for i in "${cmds[@]}"; do
     key=$(echo "${i,,}"|xargs)
-    if [ -z "${FUNCNAMES[$key]}" ]; then
-      if [ -z "${OPNAMES[$key]}" ]; then
-        echo 'Not supported command!'
-        exit 1
-      else
-        funcname='doOp'
-        if [ -z "$funcparams" ]; then
-          funcparams="${OPNAMES[$key]}"
-        else
-          funcparams="$funcparams","${OPNAMES[$key]}"
-        fi
-      fi
-    elif [ -z "$funcname" ]; then
+    if [ ! -z "${FUNCNAMES[$key]}" ]; then
+      hasNet=1
       funcname="${FUNCNAMES[$key]}"
-      break
+    elif  [ ! -z "${OPNAMES[$key]}" ]; then
+      hasOp=1
+      funcname='doOp'
+      if [ -z "$funcparams" ]; then
+        funcparams="${OPNAMES[$key]}"
+      else
+        funcparams="$funcparams","${OPNAMES[$key]}"
+      fi
     else
-      echo 'Mixing network setting up and operation commands is not allowed!'
+      echo "'"${i}"'"' is a not supported command!'
       exit 1
     fi
   done
+  if [ $(($hasNet+$hasOp)) != 1 ]; then
+    echo 'Mixing network setting up and operation commands is not allowed!'
+    exit 1
+  fi
 }
 
 function startMinifab() {
