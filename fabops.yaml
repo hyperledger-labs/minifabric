@@ -1,6 +1,7 @@
 ---
 - name: Start fabric operations
   hosts: minifab
+  gather_facts: no
   connection: local
   vars:
     pjroot: "{{ playbook_dir }}"

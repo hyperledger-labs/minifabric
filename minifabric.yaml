@@ -1,6 +1,7 @@
 ---
 - name: Stand up fabric network
   hosts: minifab
+  gather_facts: no
   connection: local
   vars:
     pjroot: "{{ playbook_dir }}"
