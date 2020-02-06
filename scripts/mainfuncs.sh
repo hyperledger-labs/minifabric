@@ -7,10 +7,15 @@
 
 # This script defines the main capabilities of this project
 
-function isValidateOp() {
-  ops="up netup down restart generate install approve instantiate invoke create join blockquery channelquery channelsign channelupdate anchorupdate dashup dashdown cleanup"
-  [[ $ops =~ (^|[[:space:]])$1($|[[:space:]]) ]] && echo 1 || echo 0
-}
+declare -A FUNCNAMES
+declare -A OPNAMES
+FUNCNAMES=([up]=networkUp [netup]=netUp [down]=networkDown \
+  [restart]=networkRestart [generate]=generateCerts [cleanup]=cleanup)
+OPNAMES=([install]='ccinstall' [approve]='ccapprove' [instantiate]='ccinstantiate' \
+  [invoke]='ccinvoke' [create]='channelcreate' [join]='channeljoin' \
+  [blockquery]='blockquery' [channelquery]='channelquery' \
+  [channelsign]='channelsign' [channelupdate]='channelupdate' \
+  [anchorupdate]='anchorupdate' [dashup]='dashup' [dashdown]='dashdown')
 
 # Print the usage message
 function printHelp() {
@@ -158,4 +163,37 @@ function doOp() {
 function cleanup {
   networkDown
   rm -rf vars/*
+}
+
+funcname=''
+funcparams=''
+
+function isValidateOp() {
+  readarray -td, cmds < <(printf '%s' "$MODE")
+  for i in "${cmds[@]}"; do
+    key=$(echo "${i,,}"|xargs)
+    if [ -z "${FUNCNAMES[$key]}" ]; then
+      if [ -z "${OPNAMES[$key]}" ]; then
+        echo 'Not supported command!'
+        exit 1
+      else
+        funcname='doOp'
+        if [ -z "$funcparams" ]; then
+          funcparams="${OPNAMES[$key]}"
+        else
+          funcparams="$funcparams","${OPNAMES[$key]}"
+        fi
+      fi
+    elif [ -z "$funcname" ]; then
+      funcname="${FUNCNAMES[$key]}"
+      break
+    else
+      echo 'Mixing network setting up and operation commands is not allowed!'
+      exit 1
+    fi
+  done
+}
+
+function startMinifab() {
+  time $funcname $funcparams
 }
