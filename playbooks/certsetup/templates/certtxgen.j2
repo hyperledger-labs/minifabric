@@ -6,6 +6,4 @@ configtxgen -profile OrdererGenesis -outputBlock genesis.block -channelID system
 declare -a params=({{ peerorgmsplist }})
 for value in ${params[@]}; do
   configtxgen -printOrg $value > JoinRequest_$value.json
-  configtxgen -profile OrgChannel -outputAnchorPeersUpdate \
-  ./${value}Anchor.tx -channelID {{ CHANNEL_NAME }} -asOrg $value
 done
