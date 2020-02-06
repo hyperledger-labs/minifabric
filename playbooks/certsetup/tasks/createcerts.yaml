@@ -21,12 +21,6 @@
     src: "{{ pjroot }}/playbooks/certsetup/templates/configtx.j2"
     dest: "{{ pjroot }}/vars/configtx.yaml"
 
-- name: Create all peer org mspid list
-  set_fact:
-    peerorgmsplist: >-
-      {{ peerorgmsplist|default('') + '"' + (item.split('.')|join('')) + '" ' }}
-  with_items: "{{ peerorgs }}"
-
 - name: Create certs and channel artifacts script
   template:
     src: "{{ pjroot }}/playbooks/certsetup/templates/certtxgen.j2"

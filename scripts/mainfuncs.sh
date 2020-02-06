@@ -13,7 +13,7 @@ FUNCNAMES=([up]=networkUp [netup]=netUp [down]=networkDown \
   [restart]=networkRestart [generate]=generateCerts [cleanup]=cleanup)
 OPNAMES=([install]='ccinstall' [approve]='ccapprove' [instantiate]='ccinstantiate' \
   [invoke]='ccinvoke' [create]='channelcreate' [join]='channeljoin' \
-  [blockquery]='blockquery' [channelquery]='channelquery' \
+  [blockquery]='blockquery' [channelquery]='channelquery' [profilegen]='profilegen' \
   [channelsign]='channelsign' [channelupdate]='channelupdate' \
   [anchorupdate]='anchorupdate' [dashup]='dashup' [dashdown]='dashdown')
 
@@ -28,6 +28,7 @@ function printHelp() {
   echo "       - 'down' - tear down the network"
   echo "       - 'restart' - restart the network"
   echo "       - 'generate' - generate required certificates and genesis block"
+  echo "       - 'profilegen' - generate channel based profiles"
   echo "       - 'install'  - install chaincode"
   echo "       - 'approve'  - approve chaincode"
   echo "       - 'instantiate'  - instantiate chaincode"
@@ -117,7 +118,7 @@ function networkUp() {
 # Only do the following operations when there is at least one orderer node exists  
   if [ -f "./vars/orderendpoints.yaml" ]; then
   ansible-playbook -i hosts                                                           \
-  -e "mode=channelcreate,channeljoin,anchorupdate,ccinstall,ccapprove,ccinstantiate"  \
+  -e "mode=channelcreate,channeljoin,anchorupdate,profilegen,ccinstall,ccapprove,ccinstantiate"  \
   -e "hostroot=$hostroot" -e "CC_LANGUAGE=$CC_LANGUAGE"                               \
   -e "DB_TYPE=$DB_TYPE" -e "CHANNEL_NAME=$CHANNEL_NAME" -e "CC_NAME=$CC_NAME"         \
   -e "CC_VERSION=$CC_VERSION" -e "CHANNEL_NAME=$CHANNEL_NAME" -e "IMAGETAG=$IMAGETAG" \

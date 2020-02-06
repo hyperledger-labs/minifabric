@@ -19,7 +19,7 @@
   command: >-
     docker run -d --network minifab --name dashboard.{{ DASH_ORG }}
     -v {{hostroot}}/vars/keyfiles:/keyfiles
-    -v {{hostroot}}/vars/connection.json:/cmdash/connection.json
+    -v {{hostroot}}/vars/{{CHANNEL_NAME}}_connection.json:/cmdash/connection.json
     -v {{hostroot}}/vars/orderendpoints.yaml:/cmdash/orderendpoints.yaml
     -e org={{ DASH_ORG }} -e profile=/cmdash/connection.json
     -e channel={{ CHANNEL_NAME }} -e chaincode=cmcc -e port=8080
