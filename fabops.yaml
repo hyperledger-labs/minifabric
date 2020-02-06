@@ -34,4 +34,4 @@
       loop: "{{ allops }}"
       loop_control:
         loop_var: op
-      when: status_flag == "Success"
+      when: status_flag == "Success" and (allorderers|length) > 0 and (allpeers|length) > 0

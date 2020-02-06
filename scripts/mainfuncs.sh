@@ -115,8 +115,7 @@ function networkUp() {
   -e "CC_VERSION=$CC_VERSION" -e "CHANNEL_NAME=$CHANNEL_NAME" -e "IMAGETAG=$IMAGETAG" \
   -e "CC_PARAMETERS=$CC_PARAMETERS" -e "EXPOSE_ENDPOINTS=$EXPOSE_ENDPOINTS"           \
   -e "ADDRS=$ADDRS" minifabric.yaml
-# Only do the following operations when there is at least one orderer node exists  
-  if [ -f "./vars/orderendpoints.yaml" ]; then
+
   ansible-playbook -i hosts                                                           \
   -e "mode=channelcreate,channeljoin,anchorupdate,profilegen,ccinstall,ccapprove,ccinstantiate"  \
   -e "hostroot=$hostroot" -e "CC_LANGUAGE=$CC_LANGUAGE"                               \
@@ -126,7 +125,6 @@ function networkUp() {
   -e "ADDRS=$ADDRS" fabops.yaml
   echo 'Running Nodes:'
   docker ps -a --format "{{.Names}}:{{.Ports}}"
-  fi
 }
 
 function networkDown() {
