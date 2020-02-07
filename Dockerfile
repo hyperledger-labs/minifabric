@@ -11,6 +11,7 @@ RUN apt update -y                                     && \
     apt install -y ansible docker-ce docker-ce-cli containerd.io
 
 COPY . /home
-COPY plugins/callback/minifab.py /usr/lib/python2.7/dist-packages/ansible/plugins/callback
+COPY plugins /usr/lib/python2.7/dist-packages/ansible/plugins
+RUN find /home/plugins -delete
 ENV PATH $PATH:/home/bin
 WORKDIR /home
