@@ -12,7 +12,7 @@
         allops: "{{ mode.split(',')|list }}"
         status_flag: "Success"
 
-    - name: "Fabric operation"
+    - name: "Fabric operations"
       debug:
         msg: "{{ allops|join(', ') }}"
       tags: [print_action]

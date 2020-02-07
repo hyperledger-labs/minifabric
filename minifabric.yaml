@@ -8,7 +8,7 @@
   vars_files:
     - "./spec.yaml"
   tasks:
-    - name: "Fabric network"
+    - name: "Fabric networks"
       debug:
         msg: "{{ mode | title }}"
       tags: [print_action]

@@ -19,8 +19,3 @@
     - "{{ {'name': 'ordererendpoints.j2', 'target': 'orderendpoints.yaml'} }}"
   when: (allorderers|length) > 0
 
-- name: "Profiles generation"
-  debug:
-    msg: "./vars/{{CHANNEL_NAME}}_connection.*"
-  tags: [print_action]
-
