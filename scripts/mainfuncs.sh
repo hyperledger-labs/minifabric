@@ -168,7 +168,7 @@ funcname=''
 funcparams=''
 
 function isValidateOp() {
-  if [ -z $MODE ]; then
+  if [ -z $MODE ] | [ '-h' = "$MODE" ]; then
     printHelp
     exit
   fi
