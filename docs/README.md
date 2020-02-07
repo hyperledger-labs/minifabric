@@ -139,6 +139,24 @@ minifab blockquery -b 6
 
 The first two commands do the same thing and will retrieve the latest block. The last command will retrieve the block number 7 (notice the first block is 0)
 
+### Update channel configuration
+To update channel configuration, follow these steps:
+
+```
+   minifab channelquery
+```
+
+The above command will produce a channel configuration json file in vars directory, the name of the file will be
+`<channel_name>_config.json`, once you see that file, you can go ahead make changes to the file. If you are satsified with
+the changes, execute the following command
+
+```
+   minifab channelsign,channelupdate
+```
+The above command will sign off the channel configuration update using all the orgs admin credentials and then submit the
+channel configuration update transaction. When it is all finished successfully, you can do another channelquery to see the
+changes take affects.
+
 ### Execution context
 Minifab uses many settings throughout all the operations. These settings can be changed any time you run a minifab command and these settings will be saved in the vars/envsetting file. Each time a command is executed, that file will be loaded and settings specified in the command line will be written into that file. All the settings saved and specified in the command  make the current execution context. They include chaincode name, chaincode invocation parameter, chaincode version, chaincode language, channel name, fabric release, endpoint exposure and block query number. 
 
