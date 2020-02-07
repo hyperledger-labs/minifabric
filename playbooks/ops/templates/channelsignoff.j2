@@ -22,14 +22,14 @@ peer channel fetch config config_block.pb -o $ORDERER_ADDRESS \
 
 # 2. Translate the configuration into json format
 configtxlator proto_decode --input config_block.pb --type common.Block \
-  | jq .data.data[0].payload.data.config > {{ CHANNEL_NAME }}_config.json
+  | jq .data.data[0].payload.data.config > {{ CHANNEL_NAME }}_current_config.json
 
 # 3. Translate the current config in json format to protobuf format
-configtxlator proto_encode --input {{ CHANNEL_NAME }}_config.json \
+configtxlator proto_encode --input {{ CHANNEL_NAME }}_current_config.json \
   --type common.Config --output config.pb
 
 # 4. Translate the desired config in json format to protobuf format
-configtxlator proto_encode --input New_{{ CHANNEL_NAME }}_config.json \
+configtxlator proto_encode --input {{ CHANNEL_NAME }}_config.json \
   --type common.Config --output modified_config.pb
 
 # 5. Calculate the delta of the current config and desired config

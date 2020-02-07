@@ -32,6 +32,9 @@ peer lifecycle chaincode commit -o $ORDERER_ADDRESS --channelID {{ CHANNEL_NAME 
   --peerAddresses {{ onepeer }}:7051 \
   --tlsRootCertFiles /vars/keyfiles/peerOrganizations/{{ anorg }}/peers/{{ onepeer }}/tls/ca.crt \
 {% endfor %}
+{% if CC_PRIVATE == 'true' %}
+  --collections-config /vars/{{CC_NAME}}_collection_config.json \
+{% endif %}
   --tls true --cafile $ORDERER_TLS_CA
 
 peer chaincode invoke -o $ORDERER_ADDRESS --isInit --tls true \
@@ -41,4 +44,7 @@ peer chaincode invoke -o $ORDERER_ADDRESS --isInit --tls true \
   --peerAddresses {{ onepeer }}:7051 \
   --tlsRootCertFiles /vars/keyfiles/peerOrganizations/{{ anorg }}/peers/{{ onepeer }}/tls/ca.crt \
 {% endfor %}
+{% if TRANSIENT_DATA != 'Cg==' %}
+  --transient '{{ TRANSIENT_DATA|b64decode|trim }}' \
+{% endif %}
   -c '{"Args":[ {{ CC_PARAMETERS|b64decode|trim }} ]}' --waitForEvent
