@@ -14,3 +14,17 @@
   loop_control:
     loop_var: installpeer
   when: status_flag == "Success"
+
+- set_fact:
+    policy: "{{ peerorgs | map('replace','.','') | list }}"
+- set_fact:
+    policy: "{{ policy | map('regex_replace', '(.*)', 'SINGLEQUOTE\\1.memberSINGLEQUOTE') | list }}"
+- set_fact:
+    policy: >-
+      {{ policy|map("replace","SINGLEQUOTE","'")|list|join(', ') }}
+
+- name: Create chaincode collection config for private data
+  template:
+    src: "{{ pjroot }}/playbooks/ops/templates/collection_config.j2"
+    dest: "{{ pjroot }}/vars/{{CC_NAME}}_collection_config.json"
+  when: CC_PRIVATE == 'true'

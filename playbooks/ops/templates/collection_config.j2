@@ -1,0 +1,19 @@
+[
+ {
+    "name": "collectionPublic",
+    "policy": "OR( {{ policy }} )",
+    "requiredPeerCount": 0,
+    "maxPeerCount": 3,
+    "blockToLive":1000000,
+    "memberOnlyRead": true
+ },
+ {
+    "name": "collectionPrivate",
+    "policy": "OR( {{ policy }} )",
+    "requiredPeerCount": 0,
+    "maxPeerCount": 3,
+    "blockToLive":30,
+    "memberOnlyRead": true
+ }
+]
+

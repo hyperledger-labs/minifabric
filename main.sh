@@ -23,7 +23,7 @@ MODE=$1
 shift
 isValidateOp
 
-while getopts "h?c:b:s:l:i:n:v:p:e:o:" opt; do
+while getopts "h?c:b:s:l:i:n:v:p:e:o:g:t:u:" opt; do
   case "$opt" in
   h | \?)
     printHelp
@@ -59,6 +59,12 @@ while getopts "h?c:b:s:l:i:n:v:p:e:o:" opt; do
   o)
     DASH_ORG=$OPTARG
     ;;
+  t)
+    TRANSIENT_DATA=$OPTARG
+    ;;
+  u)
+    CC_PRIVATE=$OPTARG
+    ;;
   esac
 done
 
@@ -72,11 +78,14 @@ echo "    CC_LANGUAGE=$CC_LANGUAGE"
 echo "    CC_NAME=$CC_NAME"
 echo "    CC_VERSION=$CC_VERSION"
 echo "    CC_PARAMETERS=$CC_PARAMETERS"
+echo "    CC_PRIVATE=$CC_PRIVATE"
+echo "    TRANSIENT_DATA=$TRANSIENT_DATA"
 echo "    BLOCK_NUMBER=$BLOCK_NUMBER"
 echo "    EXPOSE_ENDPOINTS=$EXPOSE_ENDPOINTS"
 echo "    HOST_ADDRESSES=$ADDRS"
 
 CC_PARAMETERS=$(echo $CC_PARAMETERS|base64)
+TRANSIENT_DATA=$(echo $TRANSIENT_DATA|base64)
 
 if [ -z "$hostroot" ]; then hostroot=$(pwd); fi
 echo "    WORKING_DIRECTORY: $hostroot"
