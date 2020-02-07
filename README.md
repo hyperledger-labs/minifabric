@@ -10,7 +10,7 @@ This tool helps Fabric users working with fabric network. It currently provides 
 7. Approve and instantiate chaincode
 8. Invoke chaincode methods
 9. Query blocks and transactions
-10. Channel configuration query, configuration update and configuration signing
+10. Channel configuration query, configuration signing and configuration update
 11. Consortium management dashboard
 
 ### Prerequsites
@@ -143,6 +143,14 @@ Minifab uses many settings throughout all the operations. These settings can be 
 All the default values are set by [envsettings](https://github.com/litong01/minifabric/blob/master/envsettings). Each of the values get updated if specified in commands and saved back to `./vars/envsettings`. Users strongly discouraged to manually change that file since it is basically a program. Changes to that file should have been made by minifab.
 
 Because of the execution context, when you execute a command, you do not really have to specify all the parameters necessary if the context do not need to be changed. For example, if you just executed a chaincode invoke command, and you like to execute invoke again, then you do not really need to specify the -n parameter since it is already in the current execution context. Same thing applies to every parameter listed in that file. You do not need to specify the parameter in a command unless you intend to use a new value in your command, once you do, the new value becomes part of the current execution context. 
+
+### Update minifabric
+Minifabric development goes very fast. It is always a good idea to refresh your minifabric once in awhile by simply run the following script
+```
+curl -o minifab -L https://tinyurl.com/twrt8zv && chmod +x minifab
+docker pull hfrd/minifab:latest
+```
+
 
 ### See more available fabric commands
 ```
