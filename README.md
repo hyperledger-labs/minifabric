@@ -2,11 +2,11 @@
 If you like to experience Hyperledger Fabric or develop your smart contract,
 Minifabric is the tool to start. It does not matter if you just have
 a small server or you have multiple servers, Minifabric will help you stand
-up your Fabric network within few minutes. Minifabric is small but it allows
-you to experience the full capabilities of Hyperledger Fabric. All you need
-is a docker environment. If you like to explore what you can do with it,
-please read [Minifabric User Guide](https://github.com/litong01/minifabric/blob/master/docs/README.md).
-For those impatient, please following the following two steps to start things off.
+up your Fabric network on a single server or cross multiple servers within
+few minutes. Minifabric is small but it allows you to experience the full
+capabilities of Hyperledger Fabric. All you need is a docker environment. If
+you like to explore what you can do with it, please read [Minifabric User Guide](https://github.com/litong01/minifabric/blob/master/docs/README.md). For those impatient, please follow the steps
+below to start things off.
 
 
 ### Get the script and make it executable
