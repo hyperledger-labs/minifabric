@@ -10,7 +10,7 @@
   tasks:
     - name: "Fabric networks"
       debug:
-        msg: "{{ mode | title }}"
+        msg: "{{ mode }}"
       tags: [print_action]
     - set_fact:
         status_flag: "Success"
