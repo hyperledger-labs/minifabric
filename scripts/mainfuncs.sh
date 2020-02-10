@@ -56,7 +56,7 @@ function printHelp() {
   echo "    -t|--transient-parameters - chaincode instantiation and invocation transient parameters"
   echo "    -r|--chaincode-private    - the chaincode instantiated processes private data"
   echo "    -e|--expose-endpoints     - make all the node endpoints available outside of the server"
-  echo "    -o|--organization         - organization name to be used for operations"
+  echo "    -o|--organization         - organization to be used for org specific operations"
   echo "    -y|--chaincode-policy     - chaincode policy"
   echo "    -h|--help                 - print this message"
   echo
