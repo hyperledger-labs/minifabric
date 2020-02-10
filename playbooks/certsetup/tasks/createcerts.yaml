@@ -44,3 +44,8 @@
     -v /var/run/:/host/var/run
     -v {{ hostroot}}/vars:/etc/hyperledger/fabric
     hyperledger/fabric-tools:{{ fabric.release }} /etc/hyperledger/fabric/run/certtxgen.sh
+
+- name: Package all the certs to one file
+  archive:
+    path: "{{ pjroot }}/vars/keyfiles"
+    dest: "{{ pjroot }}/vars/certs.tgz"  
