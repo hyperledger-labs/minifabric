@@ -9,7 +9,7 @@ RUN cd /tmp && git init minifabric && cd minifabric                && \
     git pull --depth=1 origin master && mv plugins /tmp            && \
     rm -f .dockerignore .gitignore Dockerfile DockerfileHub 
 
-FROM ubuntu:latest
+FROM ubuntu:18.04
 LABEL maintainer="litong01@us.ibm.com"
 RUN apt update -y                                     && \
     apt install -y software-properties-common curl    && \
