@@ -181,7 +181,8 @@ class CallbackModule(CallbackBase):
             msg = to_text(result._result.get('msg', '')) or\
                 to_text(result._result.get('reason', ''))
 
-            stderr = [result._result.get('exception', None),
+            stderr = [result._result.get('stderr', None),
+                      result._result.get('exception', None),
                       result._result.get('module_stderr', None)]
             stderr = "\n".join([e for e in stderr if e]).strip()
 
