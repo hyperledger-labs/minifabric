@@ -21,10 +21,6 @@ else
   SEQUENCE=$((1+$SID))
 fi
 
-peer lifecycle chaincode checkcommitreadiness --channelID {{ CHANNEL_NAME }} \
-  --name {{ CC_NAME }} --version {{ CC_VERSION }} --init-required --sequence $SEQUENCE \
-  --tls true --cafile $ORDERER_TLS_CA --output json
-
 peer lifecycle chaincode commit -o $ORDERER_ADDRESS --channelID {{ CHANNEL_NAME }} \
   --name {{ CC_NAME }} --version {{ CC_VERSION }} --init-required --sequence $SEQUENCE \
 {% for anorg in orgpeers.keys() %}
@@ -34,6 +30,9 @@ peer lifecycle chaincode commit -o $ORDERER_ADDRESS --channelID {{ CHANNEL_NAME 
 {% endfor %}
 {% if CC_PRIVATE == 'true' %}
   --collections-config /vars/{{CC_NAME}}_collection_config.json \
+{% endif %}
+{% if CC_POLICY != 'Cg==' %}
+  --signature-policy '{{ CC_POLICY|b64decode|trim }}' \
 {% endif %}
   --tls true --cafile $ORDERER_TLS_CA
 

@@ -44,45 +44,27 @@ function printHelp() {
   echo "       - 'dashdown'  - shutdown consortium management dashboard"
   echo "       - 'cleanup'  - remove all the nodes and cleanup runtime files"
   echo ""
-  echo "    -c <channel name> - channel name to use (defaults to \"mychannel\")"
-  echo "    -s <dbtype> - the database backend to use: goleveldb (default) or couchdb"
-  echo "    -l <language> - the programming language of the chaincode to deploy: go (default), node, or java"
-  echo "    -i <imagetag> - the tag to be used to launch the network (defaults to \"1.4.4\")"
-  echo "    -n <chaincode name> - chaincode name to be installed"
-  echo "    -b <block number> - block number to be queried"
-  echo "    -v <chaincode version> - chaincode version"
-  echo "    -p <chaincode parameters> - chaincode instantiation and invocation parameters"
-  echo "    -t <transient parameters> - chaincode instantiation and invocation transient parameters"
-  echo "    -u <chaincode private> - chaincode process private data"
-  echo "    -e <true|false> make all the node endpoints available outside of the minifab network"
-  echo "    -o <orgname> organization name to be used for start up or shutdown consortium management dashboard"
-  echo "  minifab -h (print this message)"
-  echo
-  echo "Use all defaults to stand up a fabric network:"
-  echo
-  echo "    minifab up"
-  echo "    minifab down"
-  echo
-  echo "The first command will stand up fabric network, create default channel, join the"
-  echo "channel, install and instantiate sample chaincode. The second command will destroy"
-  echo "everything"
-  echo
-  echo "Here are few examples to do other things:"
-  echo
-  echo "    minifab generate -c mychannel"
-  echo "    minifab up -c mychannel"
-  echo "    minifab up -i 2.0"
-  echo "    minifab create -c anotherchannel"
-  echo "    minifab join -c anotherchannel"
-  echo "    minifab install -n anothercc"
-  echo "    minifab instantiate -n anothercc -v 2.0"
+  echo "    -c|--channel-name         - channel name to use (defaults to \"mychannel\")"
+  echo "    -s|--database-type        - the database backend to use: goleveldb (default) or couchdb"
+  echo "    -l|--chaincode-language   - the programming language of the chaincode being deployed: go (default), node, or java"
+  echo "    -i|--fabric-release       - the fabric release to be used to launch the network (defaults to \"2.0.0\")"
+  echo "    -n|--chaincode-name       - chaincode name to be installed/instantiated/approved"
+  echo "    -b|--block-number         - block number to be queried"
+  echo "    -v|--chaincode-version    - chaincode version to be installed"
+  echo "    -p|--chaincode-parameters - chaincode instantiation and invocation parameters"
+  echo "    -t|--transient-parameters - chaincode instantiation and invocation transient parameters"
+  echo "    -r|--chaincode-private    - the chaincode instantiated processes private data"
+  echo "    -e|--expose-endpoints     - make all the node endpoints available outside of the server"
+  echo "    -o|--organization         - organization name to be used for operations"
+  echo "    -y|--chaincode-policy     - chaincode policy"
+  echo "    -h|--help                 - print this message"
   echo
 }
 
 function doDefaults() {
   declare -a params=("CHANNEL_NAME" "CC_LANGUAGE" "IMAGETAG" "BLOCK_NUMBER" "CC_VERSION" \
     "CC_NAME" "DB_TYPE" "CC_PARAMETERS" "EXPOSE_ENDPOINTS" "DASH_ORG" "TRANSIENT_DATA" \
-    "CC_PRIVATE")
+    "CC_PRIVATE" "CC_POLICY")
   if [ ! -f "./vars/envsettings" ]; then
     cp envsettings vars/envsettings
   fi
@@ -120,7 +102,7 @@ function networkUp() {
   -e "CC_VERSION=$CC_VERSION" -e "CHANNEL_NAME=$CHANNEL_NAME" -e "IMAGETAG=$IMAGETAG" \
   -e "CC_PARAMETERS=$CC_PARAMETERS" -e "EXPOSE_ENDPOINTS=$EXPOSE_ENDPOINTS"           \
   -e "ADDRS=$ADDRS" -e "TRANSIENT_DATA=$TRANSIENT_DATA" -e "CC_PRIVATE=$CC_PRIVATE"   \
-  minifabric.yaml
+  -e "CC_POLICY=$CC_POLICY" minifabric.yaml
 
   ansible-playbook -i hosts                                                           \
   -e "mode=channelcreate,channeljoin,anchorupdate,profilegen,ccinstall,ccapprove,ccinstantiate"  \
@@ -129,7 +111,7 @@ function networkUp() {
   -e "CC_VERSION=$CC_VERSION" -e "CHANNEL_NAME=$CHANNEL_NAME" -e "IMAGETAG=$IMAGETAG" \
   -e "CC_PARAMETERS=$CC_PARAMETERS" -e "EXPOSE_ENDPOINTS=$EXPOSE_ENDPOINTS"           \
   -e "ADDRS=$ADDRS" -e "TRANSIENT_DATA=$TRANSIENT_DATA" -e "CC_PRIVATE=$CC_PRIVATE"   \
-  fabops.yaml
+  -e "CC_POLICY=$CC_POLICY" fabops.yaml
   echo 'Running Nodes:'
   docker ps -a --format "{{.Names}}:{{.Ports}}"
 }
@@ -141,7 +123,7 @@ function networkDown() {
   -e "CC_VERSION=$CC_VERSION" -e "CHANNEL_NAME=$CHANNEL_NAME" -e "IMAGETAG=$IMAGETAG" \
   -e "CC_PARAMETERS=$CC_PARAMETERS"  -e "EXPOSE_ENDPOINTS=$EXPOSE_ENDPOINTS"          \
   -e "ADDRS=$ADDRS" -e "TRANSIENT_DATA=$TRANSIENT_DATA" -e "CC_PRIVATE=$CC_PRIVATE"   \
-  minifabric.yaml
+  -e "CC_POLICY=$CC_POLICY" minifabric.yaml
 }
 
 function networkRestart() {
@@ -156,7 +138,7 @@ function generateCerts() {
   -e "CC_VERSION=$CC_VERSION" -e "CHANNEL_NAME=$CHANNEL_NAME" -e "IMAGETAG=$IMAGETAG" \
   -e "CC_PARAMETERS=$CC_PARAMETERS"  -e "EXPOSE_ENDPOINTS=$EXPOSE_ENDPOINTS"          \
   -e "ADDRS=$ADDRS" -e "TRANSIENT_DATA=$TRANSIENT_DATA" -e "CC_PRIVATE=$CC_PRIVATE"   \
-  minifabric.yaml --skip-tags "nodes"
+  -e "CC_POLICY=$CC_POLICY" minifabric.yaml --skip-tags "nodes"
 }
 
 function doOp() {
@@ -166,7 +148,8 @@ function doOp() {
   -e "CC_VERSION=$CC_VERSION" -e "CHANNEL_NAME=$CHANNEL_NAME" -e "IMAGETAG=$IMAGETAG" \
   -e "CC_PARAMETERS=$CC_PARAMETERS"  -e "EXPOSE_ENDPOINTS=$EXPOSE_ENDPOINTS"          \
   -e "ADDRS=$ADDRS" -e "DASH_ORG=$DASH_ORG" -e "BLOCK_NUMBER=$BLOCK_NUMBER"           \
-  -e "TRANSIENT_DATA=$TRANSIENT_DATA" -e "CC_PRIVATE=$CC_PRIVATE" fabops.yaml
+  -e "TRANSIENT_DATA=$TRANSIENT_DATA" -e "CC_PRIVATE=$CC_PRIVATE"                     \
+  -e "CC_POLICY=$CC_POLICY" fabops.yaml
 }
 
 function cleanup {
@@ -177,8 +160,8 @@ function cleanup {
 funcname=''
 funcparams=''
 
-function isValidateOp() {
-  if [ -z $MODE ] | [ '-h' = "$MODE" ]; then
+function isValidateCMD() {
+  if [ -z $MODE ] || [[ '-h' == "$MODE" ]] || [[ '--help' == "$MODE" ]]; then
     printHelp
     exit
   fi
@@ -202,7 +185,10 @@ function isValidateOp() {
       exit 1
     fi
   done
-  if [ $(($hasNet+$hasOp)) != 1 ]; then
+  if [[ $(($hasNet+$hasOp)) == 0 ]]; then
+    printHelp
+    exit
+  elif [[ $(($hasNet+$hasOp)) > 1 ]]; then
     echo 'Mixing network setting up and operation commands is not allowed!'
     exit 1
   fi
