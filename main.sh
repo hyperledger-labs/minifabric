@@ -21,53 +21,45 @@ export VERBOSE=false
 
 MODE=$1
 shift
-isValidateOp
 
-while getopts "h?c:b:s:l:i:n:v:p:e:o:g:t:u:" opt; do
-  case "$opt" in
-  h | \?)
-    printHelp
-    exit 0
-    ;;
-  b)
-    BLOCK_NUMBER=$OPTARG
-    ;;
-  c)
-    CHANNEL_NAME=$OPTARG
-    ;;
-  s)
-    DB_TYPE=$OPTARG
-    ;;
-  l)
-    CC_LANGUAGE=$OPTARG
-    ;;
-  i)
-    IMAGETAG=$OPTARG
-    ;;
-  n)
-    CC_NAME=$OPTARG
-    ;;
-  v)
-    CC_VERSION=$OPTARG
-    ;;
-  p)
-    CC_PARAMETERS=$OPTARG
-    ;;
-  e)
-    EXPOSE_ENDPOINTS=$OPTARG
-    ;;
-  o)
-    DASH_ORG=$OPTARG
-    ;;
-  t)
-    TRANSIENT_DATA=$OPTARG
-    ;;
-  u)
-    CC_PRIVATE=$OPTARG
-    ;;
-  esac
+while [[ $# -gt 0 ]]; do
+optkey="$1"
+
+case $optkey in
+  -h|--help)
+    echo 'printHelp';exit 0;;
+  -b|--block-number)
+    BLOCK_NUMBER="$2";shift;shift;;
+  -c|--channel-name)
+    CHANNEL_NAME="$2";shift;shift;;
+  -s|--database-type)
+    DB_TYPE="$2";shift;shift;;
+  -l|--chaincode-language)
+    CC_LANGUAGE="$2";shift;shift;;
+  -i|--fabric-release)
+    IMAGETAG="$2";shift;shift;;
+  -n|--chaincode-name)
+    CC_NAME="$2";shift;shift;;
+  -v|--chaincode-version)
+    CC_VERSION="$2";shift;shift;;
+  -p|--chaincode-parameters)
+    CC_PARAMETERS="$2";shift;shift;;
+  -e|--expose-endpoints)
+    EXPOSE_ENDPOINTS="$2";shift;shift;;
+  -o|--organization)
+    DASH_ORG="$2";shift;shift;;
+  -t|--transient-parameters)
+    TRANSIENT_DATA="$2";shift;shift;;
+  -r|--chaincode-private)
+    CC_PRIVATE="$2";shift;shift;;
+  -y|--chaincode-policy)
+    CC_POLICY="$2";shift;shift;;
+  *) # unknown option
+    echo "$1 is a not supported option"; exit 1;;
+esac
 done
 
+isValidateCMD
 doDefaults
 
 echo "Minifab Execution Context:"
@@ -79,12 +71,14 @@ echo "    CC_NAME=$CC_NAME"
 echo "    CC_VERSION=$CC_VERSION"
 echo "    CC_PARAMETERS=$CC_PARAMETERS"
 echo "    CC_PRIVATE=$CC_PRIVATE"
+echo "    CC_POLICY=$CC_POLICY"
 echo "    TRANSIENT_DATA=$TRANSIENT_DATA"
 echo "    BLOCK_NUMBER=$BLOCK_NUMBER"
 echo "    EXPOSE_ENDPOINTS=$EXPOSE_ENDPOINTS"
 echo "    HOST_ADDRESSES=$ADDRS"
 
 CC_PARAMETERS=$(echo $CC_PARAMETERS|base64)
+CC_POLICY=$(echo $CC_POLICY|base64)
 TRANSIENT_DATA=$(echo $TRANSIENT_DATA|base64)
 
 if [ -z "$hostroot" ]; then hostroot=$(pwd); fi

@@ -7,10 +7,21 @@
     - "absent"
     - "directory"
 
+- stat:
+    path: "{{ pjroot }}/vars/my-crypto-config.yaml"
+  register: cryc
+
+- name: Use the provide crypto-config.yaml file
+  copy:
+    src: "{{ pjroot }}/vars/my-crypto-config.yaml"
+    dest: "{{ pjroot }}/vars/crypto-config.yaml"
+  when: cryc.stat.exists == true
+
 - name: Create crypto-config file
   template:
     src: "{{ pjroot }}/playbooks/certsetup/templates/crypto-config.j2"
     dest: "{{ pjroot }}/vars/crypto-config.yaml"
+  when: cryc.stat.exists == false
 
 - name: Set effecctive release
   set_fact:
