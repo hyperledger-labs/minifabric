@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM ubuntu:18.04
 
 LABEL maintainer="litong01@us.ibm.com"
 
