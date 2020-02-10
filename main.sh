@@ -27,7 +27,7 @@ optkey="$1"
 
 case $optkey in
   -h|--help)
-    echo 'printHelp';exit 0;;
+    printHelp; exit 0;;
   -b|--block-number)
     BLOCK_NUMBER="$2";shift;shift;;
   -c|--channel-name)
