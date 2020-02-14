@@ -7,14 +7,23 @@
     pjroot: "{{ playbook_dir }}"
   vars_files:
     - "./spec.yaml"
+    - "./playbooks/ops/opnames.yaml"
   tasks:
     - set_fact:
         allops: "{{ mode.split(',')|list }}"
         status_flag: "Success"
 
+    - set_fact:
+        OPNAMES: "{{ OPNAMES | combine({'ccinstantiate': 'cc commit'}) }}"
+      when: IMAGETAG is version('2.0', '>=')
+
+    - set_fact:
+        msgops: "{{ (msgops|default([])) + [OPNAMES[item]] }}"
+      with_items: "{{ allops }}"
+
     - name: "Fabric operations"
       debug:
-        msg: "{{ allops|join(', ') }}"
+        msg: "{{ msgops|join(', ') }}"
       tags: [print_action]
 
     - name: "Process configuration"
