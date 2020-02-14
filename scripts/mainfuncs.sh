@@ -12,9 +12,9 @@ declare -A OPNAMES
 FUNCNAMES=([up]=networkUp [netup]=netUp [down]=networkDown \
   [restart]=networkRestart [generate]=generateCerts [cleanup]=cleanup)
 OPNAMES=([install]='ccinstall' [approve]='ccapprove' [instantiate]='ccinstantiate' \
-  [invoke]='ccinvoke' [create]='channelcreate' [join]='channeljoin' \
-  [blockquery]='blockquery' [channelquery]='channelquery' [profilegen]='profilegen' \
-  [channelsign]='channelsign' [channelupdate]='channelupdate' \
+  [commit]='ccinstantiate' [invoke]='ccinvoke' [create]='channelcreate' \
+  [join]='channeljoin' [blockquery]='blockquery' [channelquery]='channelquery' \
+  [profilegen]='profilegen' [channelsign]='channelsign' [channelupdate]='channelupdate' \
   [anchorupdate]='anchorupdate' [dashup]='dashup' [dashdown]='dashdown')
 
 # Print the usage message
@@ -31,7 +31,8 @@ function printHelp() {
   echo "      - 'profilegen' - generate channel based profiles"
   echo "      - 'install'  - install chaincode"
   echo "      - 'approve'  - approve chaincode"
-  echo "      - 'instantiate'  - instantiate chaincode"
+  echo "      - 'instantiate'  - instantiate chaincode for fabric releases less than 2.0"
+  echo "      - 'commit'  - commit chaincode for fabric releases greater or equal to 2.0"
   echo "      - 'invoke'  - invoke a chaincode method"
   echo "      - 'create'  - create application channel"
   echo "      - 'join'  - join all peers currently in the network to a channel"
