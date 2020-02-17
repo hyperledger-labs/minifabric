@@ -18,6 +18,13 @@
       when: IMAGETAG is version('2.0', '>=')
 
     - set_fact:
+        allops: "{{ allops | difference(['ccapprove']) }}"
+      when: IMAGETAG is version('2.0', '<')
+
+    - meta: end_play
+      when: allops|length == 0
+
+    - set_fact:
         msgops: "{{ (msgops|default([])) + [OPNAMES[item]] }}"
       with_items: "{{ allops }}"
 
