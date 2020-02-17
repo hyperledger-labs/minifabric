@@ -3,8 +3,8 @@
 "x-type": "hlfv1"
 "version": "1.0.0"
 "client":
-{% set pypeer=allpeers|random %}
-  "organization": "{{ pypeer.org }}"
+{% set gopeer=allpeers|random %}
+  "organization": "{{ gopeer.org }}"
   "cryptoconfig":
     "path": "/keyfiles"
   "connection":
@@ -14,6 +14,19 @@
         "eventHub": "300"
         "eventReg": "300"
       "orderer": "300"
+  "credentialStore":
+    "path": "/tmp/state-store"
+    "cryptoStore":
+      "path": "/tmp/msp"
+  "BCCSP":
+    "security":
+      "enabled": "true"
+      "default":
+        "provider": "SW"
+      "hashAlgorithm": "SHA2"
+      "softVerify": "true"
+      "level": "256"
+
 "channels":
   "{{ CHANNEL_NAME }}":
     "orderers":
@@ -30,7 +43,7 @@
 
 "organizations":
 {% for org in allorgs %}
-{%  set orgelements = allkeys.values() | selectattr("org", "equalto", org) | list %}
+{%  set orgelements = allkeys.values() | selectattr('org', 'equalto', org) | list %}
   "{{ org }}":
     "mspid": "{{ org.split('.')|join('') }}"
     "cryptoPath": "{{ org }}/users/{username}@{{ org}}/msp"
@@ -41,6 +54,10 @@
     "orderers":
 {%   for orderer in allorderers|selectattr('org', 'equalto', org)|list %}
     - "{{ orderer.fullname }}"
+{%   endfor %}
+    "certificateAuthorities":
+{%   for ca in allcas|selectattr('org', 'equalto', org)|list %}
+    - "{{ ca.fullname }}"
 {%   endfor %}
 {% endfor %}
 
@@ -53,6 +70,7 @@
     "tlsCACerts":
       "path": "{{ '/keyfiles/ordererOrganizations/'+orderer.org+'/orderers/'+orderer.fullname+'/tls/ca.crt' }}"
 {% endfor %}
+
 "peers":
 {% for peer in allpeers %}
   "{{ peer.fullname }}":
@@ -61,6 +79,20 @@
       "ssl-target-name-override": "{{ peer.fullname }}"
     "tlsCACerts":
       "path": "{{ '/keyfiles/peerOrganizations/'+peer.org+'/tlsca/tlsca.'+peer.org+'-cert.pem' }}"
+{% endfor %}
+
+"certificateAuthorities":
+{% for ca in allcas %}
+  "{{ ca.fullname }}":
+    "url": "https://{{ ca.fullname }}:7054"
+    "tlsCACerts":
+      "path": "{{ '/keyfiles/peerOrganizations/'+ca.org+'/ca/ca.'+ca.org+'-cert.pem' }}"
+    "httpOptions":
+      "verify": "false"
+    "caName": "{{ ca.name }}"
+    "registrar":
+      "enrollId": "admin"
+      "enrollSecret": "adminpw"
 {% endfor %}
 
 "entityMatchers":
@@ -75,6 +107,7 @@
     "urlSubstitutionExp": "{{ orderer.fullname }}:7050"
 {% endif %}
 {% endfor %}
+  
   "peer":
 {% for peer in allpeers %}
   - "mappedHost": "{{ peer.fullname }}"
@@ -84,5 +117,17 @@
     "urlSubstitutionExp": "{{ ADDRS.split(',')[0] }}:{{ nodeports[peer.fullname+'_7051'] }}"
 {% else %}
     "urlSubstitutionExp": "{{ peer.fullname }}:7051"
+{% endif %}
+{% endfor %}
+  
+  "certificateAuthorities":
+{% for ca in allcas %}
+  - "mappedHost": "{{ ca.fullname }}"
+    "pattern": "(\\w*){{ ca.fullname }}(\\w*)"
+    "sslTargetOverrideUrlSubstitutionExp": "{{ ca.fullname }}"
+{% if EXPOSE_ENDPOINTS=='true' %}
+    "urlSubstitutionExp": "{{ ADDRS.split(',')[0] }}:{{ nodeports[ca.fullname+'_7054'] }}"
+{% else %}
+    "urlSubstitutionExp": "{{ ca.fullname }}:7051"
 {% endif %}
 {% endfor %}
