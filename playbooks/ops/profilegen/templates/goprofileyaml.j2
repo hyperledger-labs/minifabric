@@ -128,6 +128,6 @@
 {% if EXPOSE_ENDPOINTS=='true' %}
     "urlSubstitutionExp": "{{ ADDRS.split(',')[0] }}:{{ nodeports[ca.fullname+'_7054'] }}"
 {% else %}
-    "urlSubstitutionExp": "{{ ca.fullname }}:7051"
+    "urlSubstitutionExp": "{{ ca.fullname }}:7054"
 {% endif %}
 {% endfor %}
