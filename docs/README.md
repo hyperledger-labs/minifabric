@@ -91,6 +91,10 @@ $(pwd)/vars/chaincode/<chaincodename>/node
 $(pwd)/vars/chaincode/<chaincodename>/java
 ```
 
+When you develop your own chaincode for 1.4.x, it is important to place all your code in one package since Fabric 1.4.x
+uses go 1.12.12 whose support to mod module is not complete, code in the subdirectory can not be picked up. For fabric 2.0
+or greater, it is supported, you can have some local modules with your own chaincode.
+
 If you have no chaincode developed and run `minifab install` command, minifab will install the sample chaincode named `simple` which comes with minifab.
 
 ### To upgrade your chaincode

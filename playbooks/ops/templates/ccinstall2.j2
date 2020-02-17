@@ -21,7 +21,7 @@ if [ ! -f "{{ CC_NAME }}_{{ CC_LANGUAGE}}_{{ CC_VERSION }}.tar.gz" ]; then
   go mod vendor
   cd -
   peer lifecycle chaincode package {{ CC_NAME }}_{{ CC_LANGUAGE }}_{{ CC_VERSION }}.tar.gz \
-    -p github.com/chaincode/{{ CC_NAME}}/{{ CC_LANGUAGE }}/ \
+    -p /go/src/github.com/chaincode/{{ CC_NAME}}/{{ CC_LANGUAGE }}/ \
     --lang golang --label {{ CC_NAME }}_{{ CC_VERSION }}
 {% else %}
   peer lifecycle chaincode package {{ CC_NAME }}_{{ CC_LANGUAGE }}_{{ CC_VERSION }}.tar.gz \

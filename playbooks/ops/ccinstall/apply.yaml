@@ -6,7 +6,6 @@
 - name: Select an orderer for chaincode install
   set_fact:
     orderer: "{{ allorderers | random }}"
-    langsuffix: "{{ {'go': 'lang', 'node':'', 'java':''} }}"
 
 - name: "Install chaincode onto all peers"
   include_tasks: "installcc.yaml"
