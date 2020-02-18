@@ -9,7 +9,7 @@ export CORE_PEER_TLS_ENABLED=true
 export CORE_PEER_MSPCONFIGPATH=/vars/keyfiles/peerOrganizations/{{ installpeer.org }}/users/Admin@{{ installpeer.org }}/msp
 export CORE_PEER_ID=cli
 export CORE_PEER_ADDRESS={{ installpeer.fullname }}:7051
-export ORDERER_TLS_CA=/vars/keyfiles/ordererOrganizations/{{ orderer.org}}/tlsca/tlsca.{{ orderer.org }}-cert.pem
+export ORDERER_TLS_CA=/vars/keyfiles/ordererOrganizations/{{ orderer.org}}/orderers/{{ orderer.fullname }}/tls/ca.crt
 export ORDERER_ADDRESS={{ orderer.fullname }}:7050
 
 cd /go/src/github.com/chaincode/{{ CC_NAME }}

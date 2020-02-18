@@ -9,7 +9,7 @@ export CORE_PEER_TLS_ENABLED=true
 export CORE_PEER_MSPCONFIGPATH=/vars/keyfiles/peerOrganizations/{{ peer.org }}/users/Admin@{{ peer.org }}/msp
 export CORE_PEER_ID=cli
 export CORE_PEER_ADDRESS={{ peer.fullname }}:7051
-export ORDERER_TLS_CA=/vars/keyfiles/ordererOrganizations/{{ orderer.org}}/tlsca/tlsca.{{ orderer.org }}-cert.pem
+export ORDERER_TLS_CA=/vars/keyfiles/ordererOrganizations/{{ orderer.org}}/orderers/{{ orderer.fullname }}/tls/ca.crt
 export ORDERER_ADDRESS={{ orderer.fullname }}:7050
 
 PKID=$(peer lifecycle chaincode queryinstalled -O json | jq -r '.installed_chaincodes | .[] | select(.package_id|startswith("{{ CC_NAME}}_{{ CC_VERSION }}:")) | .package_id')
