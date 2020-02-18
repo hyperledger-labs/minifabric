@@ -30,7 +30,7 @@
 - name: Start couchdb nodes if db type is set to couchdb
   command: >-
     docker run -d --network minifab --name {{ item.fullname }}.couchdb
-     hyperledger/fabric-couchdb:latest
+    hyperledger/fabric-couchdb:latest
   with_items: "{{ allpeers }}"
   when: DB_TYPE == "couchdb"
 
