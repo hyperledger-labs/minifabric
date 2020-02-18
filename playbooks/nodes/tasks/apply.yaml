@@ -30,13 +30,13 @@
 - name: Start couchdb nodes if db type is set to couchdb
   command: >-
     docker run -d --network minifab --name {{ item.fullname }}.couchdb
-    hyperledger/fabric-couchdb:latest
+    --hostname {{ item.fullname }}.couchdb hyperledger/fabric-couchdb:latest
   with_items: "{{ allpeers }}"
   when: DB_TYPE == "couchdb"
 
 - name: Start all peer nodes
   command: >-
-    docker run -d --network minifab --name {{ item.fullname }}
+    docker run -d --network minifab --name {{ item.fullname }} --hostname {{ item.fullname }}
     --env-file {{ pjroot }}/vars/run/{{ item.fullname }}.env
     {{ (EXPOSE_ENDPOINTS=='true')|ternary('-p '+nodeports[item.fullname + '_' + porttype[item.type]]+':'+porttype[item.type], '') }}
     -v /var/run/:/host/var/run
@@ -52,7 +52,7 @@
 
 - name: Start all orderer nodes
   command: >-
-    docker run -d --network minifab --name {{ item.fullname }}
+    docker run -d --network minifab --name {{ item.fullname }} --hostname {{ item.fullname }}
     --env-file {{ pjroot }}/vars/run/{{ item.fullname }}.env
     {{ (EXPOSE_ENDPOINTS=='true')|ternary('-p '+nodeports[item.fullname + '_' + porttype[item.type]]+':'+porttype[item.type], '') }}
     -v {{ hostroot }}/vars/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
@@ -68,7 +68,7 @@
 
 - name: Start all ca nodes
   command: >-
-    docker run -d --network minifab --name {{ item.fullname }}
+    docker run -d --network minifab --name {{ item.fullname }} --hostname {{ item.fullname }}
     --env-file {{ pjroot }}/vars/run/{{ item.fullname }}.env
     {{ (EXPOSE_ENDPOINTS=='true')|ternary('-p '+nodeports[item.fullname + '_' + porttype[item.type]]+':'+porttype[item.type], '') }}
     -v {{ hostroot }}/vars/keyfiles/{{ (item.org in peerorgs) |ternary('peer', 'orderer') }}Organizations/{{item.org}}:/certs
@@ -81,7 +81,7 @@
 
 - name: Start cli container for all fabric operations
   command: >-
-    docker run -dit --network minifab --name cli
+    docker run -dit --network minifab --name cli --hostname cli
     -v /var/run/docker.sock:/var/run/docker.sock
     -v {{ hostroot }}/vars:/vars
     -v {{ hostroot }}/vars/chaincode:{{ gopath }}/src/github.com/chaincode
