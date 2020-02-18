@@ -102,6 +102,19 @@
 {% endif %}
       }{{ '' if loop.last else ',' }}
 {% endfor %}
+    ],
+  "certificateAuthorities": [
+{% for ca in allcas %}
+      { "mappedHost": "{{ ca.fullname }}",
+        "pattern": "(\\w*){{ ca.fullname }}(\\w*)",
+        "sslTargetOverrideUrlSubstitutionExp": "{{ ca.fullname }}",
+{% if EXPOSE_ENDPOINTS=='true' %}
+        "urlSubstitutionExp": "{{ ADDRS.split(',')[0] }}:{{ nodeports[ca.fullname+'_7054'] }}"
+{% else %}
+        "urlSubstitutionExp": "{{ ca.fullname }}:7054"
+{% endif %}
+      }{{ '' if loop.last else ',' }}
+{% endfor %}
     ]
   }
 }

@@ -4,6 +4,15 @@ OrdererOrgs:
 {% for org in ordererorgs %}
   - Name: {{ org }}
     Domain: {{ org }}
+{% set ocas = (allcas|selectattr('org','equalto',org)|list) %}
+{% if ocas|length > 0 %}
+    CA:
+      Hostname: {{ ocas[0].name }}
+      CommonName: {{ ocas[0].fullname }}
+      Country: US
+      Province: North Carolina
+      Locality: Raleigh
+{% endif %}
     Specs:
 {%    for item in allorderers %}
 {%      if item.org == org %}
@@ -25,10 +34,20 @@ PeerOrgs:
   - Name: {{ org }}
     Domain: {{ org }}
     EnableNodeOUs: true
+{% set ocas = (allcas|selectattr('org','equalto',org)|list) %}
+{% if ocas|length > 0 %}
+    CA:
+      Hostname: {{ ocas[0].name }}
+      CommonName: {{ ocas[0].fullname }}
+      Country: US
+      Province: North Carolina
+      Locality: Raleigh
+{% endif %}
     Specs:
 {%    for item in allpeers %}
 {%      if item.org == org %}
       - Hostname: {{ item.name }}
+        CommonName: {{ item.fullname }}
 {%         if EXPOSE_ENDPOINTS == 'true' %}
         SANS:
 {%            for anIP in ADDRS.split(',') %}
