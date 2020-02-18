@@ -61,7 +61,7 @@
         "grpc-max-send-message-length": 15
       },
       "tlsCACerts": {
-        "path": "/keyfiles/ordererOrganizations/{{ item.org }}/tlsca/tlsca.{{ item.org }}-cert.pem"
+        "path": "/keyfiles/ordererOrganizations/{{ item.org }}/orderers/{{ item.key }}/tls/ca.crt"
       }
     }{{ '' if loop.last else ',' }}
 {%   endfor %}
@@ -82,11 +82,27 @@
         "grpc-max-send-message-length": 15
       },
       "tlsCACerts": {
-        "path": "/keyfiles/peerOrganizations/{{ item.org }}/tlsca/tlsca.{{ item.org }}-cert.pem"
+        "path": "/keyfiles/peerOrganizations/{{ item.org }}/peers/{{ item.key }}/tls/ca.crt"
       }
     }{{ '' if loop.last else ',' }}
 {%   endfor %}
   },
 {% endif %}
-  "certificateAuthorities": { }
+  "certificateAuthorities": {
+{% for ca in allcas %}
+    "{{ ca.fullname }}": {
+      "url": "https://{{ ca.fullname }}:7054",
+      "tlsCACerts": {
+{% if ca.org in peerorgs %}
+        "path": "{{ '/keyfiles/peerOrganizations/'+ca.org+'/ca/'+ca.fullname+'-cert.pem' }}"
+{% else %}
+        "path": "{{ '/keyfiles/ordererOrganizations/'+ca.org+'/ca/'+ca.fullname+'-cert.pem' }}"
+{% endif %}
+      },
+      "httpOptions": { "verify": "false" },
+      "caName": "{{ ca.name }}",
+      "registrar": { "enrollId": "admin", "enrollSecret": "adminpw"}
+    }{{ '' if loop.last else ',' }}
+{% endfor %}
+  }
 }

@@ -78,7 +78,7 @@
     "grpcOptions":
       "ssl-target-name-override": "{{ peer.fullname }}"
     "tlsCACerts":
-      "path": "{{ '/keyfiles/peerOrganizations/'+peer.org+'/tlsca/tlsca.'+peer.org+'-cert.pem' }}"
+      "path": "{{ '/keyfiles/peerOrganizations/'+peer.org+'/peers/'+peer.fullname+'/tls/ca.crt' }}"
 {% endfor %}
 
 "certificateAuthorities":
@@ -86,7 +86,11 @@
   "{{ ca.fullname }}":
     "url": "https://{{ ca.fullname }}:7054"
     "tlsCACerts":
-      "path": "{{ '/keyfiles/peerOrganizations/'+ca.org+'/ca/ca.'+ca.org+'-cert.pem' }}"
+{% if ca.org in peerorgs %}
+      "path": "{{ '/keyfiles/peerOrganizations/'+ca.org+'/ca/'+ca.fullname+'-cert.pem' }}"
+{% else %}
+      "path": "{{ '/keyfiles/ordererOrganizations/'+ca.org+'/ca/'+ca.fullname+'-cert.pem' }}"
+{% endif %}
     "httpOptions":
       "verify": "false"
     "caName": "{{ ca.name }}"
