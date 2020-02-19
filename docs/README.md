@@ -192,7 +192,7 @@ minifab
 ```
 
 ### For the people who has trouble to download images from docker hub
-Minifabric uses hyperledger offical docker images from docker hub. It will automatically pull these images when it needs them. For people who lived outside of the US, pulling images may be extremely slow or nearly impossible. To avoid breakages due to the image pulling issues, you may pull the following images from other docker repository or use different means to pull these images. As long as these images exist on your machine, minifab wont pull them again. Here is a list of images that you will need.
+Minifabric uses hyperledger offical docker images from docker hub. It will automatically pull these images when it needs them. For people who lives outside of the US, pulling images may be extremely slow or nearly impossible. To avoid breakages due to the image pulling issues, you may pull the following images from other docker repository or use different means to pull these images for example, writing your own script to pull images over night. As long as these images exist on your machine, minifab wont pull them again. To help you to do this, here is a list of images in case you like to pull them use other means.
 
 #### Fabric 2.0
 ```
