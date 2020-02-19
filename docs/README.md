@@ -66,6 +66,20 @@ minifab cleanup
 ```
 The first command simply removes all the docker containers which make up the fabric network. The seoncd command remove all the containers and cleanup the working directory
 
+### The normal process of dealing with Hyperledger Fabric
+Working with Hyperledger Fabric can be intimidating at first, this section is to show you the normal process of working with Fabric.
+
+    1. Stand up a fabric network
+    2. Create a channel
+    3. Join peers to a channel
+    4. Install chaincode onto peers
+    5. Approve chaincode (only for 2.0)
+    6. Commit or instantiate chaincode
+    7. Invoke chaincode (using either minifab or your applications)
+    8. Query blocks
+    
+Then you may perform some more advanced operations such as channel query, channel update signoff, channel update. If you have multiple minifabric created Fabric network, you can even use the minifab dashboard to join all them together to make a bigger Fabric network.
+
 ### Setup a network using a different spec
 Simply download this [spec](https://github.com/litong01/minifabric/blob/master/spec.yaml) and make changes to what you like, then run the following command in a directory where your new spec.yaml file is:
 
