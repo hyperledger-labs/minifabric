@@ -7,7 +7,7 @@ grade servers. Minifabric is small but it allows you to experience the full
 capabilities of Hyperledger Fabric. You will be able to try all Fabric operations
 such as channel create, channel join, chaincode install, approve, instantiation.
 It also supports channel update, private data collection, block query etc.
-All you need to start with is a [docker](https://www.docker.com/) (18.03 or newer) environment.
+All you need to start with is a [docker](https://www.docker.com/) (18.03 or newer) environment. Minifabric works on both OS X and Linux. Windows support is in the works.
 If you like to read more before jumping in, please read [Minifabric User Guide](https://github.com/litong01/minifabric/blob/master/docs/README.md). For those impatient, please follow the steps
 below to start things off.
 
