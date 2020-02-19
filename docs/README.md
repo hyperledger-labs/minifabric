@@ -93,7 +93,7 @@ $(pwd)/vars/chaincode/<chaincodename>/java
 
 When you develop your own chaincode for 1.4.x, it is important to place all your code in one package since Fabric 1.4.x
 uses go 1.12.12 whose support to mod module is not complete, code in the subdirectory can not be picked up. For fabric 2.0
-or greater, it is supported, you can have some local modules with your own chaincode.
+or greater, it is supported, you can have some local modules with your own chaincode. If you are in a location which is hard to access golang related public repository, you can package your chaincode with the vendor directory which already includes all necessary dependencies, this way, during the install, minifabric wont try to get the dependencies again.
 
 If you have no chaincode developed and run `minifab install` command, minifab will install the sample chaincode named `simple` which comes with minifab.
 
@@ -161,6 +161,16 @@ The above command will sign off the channel configuration update using all the o
 channel configuration update transaction. When it is all finished successfully, you can do another channelquery to see the
 changes take affects.
 
+### To add a new organization to your Fabric network
+To add a new organization to your network takes few steps, please follow the below steps:
+```
+1. minifab install,approve,commit -n cmcc
+2. minifab dashup -o org0.example.com
+```
+
+The step #2 will provide you a port, you can access the Consortium Dashboard at the public IP address of the machine and the port, for example, if your server's IP is 192.168.56.23, and the port showing in the step #2 is 7060, then you can access it at http://192.168.56.32:7060. Once you see the dashboard, you can create proposal. When you try to create a proposal, you will need to upload a join request json file. The good news is that if you already setup an organization somewhere else using minifabric, you will find join request file in vars directory using a name like this JoinRequest_org0examplecom.json, notice the file name starts JoinRequest, then the organizations MSPID. It is a json file. If your new organization is not created by minifabric, you will have to manually create this file, this file is a typical Fabric channel configuration file which contains pieces information about your network and certificates. You should use the file created in the vars directory as an example to manually create a similar file for your fabric network. Once you have the proposal created on the dashboard, you will need to possibly bring up the other organization's dashboard to sign the proposal. Once the proposal gets signed by enough organization admins, then one of the admins will be able to click on the Apply button from the dashboard to submit the proposal. Once it is all done without errors, then the new org is now part of the your Fabric network. The new org admin will be able to join their peers to the channel.
+
+
 ### Execution context
 Minifab uses many settings throughout all the operations. These settings can be changed any time you run a minifab command and these settings will be saved in the vars/envsetting file. Each time a command is executed, that file will be loaded and settings specified in the command line will be written into that file. All the settings saved and specified in the command  make the current execution context. They include chaincode name, chaincode invocation parameter, chaincode version, chaincode language, channel name, fabric release, endpoint exposure and block query number. 
 
@@ -180,3 +190,34 @@ docker pull hfrd/minifab:latest
 ```
 minifab
 ```
+
+### For the people who has trouble to download images from docker hub
+Minifabric uses hyperledger offical docker images from docker hub. It will automatically pull these images when it needs them. For people who lived outside of the US, pulling images may be extremely slow or nearly impossible. To avoid breakages due to the image pulling issues, you may pull the following images from other docker repository or use different means to pull these images. As long as these images exist on your machine, minifab wont pull them again. Here is a list of images that you will need.
+
+#### Fabric 2.0
+```
+hfrd/minifab:latest
+hfrd/cmdash:latest
+hyperledger/fabric-tools:2.0
+hyperledger/fabric-peer:2.0
+hyperledger/fabric-orderer:2.0
+hyperledger/fabric-ccenv:2.0
+hyperledger/fabric-baseos:2.0
+hyperledger/fabric-ca:1.4
+hyperledger/fabric-couchdb:latest
+```
+
+#### Fabric 1.4 which is an alias to 1.4.4
+```
+hfrd/minifab:latest
+hfrd/cmdash:latest
+hyperledger/fabric-ca:1.4
+hyperledger/fabric-tools:1.4
+hyperledger/fabric-ccenv:1.4
+hyperledger/fabric-orderer:1.4
+hyperledger/fabric-peer:1.4
+hyperledger/fabric-couchdb:latest
+hyperledger/fabric-baseos:amd64-0.4.18
+```
+
+For other Fabric releases which is equal to or greater than 1.4.1, replace the tag accordingly.
