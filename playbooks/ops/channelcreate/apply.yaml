@@ -7,12 +7,6 @@
     peer: "{{ allpeers | random }}"
     orderer: "{{ allorderers | random }}"
 
-- name: Create all peer org mspid list
-  set_fact:
-    peerorgmsplist: >-
-      {{ peerorgmsplist|default('') + '"' + (item.split('.')|join('')) + '" ' }}
-  with_items: "{{ peerorgs }}"
-
 - name: Create channel creation script
   template:
     src: "{{ pjroot }}/playbooks/ops/templates/channelcreate.j2"

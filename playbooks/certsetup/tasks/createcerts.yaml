@@ -27,6 +27,12 @@
   set_fact:
     truerelease: "{{ (fabric.release == '1.4') | ternary('1.4.4', fabric.release) }}"
 
+- name: Create all peer org mspid list
+  set_fact:
+    peerorgmsplist: >-
+      {{ peerorgmsplist|default('') + '"' + (item.split('.')|join('')) + '" ' }}
+  with_items: "{{ peerorgs }}"
+
 - name: Create config tx file
   template:
     src: "{{ pjroot }}/playbooks/certsetup/templates/configtx.j2"
