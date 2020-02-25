@@ -25,7 +25,7 @@
 
 - name: Set effecctive release
   set_fact:
-    truerelease: "{{ (fabric.release == '1.4') | ternary('1.4.4', fabric.release) }}"
+    truerelease: "{{ (fabric.release == '1.4') | ternary('1.4.5', fabric.release) }}"
 
 - name: Create all peer org mspid list
   set_fact:

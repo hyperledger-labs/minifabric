@@ -221,7 +221,7 @@ hyperledger/fabric-ca:1.4
 hyperledger/fabric-couchdb:latest
 ```
 
-#### Fabric 1.4 which is an alias to 1.4.4
+#### Fabric 1.4 which is an alias to 1.4.5
 ```
 hfrd/minifab:latest
 hfrd/cmdash:latest
