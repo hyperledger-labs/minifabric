@@ -1,7 +1,7 @@
 ---
 - name: Set fabric.release based on the passed in parameter
   set_fact:
-    fabric: "{{ fabric | combine({'release': (IMAGETAG|default('1.4.4')) + ''}) }}"
+    fabric: "{{ fabric | combine({'release': (IMAGETAG|default('2.0')) + ''}) }}"
     allcas: "{{ [] }}"
     allpeers: "{{ [] }}"
     allorderers: "{{ [] }}"
