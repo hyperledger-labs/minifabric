@@ -17,7 +17,7 @@
 - set_fact:
     policy: "{{ peerorgs | map('replace','.','') | list }}"
 - set_fact:
-    policy: "{{ policy | map('regex_replace', '(.*)', 'SINGLEQUOTE\\1.memberSINGLEQUOTE') | list }}"
+    policy: "{{ policy | map('regex_replace', '^(.*)$', 'SINGLEQUOTE\\1.memberSINGLEQUOTE') | list }}"
 - set_fact:
     policy: >-
       {{ policy|map("replace","SINGLEQUOTE","'")|list|join(', ') }}
