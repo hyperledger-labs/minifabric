@@ -9,17 +9,18 @@ RUN cd /tmp && git init minifabric && cd minifabric                && \
     git pull --depth=1 origin master && mv plugins /tmp            && \
     rm -f .dockerignore .gitignore Dockerfile DockerfileHub 
 
-FROM ubuntu:18.04
-LABEL maintainer="litong01@us.ibm.com"
-RUN apt update -y                                     && \
-    apt install -y software-properties-common curl    && \
-    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - && \
-    add-apt-repository --yes "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" && \
-    apt-add-repository --yes --update ppa:ansible/ansible && \
-    apt install -y apt-transport-https ca-certificates gnupg-agent && \
-    apt install -y ansible docker-ce docker-ce-cli containerd.io
+FROM alpine:latest
 
-COPY --from=build /tmp/minifabric ./home
-COPY --from=build /tmp/plugins /usr/lib/python2.7/dist-packages/ansible/plugins
+LABEL maintainer="litong01@us.ibm.com"
+
+ENV PYTHONUNBUFFERED=1
+
+RUN apk add --no-cache python3 bash ansible docker && \
+    if [ ! -e /usr/bin/python ]; then ln -sf python3 /usr/bin/python ; fi && \
+    wget -q https://raw.githubusercontent.com/dlitz/pycrypto/master/lib/Crypto/Random/Fortuna/FortunaGenerator.py \
+    -O /usr/lib/python3.8/site-packages/Crypto/Random/Fortuna/FortunaGenerator.py
+
+COPY --from=build /tmp/minifabric /home
+COPY --from=build /tmp/plugins /usr/lib/python3.8/site-packages/ansible/plugins
 ENV PATH $PATH:/home/bin
 WORKDIR /home
