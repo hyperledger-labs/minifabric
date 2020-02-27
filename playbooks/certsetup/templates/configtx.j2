@@ -128,10 +128,23 @@ Orderer: &OrdererDefaults
 
 {% if allorderers | length > 0 %}
   Addresses:
+{%  if EXPOSE_ENDPOINTS == 'true' %}
+{%  set ipaddr = ADDRS.split(',')[0] %}
+{%  for orderer in allorderers %}
+  - {{ ipaddr }}:{{ nodeports[orderer.fullname+'_7050'] }}
+{%  endfor %}
+  EtcdRaft:
+    Consenters:
+{%  for orderer in allorderers %}
+    - Host: {{ ipaddr }}
+      Port: {{ nodeports[orderer.fullname+'_7050'] }}
+      ClientTLSCert: keyfiles/ordererOrganizations/{{ orderer.org }}/orderers/{{ orderer.fullname }}/tls/server.crt
+      ServerTLSCert: keyfiles/ordererOrganizations/{{ orderer.org }}/orderers/{{ orderer.fullname }}/tls/server.crt
+{%  endfor %}
+{% else %}
 {%  for orderer in allorderers %}
   - {{ orderer.fullname }}:7050
 {%  endfor %}
-
   EtcdRaft:
     Consenters:
 {%  for orderer in allorderers %}
@@ -140,6 +153,7 @@ Orderer: &OrdererDefaults
       ClientTLSCert: keyfiles/ordererOrganizations/{{ orderer.org }}/orderers/{{ orderer.fullname }}/tls/server.crt
       ServerTLSCert: keyfiles/ordererOrganizations/{{ orderer.org }}/orderers/{{ orderer.fullname }}/tls/server.crt
 {%  endfor %}
+{% endif %}
 {% endif %}
   Organizations:
   Policies:
