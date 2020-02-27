@@ -13,14 +13,16 @@ Hyperledger Fabric，迷你Fabric是让您快速开始的良好工具。迷
 ### 下载工具
 
 #### 如果你所在地难于访问境外的网站
-下载下面两个文件
+下载下面三个文件
 1. https://share.weiyun.com/5l2rQhO
 2. https://share.weiyun.com/5sfKniB
+3. https://share.weiyun.com/5bDTjJE
 
-把第一个文件命名为minifaball.tgz, 把地二个文件命名为minifab, 然后执行下面命令
+把第一个文件命名为minifaball.tgz, 把第二个文件命名为minifab,把第三个文件命名为chaincode.tgz 然后执行下面三个命令
 ```
 cat minifaball.tgz | docker load
 chmod +x minifab
+mkdir vars && tar -xvf ~/chaincode.tgz -C vars
 ```
 
 #### 如果你所在地容易访问境外网站
