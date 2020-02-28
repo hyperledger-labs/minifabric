@@ -1,8 +1,8 @@
 ---
 - name: Select a peer and orderer for signing off configuration changes.
   set_fact:
-    peer: "{{ allpeers | random }}"
-    orderer: "{{ allorderers | random }}"
+    actingpeer: "{{ allpeers | random }}"
+    actingorderer: "{{ allorderers | random }}"
 
 - name: Create channel sign off script
   template:

@@ -2,7 +2,7 @@
 {% if allorgs | length > 0 %}
 Organizations:
 {%   for org in allorgs %}
-{%     set orgid = org.split('.')|join('') %}
+{%     set orgid = orgattrs[org]['mspid'] %}
   - &{{ orgid }}
       Name: {{ orgid }}
       ID: {{ orgid }}
@@ -25,8 +25,8 @@ Organizations:
       AnchorPeers:
 {%       for peer in allpeers %}
 {%         if peer.org == org %}
-      - Host: {{ peer.fullname }}
-        Port: 7051
+      - Host: {{ peer.url }}
+        Port: {{ peer.port }}
 {%         endif %}
 {%       endfor %}
 {%     elif org in ordererorgs %}
@@ -128,32 +128,17 @@ Orderer: &OrdererDefaults
 
 {% if allorderers | length > 0 %}
   Addresses:
-{%  if EXPOSE_ENDPOINTS == 'true' %}
-{%  set ipaddr = ADDRS.split(',')[0] %}
 {%  for orderer in allorderers %}
-  - {{ ipaddr }}:{{ nodeports[orderer.fullname+'_7050'] }}
+  - {{ orderer.url }}:{{ orderer.port }}
 {%  endfor %}
   EtcdRaft:
     Consenters:
 {%  for orderer in allorderers %}
-    - Host: {{ ipaddr }}
-      Port: {{ nodeports[orderer.fullname+'_7050'] }}
+    - Host: {{ orderer.url }}
+      Port: {{ orderer.port }}
       ClientTLSCert: keyfiles/ordererOrganizations/{{ orderer.org }}/orderers/{{ orderer.fullname }}/tls/server.crt
       ServerTLSCert: keyfiles/ordererOrganizations/{{ orderer.org }}/orderers/{{ orderer.fullname }}/tls/server.crt
 {%  endfor %}
-{% else %}
-{%  for orderer in allorderers %}
-  - {{ orderer.fullname }}:7050
-{%  endfor %}
-  EtcdRaft:
-    Consenters:
-{%  for orderer in allorderers %}
-    - Host: {{ orderer.fullname }}
-      Port: 7050
-      ClientTLSCert: keyfiles/ordererOrganizations/{{ orderer.org }}/orderers/{{ orderer.fullname }}/tls/server.crt
-      ServerTLSCert: keyfiles/ordererOrganizations/{{ orderer.org }}/orderers/{{ orderer.fullname }}/tls/server.crt
-{%  endfor %}
-{% endif %}
 {% endif %}
   Organizations:
   Policies:
@@ -193,7 +178,7 @@ Profiles:
       <<: *ApplicationDefaults
       Organizations:
 {%    for org in peerorgs %}
-      - *{{ org.split('.')|join('') }}
+      - *{{ orgattrs[org].mspid }}
 {%    endfor %}
       Capabilities:
         <<: *ApplicationCapabilities
@@ -206,7 +191,7 @@ Profiles:
       <<: *OrdererDefaults
       Organizations:
 {%    for org in ordererorgs %}
-      - *{{ org.split('.')|join('') }}
+      - *{{ orgattrs[org].mspid }}
 {%    endfor %}
       Capabilities:
         <<: *OrdererCapabilities
@@ -214,11 +199,11 @@ Profiles:
       <<: *ApplicationDefaults
       Organizations:
 {%   for org in ordererorgs %}
-      - <<: *{{ org.split('.')|join('') }}
+      - <<: *{{ orgattrs[org].mspid }}
 {%   endfor %}
     Consortiums:
       SampleConsortium:
         Organizations:
 {%   for org in peerorgs %}
-        - *{{ org.split('.')|join('') }}
+        - *{{ orgattrs[org].mspid }}
 {%   endfor %}

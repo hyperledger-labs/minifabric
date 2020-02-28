@@ -1,17 +1,6 @@
 #!/bin/bash
 # Script to install chaincode onto a peer node
-export CORE_PEER_TLS_ROOTCERT_FILE=/vars/keyfiles/peerOrganizations/{{ installpeer.org }}/peers/{{ installpeer.fullname }}/tls/ca.crt
-export CORE_PEER_TLS_KEY_FILE=/vars/keyfiles/peerOrganizations/{{ installpeer.org }}/peers/{{ installpeer.fullname }}/tls/server.key
-export CORE_PEER_LOCALMSPID={{ installpeer.org.split('.')|join('') }}
-export CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
-export CORE_PEER_TLS_CERT_FILE=/vars/keyfiles/peerOrganizations/{{ installpeer.org }}/peers/{{ installpeer.fullname }}/tls/server.crt
-export CORE_PEER_TLS_ENABLED=true
-export CORE_PEER_MSPCONFIGPATH=/vars/keyfiles/peerOrganizations/{{ installpeer.org }}/users/Admin@{{ installpeer.org }}/msp
-export CORE_PEER_ID=cli
-export CORE_PEER_ADDRESS={{ installpeer.fullname }}:7051
-export ORDERER_TLS_CA=/vars/keyfiles/ordererOrganizations/{{ orderer.org}}/orderers/{{ orderer.fullname }}/tls/ca.crt
-export ORDERER_ADDRESS={{ orderer.fullname }}:7050
-
+{% include "envsetting.j2" %}
 cd /go/src/github.com/chaincode/{{ CC_NAME }}
 
 if [ ! -f "{{ CC_NAME }}_{{ CC_LANGUAGE}}_{{ CC_VERSION }}.tar.gz" ]; then

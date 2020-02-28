@@ -1,20 +1,9 @@
 "channelID": "{{ CHANNEL_NAME }}"
 "ordererEndpoints":
-{% if EXPOSE_ENDPOINTS=='true' %}
-{% set ipaddr = ADDRS.split(',')[0] %}
-{% for orderer in allorderers %}
-  - "fullname": "{{ orderer.fullname }}"
-    "name" : "{{ orderer.name }}"
-    "url": "{{ ipaddr }}:{{ nodeports[orderer.fullname+'_7050'] }}"
-    "org": "{{ orderer.org }}"
-    "tlsCACerts": "{{lookup('file', pjroot + '/vars/keyfiles/ordererOrganizations/'+orderer.org+'/orderers/'+orderer.fullname+'/tls/server.crt')|b64encode}}"
-{% endfor %}
-{% else %}
 {% for orderer in allorderers %}
   - "fullname": "{{ orderer.fullname }}"
     "name": "{{ orderer.name }}"
-    "url": "{{ orderer.fullname}}:7050"
+    "url": "{{ orderer.url}}:{{ orderer.port }}"
     "org": "{{ orderer.org }}"
     "tlsCACerts": "{{lookup('file', pjroot + '/vars/keyfiles/ordererOrganizations/'+orderer.org+'/orderers/'+orderer.fullname+'/tls/server.crt')|b64encode}}"
 {% endfor %}
-{% endif %}

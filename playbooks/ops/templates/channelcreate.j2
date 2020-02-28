@@ -6,18 +6,6 @@ export FABRIC_CFG_PATH=/vars
 configtxgen -profile OrgChannel \
   -outputCreateChannelTx {{ CHANNEL_NAME }}.tx -channelID {{ CHANNEL_NAME}}
 
-# Script to join a peer to a channel
-export CORE_PEER_TLS_ROOTCERT_FILE=/vars/keyfiles/peerOrganizations/{{ peer.org }}/peers/{{ peer.fullname }}/tls/ca.crt
-export CORE_PEER_TLS_KEY_FILE=/vars/keyfiles/peerOrganizations/{{ peer.org }}/peers/{{ peer.fullname }}/tls/server.key
-export CORE_PEER_LOCALMSPID={{ peer.org.split('.')|join('') }}
-export CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
-export CORE_PEER_TLS_CERT_FILE=/vars/keyfiles/peerOrganizations/{{ peer.org }}/peers/{{ peer.fullname }}/tls/server.crt
-export CORE_PEER_TLS_ENABLED=true
-export CORE_PEER_MSPCONFIGPATH=/vars/keyfiles/peerOrganizations/{{ peer.org }}/users/Admin@{{ peer.org }}/msp
-export CORE_PEER_ID=cli
-export CORE_PEER_ADDRESS={{ peer.fullname }}:7051
-export ORDERER_TLS_CA=/vars/keyfiles/ordererOrganizations/{{ orderer.org}}/orderers/{{ orderer.fullname }}/tls/ca.crt
-export ORDERER_ADDRESS={{ orderer.fullname }}:7050
-
+{% include "envsetting.j2" %}
 peer channel create -c {{ CHANNEL_NAME }} -f {{ CHANNEL_NAME }}.tx -o $ORDERER_ADDRESS \
   --tls --cafile $ORDERER_TLS_CA

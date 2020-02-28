@@ -1,15 +1,10 @@
 #!/bin/bash
 # Script to join a peer to a channel
-export CORE_PEER_TLS_ROOTCERT_FILE=/vars/keyfiles/peerOrganizations/{{ joinpeer.org }}/peers/{{ joinpeer.fullname }}/tls/ca.crt
-export CORE_PEER_TLS_KEY_FILE=/vars/keyfiles/peerOrganizations/{{ joinpeer.org }}/peers/{{ joinpeer.fullname }}/tls/server.key
-export CORE_PEER_LOCALMSPID={{ joinpeer.org.split('.')|join('') }}
-export CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
-export CORE_PEER_TLS_CERT_FILE=/vars/keyfiles/peerOrganizations/{{ joinpeer.org }}/peers/{{ joinpeer.fullname }}/tls/server.crt
-export CORE_PEER_TLS_ENABLED=true
-export CORE_PEER_MSPCONFIGPATH=/vars/keyfiles/peerOrganizations/{{ joinpeer.org }}/users/Admin@{{ joinpeer.org }}/msp
-export CORE_PEER_ID=cli
-export CORE_PEER_ADDRESS={{ joinpeer.fullname }}:7051
-export ORDERER_TLS_CA=/vars/keyfiles/ordererOrganizations/{{ orderer.org}}/orderers/{{ orderer.fullname }}/tls/ca.crt
-export ORDERER_ADDRESS={{ orderer.fullname }}:7050
+{% include "envsetting.j2" %}
+if [ ! -f "{{ CHANNEL_NAME }}.genesis.block" ]; then
+  peer channel fetch oldest -o $ORDERER_ADDRESS --cafile $ORDERER_TLS_CA \
+  -c {{ CHANNEL_NAME }} --tls /vars/{{ CHANNEL_NAME}}.genesis.block
+fi
 
-peer channel join -b /vars/{{ CHANNEL_NAME }}.block -o $ORDERER_ADDRESS --tls --cafile $ORDERER_TLS_CA
+peer channel join -b /vars/{{ CHANNEL_NAME }}.genesis.block \
+  -o $ORDERER_ADDRESS --tls --cafile $ORDERER_TLS_CA

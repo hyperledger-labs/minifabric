@@ -1,16 +1,6 @@
 #!/bin/bash
 # Script to approve chaincode
-export CORE_PEER_TLS_ROOTCERT_FILE=/vars/keyfiles/peerOrganizations/{{ peer.org }}/peers/{{ peer.fullname }}/tls/ca.crt
-export CORE_PEER_TLS_KEY_FILE=/vars/keyfiles/peerOrganizations/{{ peer.org }}/peers/{{ peer.fullname }}/tls/server.key
-export CORE_PEER_LOCALMSPID={{ peer.org.split('.')|join('') }}
-export CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
-export CORE_PEER_TLS_CERT_FILE=/vars/keyfiles/peerOrganizations/{{ peer.org }}/peers/{{ peer.fullname }}/tls/server.crt
-export CORE_PEER_TLS_ENABLED=true
-export CORE_PEER_MSPCONFIGPATH=/vars/keyfiles/peerOrganizations/{{ peer.org }}/users/Admin@{{ peer.org }}/msp
-export CORE_PEER_ID=cli
-export CORE_PEER_ADDRESS={{ peer.fullname }}:7051
-export ORDERER_TLS_CA=/vars/keyfiles/ordererOrganizations/{{ orderer.org}}/orderers/{{ orderer.fullname }}/tls/ca.crt
-export ORDERER_ADDRESS={{ orderer.fullname }}:7050
+{% include "envsetting.j2" %}
 
 PKID=$(peer lifecycle chaincode queryinstalled -O json | jq -r '.installed_chaincodes | .[] | select(.package_id|startswith("{{ CC_NAME}}_{{ CC_VERSION }}:")) | .package_id')
 
@@ -25,10 +15,10 @@ fi
 {% for org in peerorgs %}
 {% set approvepeer = allpeers|selectattr('org', 'equalto', org)|list|random %}
 
-export CORE_PEER_LOCALMSPID={{ approvepeer.org.split('.')|join('') }}
+export CORE_PEER_LOCALMSPID={{ approvepeer.mspid }}
 export CORE_PEER_TLS_ROOTCERT_FILE=/vars/keyfiles/peerOrganizations/{{ approvepeer.org }}/peers/{{ approvepeer.fullname }}/tls/ca.crt
 export CORE_PEER_MSPCONFIGPATH=/vars/keyfiles/peerOrganizations/{{ approvepeer.org }}/users/Admin@{{ approvepeer.org }}/msp
-export CORE_PEER_ADDRESS={{ approvepeer.fullname }}:7051
+export CORE_PEER_ADDRESS={{ approvepeer.url }}:{{ approvepeer.port }}
 
 approved=$(peer lifecycle chaincode checkcommitreadiness --channelID {{ CHANNEL_NAME }} \
   --name {{ CC_NAME }} --version {{ CC_VERSION }} --init-required --sequence $SEQUENCE \

@@ -4,8 +4,8 @@
 
 - name: Select an orderer for channel creation.
   set_fact:
-    peer: "{{ allpeers | random }}"
-    orderer: "{{ allorderers | random }}"
+    actingpeer: "{{ allpeers | random }}"
+    actingorderer: "{{ allorderers | random }}"
 
 - name: Create channel creation script
   template:

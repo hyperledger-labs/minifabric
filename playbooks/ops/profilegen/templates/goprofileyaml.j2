@@ -64,33 +64,29 @@
 "orderers":
 {% for orderer in allorderers %}
   "{{ orderer.fullname }}":
-    "url": "{{ orderer.fullname}}:7050"
+    "url": "{{ orderer.url }}:{{ orderer.port }}"
     "grpcOptions":
       "ssl-target-name-override": "{{ orderer.fullname }}"
     "tlsCACerts":
-      "path": "{{ '/keyfiles/ordererOrganizations/'+orderer.org+'/orderers/'+orderer.fullname+'/tls/ca.crt' }}"
+      "path": "/keyfiles/ordererOrganizations/{{ orderer.org }}/orderers/{{ orderer.fullname }}/tls/ca.crt"
 {% endfor %}
 
 "peers":
 {% for peer in allpeers %}
   "{{ peer.fullname }}":
-    "url": "{{ peer.fullname }}:7051"
+    "url": "{{ peer.url }}:{{ peer.port }}"
     "grpcOptions":
       "ssl-target-name-override": "{{ peer.fullname }}"
     "tlsCACerts":
-      "path": "{{ '/keyfiles/peerOrganizations/'+peer.org+'/peers/'+peer.fullname+'/tls/ca.crt' }}"
+      "path": "/keyfiles/peerOrganizations/{{ peer.org }}/peers/{{ peer.fullname }}/tls/ca.crt"
 {% endfor %}
 
 "certificateAuthorities":
 {% for ca in allcas %}
   "{{ ca.fullname }}":
-    "url": "https://{{ ca.fullname }}:7054"
+    "url": "https://{{ ca.url }}:{{ ca.port }}"
     "tlsCACerts":
-{% if ca.org in peerorgs %}
-      "path": "{{ '/keyfiles/peerOrganizations/'+ca.org+'/ca/'+ca.fullname+'-cert.pem' }}"
-{% else %}
-      "path": "{{ '/keyfiles/ordererOrganizations/'+ca.org+'/ca/'+ca.fullname+'-cert.pem' }}"
-{% endif %}
+      "path": "/keyfiles/{{ orgattrs[ca.org].certpath }}/{{ ca.org }}/ca/{{ ca.fullname }}-cert.pem"
     "httpOptions":
       "verify": "false"
     "caName": "{{ ca.name }}"
@@ -105,11 +101,7 @@
   - "mappedHost": "{{ orderer.fullname }}"
     "pattern": "(\\w*){{ orderer.fullname }}(\\w*)"
     "sslTargetOverrideUrlSubstitutionExp": "{{ orderer.fullname }}"
-{% if EXPOSE_ENDPOINTS=='true' %}
-    "urlSubstitutionExp": "{{ ADDRS.split(',')[0] }}:{{ nodeports[orderer.fullname+'_7050'] }}"
-{% else %}
-    "urlSubstitutionExp": "{{ orderer.fullname }}:7050"
-{% endif %}
+    "urlSubstitutionExp": "{{ orderer.url }}:{{ orderer.port }}"
 {% endfor %}
   
   "peer":
@@ -117,11 +109,7 @@
   - "mappedHost": "{{ peer.fullname }}"
     "pattern": "(\\w*){{ peer.fullname }}(\\w*)"
     "sslTargetOverrideUrlSubstitutionExp": "{{ peer.fullname }}"
-{% if EXPOSE_ENDPOINTS=='true' %}
-    "urlSubstitutionExp": "{{ ADDRS.split(',')[0] }}:{{ nodeports[peer.fullname+'_7051'] }}"
-{% else %}
-    "urlSubstitutionExp": "{{ peer.fullname }}:7051"
-{% endif %}
+    "urlSubstitutionExp": "{{ peer.url }}:{{ peer.port }}"
 {% endfor %}
   
   "certificateAuthorities":
@@ -129,9 +117,5 @@
   - "mappedHost": "{{ ca.fullname }}"
     "pattern": "(\\w*){{ ca.fullname }}(\\w*)"
     "sslTargetOverrideUrlSubstitutionExp": "{{ ca.fullname }}"
-{% if EXPOSE_ENDPOINTS=='true' %}
-    "urlSubstitutionExp": "{{ ADDRS.split(',')[0] }}:{{ nodeports[ca.fullname+'_7054'] }}"
-{% else %}
-    "urlSubstitutionExp": "{{ ca.fullname }}:7054"
-{% endif %}
+    "urlSubstitutionExp": "{{ ca.url }}:{{ ca.port }}"
 {% endfor %}

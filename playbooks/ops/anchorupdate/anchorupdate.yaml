@@ -1,8 +1,8 @@
 ---
 - name: Select an orderer and peer for channel update.
   set_fact:
-    orderer: "{{ allorderers | random }}"
-    peer: "{{ allpeers | selectattr('org','equalto',updatingorg) | list | random }}"
+    actingorderer: "{{ allorderers | random }}"
+    actingpeer: "{{ allpeers | selectattr('org','equalto',updatingorg) | list | random }}"
 
 - name: Create anchor update script
   template:

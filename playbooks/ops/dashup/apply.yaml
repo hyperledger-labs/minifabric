@@ -14,10 +14,11 @@
 - name: Get the private key file name
   set_fact:
     keyfilename: "{{ privatekey.files[0].path.split('/')[-1] }}"
+    dashitem: "{{ alldash|selectattr('org', 'equalto', DASH_ORG) | list }}"
 
 - name: Start up consortium dashboard container
   command: >-
-    docker run -d --network minifab --name dashboard.{{ DASH_ORG }}
+    docker run -d --network minifab --name {{ dashitem[0].fullname }}
     -v {{hostroot}}/vars/keyfiles:/keyfiles
     -v {{hostroot}}/vars/{{CHANNEL_NAME}}_connection.json:/cmdash/connection.json
     -v {{hostroot}}/vars/orderendpoints.yaml:/cmdash/orderendpoints.yaml
@@ -25,10 +26,10 @@
     -e channel={{ CHANNEL_NAME }} -e chaincode=cmcc -e port=8080
     -e cert={{ certpath }}/signcerts/Admin@{{ DASH_ORG }}-cert.pem
     -e key={{ certpath }}/keystore/{{ keyfilename }}
-    -p {{ nodeports[DASH_ORG+'_8080'] }}:8080
+    {{ dashitem[0].portmap }}
     hfrd/cmdash:latest
 
 - name: "{{ DASH_ORG }} dashboard"
   debug:
-    msg: "Dashboard port: {{ nodeports[DASH_ORG+'_8080'] }}"
+    msg: "Dashboard port: {{ dashitem[0].port }}"
   tags: [print_action]

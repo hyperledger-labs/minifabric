@@ -14,9 +14,10 @@ CORE_PEER_ADDRESS={{ item.fullname }}:7051
 CORE_PEER_LISTENADDRESS=0.0.0.0:7051
 CORE_PEER_CHAINCODEADDRESS={{ item.fullname }}:7052
 CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:7052
-CORE_PEER_GOSSIP_BOOTSTRAP={{ orgpeers[item.org]|difference([item.fullname])|map('regex_replace','^(.*)$','\\1:7051')|list|join(' ') }}
-CORE_PEER_GOSSIP_EXTERNALENDPOINT={{ item.fullname }}:7051
-CORE_PEER_LOCALMSPID={{ item.org.split('.')|join('') }}
+{% set otherpeer = allpeers|selectattr('org', 'equalto', item.org)|list|difference([item])|list|first %}
+CORE_PEER_GOSSIP_BOOTSTRAP={{ otherpeer.url }}:{{ otherpeer.port }}
+CORE_PEER_GOSSIP_EXTERNALENDPOINT={{ item.url }}:{{ item.port }}
+CORE_PEER_LOCALMSPID={{ item.mspid }}
 CORE_CHAINCODE_LOGGING_LEVEL=DEBUG
 {% if DB_TYPE == 'couchdb' %}
 CORE_LEDGER_STATE_STATEDATABASE=CouchDB

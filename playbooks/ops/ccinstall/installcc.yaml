@@ -1,6 +1,7 @@
 ---
-- debug:
-    msg: "Installing  chaincode {{ CC_NAME }}:{{ CC_VERSION }} onto {{ installpeer.fullname }}"
+- name: No orderer is needed
+  set_fact:
+    actingpeer: "{{ installpeer }}"
 
 - name: Select right cc install file
   set_fact:
@@ -9,12 +10,12 @@
 - name: Create chaincode install script
   template:
     src: "{{ pjroot }}/playbooks/ops/templates/ccinstall{{isuffix}}.j2"
-    dest: "{{ pjroot }}/vars/run/ccinstall.{{ installpeer.fullname }}.sh"
+    dest: "{{ pjroot }}/vars/run/ccinstall.{{ actingpeer.fullname }}.sh"
     mode: +x
 
 - name: Run the chaincode install script on cli container
   command: >-
-    docker exec cli /vars/run/ccinstall.{{installpeer.fullname}}.sh
+    docker exec cli /vars/run/ccinstall.{{ actingpeer.fullname }}.sh
   register: result
 
 - name: Set the status flag based on the return value
