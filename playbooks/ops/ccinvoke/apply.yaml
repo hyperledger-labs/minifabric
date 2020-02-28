@@ -5,8 +5,8 @@
 
 - name: Select an orderer for chaincode install
   set_fact:
-    orderer: "{{ allorderers | random }}"
-    peer: "{{ allpeers | random }}"
+    actingorderer: "{{ allorderers | random }}"
+    actingpeer: "{{ allpeers | random }}"
     isuffix: "{{ (fabric.release is version('2.0', '>='))|ternary('2', '')}}"
 
 - name: Create chaincode invocation script

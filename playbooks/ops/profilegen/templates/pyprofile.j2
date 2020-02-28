@@ -17,7 +17,7 @@
 {% for org in allorgs %}
 {%  set orgelements = allkeys.values() | selectattr("org", "equalto", org) | list %}
     "{{org}}": {
-      "mspid": "{{ org.split('.')|join('') }}",
+      "mspid": "{{ orgattrs[org].mspid }}",
 {%      set peers = allpeers | selectattr("org", "equalto", org) | list | sort(attribute='fullname') %}
 {%      if peers is defined and (peers|length) > 0 %}
       "peers": [
@@ -46,43 +46,33 @@
     }{{ '' if loop.last else ',' }}
 {% endfor %}
   },
-{%  set items = allkeys.values() | selectattr("type", "equalto", "orderers") | list | sort(attribute='key') %}
-{% if items|length >0 %}
+{% if allorderers|length >0 %}
   "orderers": {
-{%   for item in items %}
-    "{{item.key}}": {
-{%     if EXPOSE_ENDPOINTS=='true' %}
-      "url": "{{ ADDRS.split(',')[0] }}:{{ nodeports[item.key+'_7050'] }}",
-{%     else %}
-      "url": "{{ item.key}}:7050",
-{%     endif %}
+{%   for item in allorderers %}
+    "{{item.fullname}}": {
+      "url": "{{ item.url }}:{{ item.port }}",
       "grpcOptions": {
-        "grpc.ssl_target_name_override": "{{ item.key }}",
+        "grpc.ssl_target_name_override": "{{ item.fullname }}",
         "grpc-max-send-message-length": 15
       },
       "tlsCACerts": {
-        "path": "/keyfiles/ordererOrganizations/{{ item.org }}/orderers/{{ item.key }}/tls/ca.crt"
+        "path": "/keyfiles/ordererOrganizations/{{ item.org }}/orderers/{{ item.fullname }}/tls/ca.crt"
       }
     }{{ '' if loop.last else ',' }}
 {%   endfor %}
   },
 {% endif %}
-{%  set items = allkeys.values() | selectattr("type", "equalto", "peers") | list %}
-{% if items|length >0 %}
+{% if allpeers|length >0 %}
   "peers": {
-{%   for item in items %}
-    "{{item.key}}": {
-{%     if EXPOSE_ENDPOINTS=='true' %}
-      "url": "{{ ADDRS.split(',')[0] }}:{{ nodeports[item.key+'_7051'] }}",
-{%     else %}
-      "url": "{{ item.key}}:7051",
-{%     endif %}
+{%   for item in allpeers %}
+    "{{item.fullname}}": {
+      "url": "{{ item.url }}:{{ item.port }}",
       "grpcOptions": {
-        "grpc.ssl_target_name_override": "{{ item.key }}",
+        "grpc.ssl_target_name_override": "{{ item.fullname }}",
         "grpc-max-send-message-length": 15
       },
       "tlsCACerts": {
-        "path": "/keyfiles/peerOrganizations/{{ item.org }}/peers/{{ item.key }}/tls/ca.crt"
+        "path": "/keyfiles/peerOrganizations/{{ item.org }}/peers/{{ item.fullname }}/tls/ca.crt"
       }
     }{{ '' if loop.last else ',' }}
 {%   endfor %}
@@ -91,13 +81,9 @@
   "certificateAuthorities": {
 {% for ca in allcas %}
     "{{ ca.fullname }}": {
-      "url": "https://{{ ca.fullname }}:7054",
+      "url": "https://{{ ca.url }}:{{ ca.port }}",
       "tlsCACerts": {
-{% if ca.org in peerorgs %}
-        "path": "{{ '/keyfiles/peerOrganizations/'+ca.org+'/ca/'+ca.fullname+'-cert.pem' }}"
-{% else %}
-        "path": "{{ '/keyfiles/ordererOrganizations/'+ca.org+'/ca/'+ca.fullname+'-cert.pem' }}"
-{% endif %}
+        "path": "/keyfiles/{{ orgattrs[ca.org].certpath }}/{{ ca.org+'/ca/'+ca.fullname+'-cert.pem' }}"
       },
       "httpOptions": { "verify": "false" },
       "caName": "{{ ca.name }}",

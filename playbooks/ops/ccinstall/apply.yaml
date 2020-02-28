@@ -3,9 +3,9 @@
   set_fact:
     status_flag: "Success"
 
-- name: Select an orderer for chaincode install
+- name: No orderer is needed
   set_fact:
-    orderer: "{{ allorderers | random }}"
+    actingorderer: "{{ None }}"
 
 - name: "Install chaincode onto all peers"
   include_tasks: "installcc.yaml"

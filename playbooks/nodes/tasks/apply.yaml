@@ -32,13 +32,12 @@
     docker run -d --network minifab --name {{ item.fullname }}.couchdb
     --hostname {{ item.fullname }}.couchdb hyperledger/fabric-couchdb:latest
   with_items: "{{ allpeers }}"
-  when: DB_TYPE == "couchdb"
+  when: (DB_TYPE|lower) == "couchdb"
 
 - name: Start all peer nodes
   command: >-
     docker run -d --network minifab --name {{ item.fullname }} --hostname {{ item.fullname }}
-    --env-file {{ pjroot }}/vars/run/{{ item.fullname }}.env
-    {{ (EXPOSE_ENDPOINTS=='true')|ternary('-p '+nodeports[item.fullname + '_' + porttype[item.type]]+':'+porttype[item.type], '') }}
+    --env-file {{ pjroot }}/vars/run/{{ item.fullname }}.env {{ item.portmap }}
     -v /var/run/:/host/var/run
     -v {{ mpath }}/{{item.org}}/peers/{{item.fullname}}/msp:/etc/hyperledger/fabric/msp
     -v {{ mpath }}/{{item.org}}/peers/{{item.fullname}}/tls:/etc/hyperledger/fabric/tls
@@ -53,8 +52,7 @@
 - name: Start all orderer nodes
   command: >-
     docker run -d --network minifab --name {{ item.fullname }} --hostname {{ item.fullname }}
-    --env-file {{ pjroot }}/vars/run/{{ item.fullname }}.env
-    {{ (EXPOSE_ENDPOINTS=='true')|ternary('-p '+nodeports[item.fullname + '_' + porttype[item.type]]+':'+porttype[item.type], '') }}
+    --env-file {{ pjroot }}/vars/run/{{ item.fullname }}.env {{ item.portmap }}
     -v {{ hostroot }}/vars/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
     -v {{ mpath }}/{{item.org}}/orderers/{{item.fullname}}/msp:/var/hyperledger/orderer/msp
     -v {{ mpath }}/{{item.org}}/orderers/{{item.fullname}}/tls:/var/hyperledger/orderer/tls
@@ -69,9 +67,8 @@
 - name: Start all ca nodes
   command: >-
     docker run -d --network minifab --name {{ item.fullname }} --hostname {{ item.fullname }}
-    --env-file {{ pjroot }}/vars/run/{{ item.fullname }}.env
-    {{ (EXPOSE_ENDPOINTS=='true')|ternary('-p '+nodeports[item.fullname + '_' + porttype[item.type]]+':'+porttype[item.type], '') }}
-    -v {{ hostroot }}/vars/keyfiles/{{ (item.org in peerorgs) |ternary('peer', 'orderer') }}Organizations/{{item.org}}:/certs
+    --env-file {{ pjroot }}/vars/run/{{ item.fullname }}.env {{ item.portmap }}
+    -v {{ hostroot }}/vars/keyfiles/{{ orgattrs[item.org].certpath }}/{{item.org}}:/certs
     hyperledger/fabric-ca:{{ desiredrelease }}
   with_items: "{{ allcas }}"
 

@@ -4,8 +4,8 @@
 
 - name: Select a peer and orderer for channel query.
   set_fact:
-    peer: "{{ allpeers | random }}"
-    orderer: "{{ allorderers | random }}"
+    actingpeer: "{{ None }}"
+    actingorderer: "{{ allorderers | random }}"
     isuffix: "{{ (fabric.release is version('2.0', '>='))|ternary('2', '')}}"
 
 - name: Create channel update script

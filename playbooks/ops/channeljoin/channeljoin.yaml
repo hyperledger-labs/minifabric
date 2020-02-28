@@ -4,17 +4,18 @@
 
 - name: Select an orderer for peer channel join.
   set_fact:
-    orderer: "{{ allorderers | random }}"
+    actingorderer: "{{ allorderers | random }}"
+    actingpeer: "{{ joinpeer }}"
 
 - name: Create chanel join script
   template:
     src: "{{ pjroot }}/playbooks/ops/templates/channeljoin.j2"
-    dest: "{{ pjroot }}/vars/run/channeljoin.{{ joinpeer.fullname }}.sh"
+    dest: "{{ pjroot }}/vars/run/channeljoin.{{ actingpeer.fullname }}.sh"
     mode: +x
 
 - name: Run the channel join script on cli container
   command: >-
-    docker exec cli /vars/run/channeljoin.{{ joinpeer.fullname }}.sh
+    docker exec cli /vars/run/channeljoin.{{ actingpeer.fullname }}.sh
   register: result
 
 - name: Set the status flag based on the return value
