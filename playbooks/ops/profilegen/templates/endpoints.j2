@@ -1,7 +1,7 @@
-"peerEndpoints:
+"peerEndpoints":
 {% for peer in allpeers %}
   - "fullname": "{{ peer.fullname }}"
-    "mspid": "{{ mspid }}"
+    "mspid": "{{ peer.mspid }}"
     "name": "{{ peer.name }}"
     "url": "{{ peer.url}}"
     "port": "{{ peer.port }}"
@@ -12,7 +12,7 @@
 "ordererEndpoints":
 {% for orderer in allorderers %}
   - "fullname": "{{ orderer.fullname }}"
-    "mspid": "{{ mspid }}"
+    "mspid": "{{ orderer.mspid }}"
     "name": "{{ orderer.name }}"
     "url": "{{ orderer.url}}"
     "port": "{{ orderer.port }}"
