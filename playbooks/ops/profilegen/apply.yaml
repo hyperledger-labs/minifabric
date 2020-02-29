@@ -16,6 +16,4 @@
     src: "{{ pjroot }}/playbooks/ops/profilegen/templates/{{ item.name }}"
     dest: "{{ pjroot }}/vars/{{ item.target }}"
   with_items:
-    - "{{ {'name': 'ordererendpoints.j2', 'target': 'orderendpoints.yaml'} }}"
-  when: (allorderers|length) > 0
-
+    - "{{ {'name': 'endpoints.j2', 'target': 'endpoints.yaml'} }}"

@@ -1,0 +1,22 @@
+"peerEndpoints:
+{% for peer in allpeers %}
+  - "fullname": "{{ peer.fullname }}"
+    "mspid": "{{ mspid }}"
+    "name": "{{ peer.name }}"
+    "url": "{{ peer.url}}"
+    "port": "{{ peer.port }}"
+    "org": "{{ peer.org }}"
+    "type": "peer"
+    "tlsCACerts": "{{lookup('file', pjroot+'/vars/keyfiles/peerOrganizations/'+peer.org+'/peers/'+peer.fullname+'/tls/ca.crt')|b64encode}}"
+{% endfor %}
+"ordererEndpoints":
+{% for orderer in allorderers %}
+  - "fullname": "{{ orderer.fullname }}"
+    "mspid": "{{ mspid }}"
+    "name": "{{ orderer.name }}"
+    "url": "{{ orderer.url}}"
+    "port": "{{ orderer.port }}"
+    "org": "{{ orderer.org }}"
+    "type": "orderer"
+    "tlsCACerts": "{{lookup('file', pjroot+'/vars/keyfiles/ordererOrganizations/'+orderer.org+'/orderers/'+orderer.fullname+'/tls/ca.crt')|b64encode}}"
+{% endfor %}

@@ -1,0 +1,35 @@
+- name: Get external node endpoints and certs
+  include_vars:
+    file: "{{ pjroot }}/vars/extendpoints.yaml"
+    name: exnodes
+
+- name: Add external orderers to the orderer list
+  set_fact:
+    allorderers: >-
+      {{ allorderers + [{ 'org':item.org, 'name':item.name, 'fullname': item.fullname, 
+        'type': item.type, 'url':item.url, 'port':item.port, 'mspid':item.mspid }] }}
+  with_items: "{{ exnodes.ordererEndpoints }}"
+  no_log: True
+
+- name: Add external peers to the peer list
+  set_fact:
+    allpeers: >-
+      {{ allpeers + [{ 'org':item.org, 'name':item.name, 'fullname': item.fullname, 
+        'type': item.type, 'url':item.url, 'port':item.port, 'mspid':item.mspid }] }}
+  with_items: "{{ exnodes.peerEndpoints }}"
+  no_log: True
+
+- name: Create external node cert directory
+  file:
+    path: "{{ pjroot }}/vars/keyfiles/{{ item.type }}Organizations/{{ item.org }}/{{item.type}}s/{{ item.fullname }}/tls"
+    state: "directory"
+  with_items: "{{ exnodes.ordererEndpoints + exnodes.peerEndpoints }}"
+  no_log: True
+
+- name: Save external node certificates
+  copy:
+    dest: "{{ pjroot}}/vars/keyfiles/{{ item.type }}Organizations/{{ item.org }}/orderers/{{item.fullname}}/tls/ca.crt"
+    content: |
+      {{ item.tlsCACerts | b64decode }}
+  with_items: "{{ exnodes.ordererEndpoints + exnodes.peerEndpoints }}"
+  no_log: True

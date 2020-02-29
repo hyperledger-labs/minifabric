@@ -1,9 +1,0 @@
-"channelID": "{{ CHANNEL_NAME }}"
-"ordererEndpoints":
-{% for orderer in allorderers %}
-  - "fullname": "{{ orderer.fullname }}"
-    "name": "{{ orderer.name }}"
-    "url": "{{ orderer.url}}:{{ orderer.port }}"
-    "org": "{{ orderer.org }}"
-    "tlsCACerts": "{{lookup('file', pjroot + '/vars/keyfiles/ordererOrganizations/'+orderer.org+'/orderers/'+orderer.fullname+'/tls/server.crt')|b64encode}}"
-{% endfor %}

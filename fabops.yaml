@@ -36,14 +36,14 @@
     - name: "Process configuration"
       include_tasks: "playbooks/common/config_apply.yaml"
 
-    - name: Check if external orderers endpoints exists
+    - name: Check if external node endpoint exists
       stat: 
-        path: "{{ pjroot }}/vars/orderendpoints.yaml"
-      register: exordererflag
+        path: "{{ pjroot }}/vars/extendpoints.yaml"
+      register: exflag
 
     - name: "Handling external orderers"
-      include_tasks: "playbooks/common/externalorderers.yaml"
-      when: exordererflag.stat.exists == true and (allorderers|length) == 0
+      include_tasks: "playbooks/common/externalnodes.yaml"
+      when: exflag.stat.exists == true
 
     - name: Do all the requested fabric operations
       include_tasks: "playbooks/ops/{{ op }}/apply.yaml"

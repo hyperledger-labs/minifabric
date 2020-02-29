@@ -21,7 +21,7 @@
     docker run -d --network minifab --name {{ dashitem[0].fullname }}
     -v {{hostroot}}/vars/keyfiles:/keyfiles
     -v {{hostroot}}/vars/{{CHANNEL_NAME}}_connection.json:/cmdash/connection.json
-    -v {{hostroot}}/vars/orderendpoints.yaml:/cmdash/orderendpoints.yaml
+    -v {{hostroot}}/vars/endpoints.yaml:/cmdash/endpoints.yaml
     -e org={{ DASH_ORG }} -e profile=/cmdash/connection.json
     -e channel={{ CHANNEL_NAME }} -e chaincode=cmcc -e port=8080
     -e cert={{ certpath }}/signcerts/Admin@{{ DASH_ORG }}-cert.pem
