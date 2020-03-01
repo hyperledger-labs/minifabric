@@ -2,7 +2,7 @@
 # Script to instantiate chaincode
 {% include "envsetting.j2" %}
 peer chaincode invoke -o $ORDERER_ADDRESS --cafile $ORDERER_TLS_CA \
-  -C {{CHANNEL_NAME}} -n {{ CC_NAME }}  \
+  --tls -C {{CHANNEL_NAME}} -n {{ CC_NAME }}  \
 {% for anorg in peerorgs %}
 {%   set onepeer = allpeers|selectattr('org', 'equalto', anorg)|list|random %}
   --peerAddresses {{ onepeer.url }}:{{ onepeer.port }} \

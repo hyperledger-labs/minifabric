@@ -23,10 +23,10 @@ peer lifecycle chaincode commit -o $ORDERER_ADDRESS --channelID {{ CHANNEL_NAME 
 {% if CC_POLICY != 'Cg==' %}
   --signature-policy '{{ CC_POLICY|b64decode|trim }}' \
 {% endif %}
-  --cafile $ORDERER_TLS_CA
+  --cafile $ORDERER_TLS_CA --tls
 
 peer chaincode invoke -o $ORDERER_ADDRESS --isInit \
-  --cafile $ORDERER_TLS_CA -C {{ CHANNEL_NAME }} -n {{ CC_NAME }} \
+  --cafile $ORDERER_TLS_CA --tls -C {{ CHANNEL_NAME }} -n {{ CC_NAME }} \
 {% for anorg in peerorgs %}
 {%   set onepeer = allpeers|selectattr('org', 'equalto', anorg)|list|random %}
   --peerAddresses {{ onepeer.url }}:{{ onepeer.port }} \

@@ -9,5 +9,5 @@ export FABRIC_CFG_PATH=/vars
 configtxgen -profile OrgChannel -outputAnchorPeersUpdate \
   ./${CORE_PEER_LOCALMSPID}_Anchor.tx -channelID {{ CHANNEL_NAME }} -asOrg ${CORE_PEER_LOCALMSPID}
 
-peer channel update -o $ORDERER_ADDRESS --cafile $ORDERER_TLS_CA \
+peer channel update -o $ORDERER_ADDRESS --tls --cafile $ORDERER_TLS_CA \
   -f ${CORE_PEER_LOCALMSPID}_Anchor.tx -c {{ CHANNEL_NAME }}

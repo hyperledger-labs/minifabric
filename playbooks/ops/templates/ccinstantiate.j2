@@ -3,8 +3,8 @@
 {% include "envsetting.j2" %}
 ccdone=$(peer chaincode list -C {{CHANNEL_NAME}} --instantiated|grep "Name: {{ CC_NAME }},")
 if [[ -z "$ccdone" ]]; then
-  peer chaincode instantiate -o $ORDERER_ADDRESS --cafile $ORDERER_TLS_CA -C {{CHANNEL_NAME}} \
-  -n {{ CC_NAME }} -v {{ CC_VERSION }} \
+  peer chaincode instantiate -o $ORDERER_ADDRESS --cafile $ORDERER_TLS_CA --tls \
+  -C {{CHANNEL_NAME}} -n {{ CC_NAME }} -v {{ CC_VERSION }} \
 {% if CC_PRIVATE == 'true' %}
   --collections-config /vars/{{CC_NAME}}_collection_config.json \
 {% endif %}
@@ -16,8 +16,8 @@ if [[ -z "$ccdone" ]]; then
 {% endif %}
   -c '{"Args":[{{ CC_PARAMETERS|b64decode|trim }}]}'
 else
-  peer chaincode upgrade -o $ORDERER_ADDRESS --cafile $ORDERER_TLS_CA -C {{CHANNEL_NAME}} \
-  -n {{ CC_NAME }} -v {{ CC_VERSION }} \
+  peer chaincode upgrade -o $ORDERER_ADDRESS --cafile $ORDERER_TLS_CA --tls \
+  -C {{CHANNEL_NAME}} -n {{ CC_NAME }} -v {{ CC_VERSION }} \
 {% if CC_PRIVATE == 'true' %}
   --collections-config /vars/{{CC_NAME}}_collection_config.json \
 {% endif %}
