@@ -3,8 +3,8 @@
 {% include "envsetting.j2" %}
 if [ ! -f "{{ CHANNEL_NAME }}.genesis.block" ]; then
   peer channel fetch oldest -o $ORDERER_ADDRESS --cafile $ORDERER_TLS_CA \
-  -c {{ CHANNEL_NAME }} --tls /vars/{{ CHANNEL_NAME}}.genesis.block
+  -c {{ CHANNEL_NAME }} /vars/{{ CHANNEL_NAME}}.genesis.block
 fi
 
 peer channel join -b /vars/{{ CHANNEL_NAME }}.genesis.block \
-  -o $ORDERER_ADDRESS --tls --cafile $ORDERER_TLS_CA
+  -o $ORDERER_ADDRESS --cafile $ORDERER_TLS_CA

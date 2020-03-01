@@ -22,11 +22,11 @@ export CORE_PEER_ADDRESS={{ approvepeer.url }}:{{ approvepeer.port }}
 
 approved=$(peer lifecycle chaincode checkcommitreadiness --channelID {{ CHANNEL_NAME }} \
   --name {{ CC_NAME }} --version {{ CC_VERSION }} --init-required --sequence $SEQUENCE \
-  --tls true --cafile $ORDERER_TLS_CA --output json | jq -r '.approvals.{{ approvepeer.org.split('.')|join('') }}')
+  --cafile $ORDERER_TLS_CA --output json | jq -r '.approvals.{{ approvepeer.org.split('.')|join('') }}')
 
 if [[ "$approved" == "false" ]]; then
   peer lifecycle chaincode approveformyorg --channelID {{ CHANNEL_NAME}} --name {{ CC_NAME }} \
     --version {{ CC_VERSION }} --init-required --package-id $PKID \
-    --sequence $SEQUENCE --tls true -o $ORDERER_ADDRESS --cafile $ORDERER_TLS_CA
+    --sequence $SEQUENCE -o $ORDERER_ADDRESS --cafile $ORDERER_TLS_CA
 fi
 {% endfor %}
