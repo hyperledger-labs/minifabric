@@ -1,10 +1,7 @@
 {% if actingpeer is defined and actingpeer != '' %}
-export CORE_PEER_TLS_ROOTCERT_FILE=/vars/keyfiles/peerOrganizations/{{ actingpeer.org }}/peers/{{ actingpeer.fullname }}/tls/ca.crt
-export CORE_PEER_TLS_KEY_FILE=/vars/keyfiles/peerOrganizations/{{ actingpeer.org }}/peers/{{ actingpeer.fullname }}/tls/server.key
-export CORE_PEER_LOCALMSPID={{ actingpeer.mspid }}
-export CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
-export CORE_PEER_TLS_CERT_FILE=/vars/keyfiles/peerOrganizations/{{ actingpeer.org }}/peers/{{ actingpeer.fullname }}/tls/server.crt
 export CORE_PEER_TLS_ENABLED=true
+export CORE_PEER_TLS_ROOTCERT_FILE=/vars/keyfiles/peerOrganizations/{{ actingpeer.org }}/peers/{{ actingpeer.fullname }}/tls/ca.crt
+export CORE_PEER_LOCALMSPID={{ actingpeer.mspid }}
 export CORE_PEER_MSPCONFIGPATH=/vars/keyfiles/peerOrganizations/{{ actingpeer.org }}/users/Admin@{{ actingpeer.org }}/msp
 export CORE_PEER_ID=cli
 export CORE_PEER_ADDRESS={{ actingpeer.url }}:{{ actingpeer.port }}
