@@ -8,7 +8,7 @@ export FABRIC_CFG_PATH=/vars
 
 # 1. Fetch the channel configuration
 peer channel fetch config config_block.pb -o $ORDERER_ADDRESS \
-  --cafile $ORDERER_TLS_CA -c {{CHANNEL_NAME}}
+  --cafile $ORDERER_TLS_CA --tls -c {{CHANNEL_NAME}}
 
 # 2. Translate the configuration into json format
 configtxlator proto_decode --input config_block.pb --type common.Block \

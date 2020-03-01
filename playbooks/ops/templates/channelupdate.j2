@@ -15,7 +15,7 @@ export ORDERER_ADDRESS={{ actingorderer.url }}:{{ actingorderer.port }}
 if [ -f "{{ CHANNEL_NAME }}_update_envelope.pb" ]; then
 # Now finally submit the channel update tx
   peer channel update -f {{ CHANNEL_NAME }}_update_envelope.pb \
-    -c {{ CHANNEL_NAME }} -o $ORDERER_ADDRESS --cafile $ORDERER_TLS_CA
+    -c {{ CHANNEL_NAME }} -o $ORDERER_ADDRESS --cafile $ORDERER_TLS_CA --tls
 else
   echo "No channel configuration update envelop found, do channel sign first."
   exit 1
