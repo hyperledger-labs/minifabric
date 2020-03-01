@@ -8,4 +8,4 @@ configtxgen -profile OrgChannel \
 
 {% include "envsetting.j2" %}
 peer channel create -c {{ CHANNEL_NAME }} -f {{ CHANNEL_NAME }}.tx -o $ORDERER_ADDRESS \
-  --tls --cafile $ORDERER_TLS_CA
+  --cafile $ORDERER_TLS_CA

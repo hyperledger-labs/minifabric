@@ -7,7 +7,7 @@ export FABRIC_CFG_PATH=/vars
 {% include "envsetting.j2" %}
 
 peer channel fetch config config_block.pb -o $ORDERER_ADDRESS \
-  --cafile $ORDERER_TLS_CA -c {{CHANNEL_NAME}} --tls
+  --cafile $ORDERER_TLS_CA -c {{CHANNEL_NAME}}
 
 configtxlator proto_decode --input config_block.pb --type common.Block \
   | jq .data.data[0].payload.data.config > {{ CHANNEL_NAME }}_config.json
