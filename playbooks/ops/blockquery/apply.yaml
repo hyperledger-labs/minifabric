@@ -34,8 +34,8 @@
 - name: Construct the new json document
   set_fact:
     newJSON: >-
-      {{ {'number': jsonVar['number'], 'hash': jsonVar['hash'], 'previous_hash':jsonVar['previous_hash'],
-          'txs': newVar} }}
+      {{ {'number': jsonVar['number'], 'block_hash': jsonVar['block_hash'], 'data_hash': jsonVar['data_hash'],
+          'previous_hash': jsonVar['previous_hash'], 'txs': newVar} }}
 - name: Produce the new file
   copy:
     dest: "{{ pjroot }}/vars/{{CHANNEL_NAME}}_{{BLOCK_NUMBER}}_txs.json"
