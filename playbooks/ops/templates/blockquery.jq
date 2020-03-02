@@ -1,5 +1,6 @@
 {"number":.header.number,
- "hash":.header.data_hash,
+ "block_hash": $CBHASH,
+ "data_hash":.header.data_hash,
  "previous_hash":.header.previous_hash,
  "txs": [.data.data[].payload]|[ .[]|
    {"tx_id":.header.channel_header.tx_id,

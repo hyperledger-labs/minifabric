@@ -5,9 +5,19 @@ cd /vars
 export FABRIC_CFG_PATH=/vars
 
 {% include "envsetting.j2" %}
+{% if BLOCK_NUMBER == 'newest' %}
+output=$(peer channel getinfo -o $ORDERER_ADDRESS --tls --cafile $ORDERER_TLS_CA -c {{ CHANNEL_NAME }})
+CBHASH=$(echo ${output:17}|jq '.currentBlockHash'|xargs)
+{% else %}
+peer channel fetch {{ BLOCK_NUMBER|int + 1 }} -o $ORDERER_ADDRESS --tls \
+  --cafile $ORDERER_TLS_CA -c {{ CHANNEL_NAME }}
+CBHASH=$(configtxlator proto_decode --input {{ CHANNEL_NAME }}_{{ BLOCK_NUMBER|int + 1 }}.block \
+  --type common.Block | jq '.header.previous_hash' | xargs)
+rm -f {{ CHANNEL_NAME }}_{{ BLOCK_NUMBER|int + 1 }}.block
+{% endif %}
 peer channel fetch {{ BLOCK_NUMBER }} -o $ORDERER_ADDRESS --tls \
   --cafile $ORDERER_TLS_CA -c {{ CHANNEL_NAME }}
 
 configtxlator proto_decode --input {{ CHANNEL_NAME }}_{{ BLOCK_NUMBER }}.block \
-  --type common.Block | jq -f run/blockquery.jq \
+  --type common.Block | jq --arg CBHASH $CBHASH -f run/blockquery.jq \
   > {{ CHANNEL_NAME }}_{{ BLOCK_NUMBER }}_txs.json
