@@ -13,3 +13,4 @@ OPNAMES:
   anchorupdate: "anchor update"
   dashup: "dashboard up"
   dashdown: "dashboard down"
+  nodeimport: "node import"

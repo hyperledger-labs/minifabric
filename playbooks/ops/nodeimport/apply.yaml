@@ -1,0 +1,68 @@
+- name: Get external node endpoints and certs
+  include_vars:
+    file: "{{ pjroot }}/vars/extendpoints.yaml"
+    name: exnodes
+
+- name: Intialize orderer, peer and orgs
+  set_fact:
+    ext_orderers: "{{ [] }}"
+    ext_peers: "{{ [] }}"
+    ext_orgs: "{{ [] }}"
+
+- name: Add external orderers to the orderer list
+  set_fact:
+    ext_orderers: >-
+      {{ ext_orderers + [{ 'org':item.org, 'name':item.name, 'fullname': item.fullname, 
+        'type': item.type, 'url':item.url, 'port':item.port, 'mspid':item.mspid }] }}
+  with_items: "{{ exnodes.ordererEndpoints }}"
+  no_log: True
+
+- name: Add external peers to the peer list
+  set_fact:
+    ext_peers: >-
+      {{ ext_peers + [{ 'org':item.org, 'name':item.name, 'fullname': item.fullname, 
+        'type': item.type, 'url':item.url, 'port':item.port, 'mspid':item.mspid }] }}
+  with_items: "{{ exnodes.peerEndpoints }}"
+  no_log: True
+
+- name: Get ca, peer and orderer orgs
+  set_fact:
+    ext_peerorgs: "{{ ext_peers | default([]) | map(attribute='org') | list  | unique | sort }}"
+    ext_ordererorgs: "{{ ext_orderers | default([]) | map(attribute='org') | list  | unique | sort }}"
+
+- name: Create all orgs list
+  set_fact:
+    ext_allorgs: "{{ (ext_peerorgs + ext_peerorgs) | sort | unique }}"
+
+- name: Set all org cert path
+  set_fact:
+    ext_orgattrs: >-
+      {{ ext_orgattrs | default({}) | combine({item: {'mspid': item.split('.')|join(''),
+        'certpath': (item in ext_peerorgs)|ternary('peerOrganizations', 'ordererOrganizations')}} ) }}
+  with_items: "{{ ext_allorgs }}"
+
+- name: Create external node cert directory
+  file:
+    path: "{{ pjroot }}/vars/keyfiles/{{ item.type }}Organizations/{{ item.org }}/{{item.type}}s/{{ item.fullname }}/tls"
+    state: "directory"
+  with_items: "{{ exnodes.ordererEndpoints + exnodes.peerEndpoints }}"
+  no_log: True
+
+- name: Save external node certificates
+  copy:
+    dest: "{{ pjroot}}/vars/keyfiles/{{ item.type }}Organizations/{{ item.org }}/{{item.type}}s/{{item.fullname}}/tls/ca.crt"
+    content: |
+      {{ item.tlsCACerts | b64decode }}
+  with_items: "{{ exnodes.ordererEndpoints + exnodes.peerEndpoints }}"
+  no_log: True
+
+- name: Create the top level var file for imported node
+  set_fact:
+    ext_node_vars: >-
+      {{ {'ext_peers': ext_peers, 'ext_orderers': ext_orderers, 'ext_peerorgs': ext_peerorgs,
+          'ext_ordererorgs': ext_ordererorgs, 'ext_allorgs': ext_allorgs, 'ext_orgattrs': ext_orgattrs } }}
+
+- name: Produce the imported node file
+  copy:
+    dest: "{{ pjroot }}/vars/ext_node_vars.json"
+    content: "{{ ext_node_vars | to_nice_json(indent=2) }}"

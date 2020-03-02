@@ -38,11 +38,11 @@
 
     - name: Check if external node endpoint exists
       stat: 
-        path: "{{ pjroot }}/vars/extendpoints.yaml"
+        path: "{{ pjroot }}/vars/ext_node_vars.json"
       register: exflag
 
-    - name: "Handling external orderers"
-      include_tasks: "playbooks/common/externalnodes.yaml"
+    - name: "Load external node vars"
+      include_vars: "{{ pjroot }}/vars/ext_node_vars.json"
       when: exflag.stat.exists == true
 
     - name: Do all the requested fabric operations
