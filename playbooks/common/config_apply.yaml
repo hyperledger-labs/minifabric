@@ -117,10 +117,3 @@
         'name': 'dashboard', 'fullname': 'dashboard.'+item, 'type': 'dashboard' }] }}
     nodeport: "{{ nodeport|int + 1 }}"
   with_items: "{{ allorgs }}"
-
-- name: Just show the list
-  debug:
-    var: allcas + allpeers + allorderers + alldash
-- name: Just show the list
-  debug:
-    var: orgattrs
