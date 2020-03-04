@@ -1,0 +1,30 @@
+[
+{% if (allpeers + allorderers) | length > 0 %}
+{% for node in (allpeers + allorderers) %}
+  {
+    "name": "{{ node.fullname }}",
+    "api_url": "{{ node.url }}:{{ node.port }}",
+    "type": "fabric-peer",
+    "msp_id": "{{ node.mspid }}",
+    "pem": "{{lookup('file', pjroot+'/vars/keyfiles/'+node.type+'Organizations/'+node.org+'/'+node.type+'s/'+node.fullname+'/tls/ca.crt')|b64encode}}",
+    "ssl_target_name_override": "{{ node.fullname }}"
+  }{{ '' if loop.last else ',' }}
+{% endfor %}
+{% endif %}
+{% if allcas | length > 0 %}  ,
+{% for ca in allcas %}
+{% set orgtype = 'peer' if ca.org in peerorgs else 'orderer' %}
+  {
+    "name": "{{ ca.fullname }}",
+    "ca_name": "{{ ca.fullname }}",
+    "api_url": "{{ ca.url }}:{{ ca.port }}",
+    "type": "fabric-ca",
+    "msp_id": "{{ ca.mspid }}",
+    "pem": "{{lookup('file', pjroot+'/vars/keyfiles/'+orgtype+'Organizations/'+ca.org+'/ca/'+ca.fullname+'-cert.pem')|b64encode}}",
+    "ssl_target_name_override": "{{ ca.fullname }}",
+    "enroll_id": "admin",
+    "enroll_secret": "adminpw"
+  }{{ '' if loop.last else ',' }}
+{% endfor %}
+{% endif %}
+]
