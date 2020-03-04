@@ -4,7 +4,7 @@
   {
     "name": "{{ node.fullname }}",
     "api_url": "{{ node.url }}:{{ node.port }}",
-    "type": "fabric-peer",
+    "type": "fabric-{{ node.type }}",
     "msp_id": "{{ node.mspid }}",
     "pem": "{{lookup('file', pjroot+'/vars/keyfiles/'+node.type+'Organizations/'+node.org+'/'+node.type+'s/'+node.fullname+'/tls/ca.crt')|b64encode}}",
     "ssl_target_name_override": "{{ node.fullname }}"
