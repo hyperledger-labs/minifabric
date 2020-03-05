@@ -1,0 +1,24 @@
+---
+- debug:
+    msg: "Channel query on channel {{ CHANNEL_NAME }}"
+
+- name: Select a peer and orderer for channel query.
+  set_fact:
+    actingpeer: "{{ allpeers | random }}"
+    actingorderer: "{{ allorderers | random }}"
+    isuffix: "{{ (fabric.release is version('2.0', '>='))|ternary('2', '')}}"
+
+- name: Create channel discover script
+  template:
+    src: "{{ pjroot }}/playbooks/ops/templates/discover.j2"
+    dest: "{{ pjroot }}/vars/run/discover.sh"
+    mode: +x
+
+- name: Run the channel discover script on cli container
+  command: >-
+    docker exec cli /vars/run/discover.sh
+
+- name: Channel discover results
+  debug:
+    msg: "Channel configuration file: ./vars/{{ CHANNEL_NAME }}_{{ CC_NAME }}_endorsers.json"
+  tags: [print_action]

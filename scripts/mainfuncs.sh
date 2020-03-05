@@ -15,7 +15,8 @@ OPNAMES=([install]='ccinstall' [approve]='ccapprove' [instantiate]='ccinstantiat
   [commit]='ccinstantiate' [invoke]='ccinvoke' [create]='channelcreate' \
   [join]='channeljoin' [blockquery]='blockquery' [channelquery]='channelquery' \
   [profilegen]='profilegen' [channelsign]='channelsign' [channelupdate]='channelupdate' \
-  [anchorupdate]='anchorupdate' [dashup]='dashup' [dashdown]='dashdown' [nodeimport]='nodeimport')
+  [anchorupdate]='anchorupdate' [dashup]='dashup' [dashdown]='dashdown' \
+  [nodeimport]='nodeimport' [discover]='discover')
 
 # Print the usage message
 function printHelp() {
@@ -44,6 +45,7 @@ function printHelp() {
   echo "      - 'dashup'  - start up consortium management dashboard"
   echo "      - 'dashdown'  - shutdown consortium management dashboard"
   echo "      - 'nodeimport' - import external node certs and endpoints"
+  echo "      - 'discover' - disocver channel endorsement policy"
   echo "      - 'cleanup'  - remove all the nodes and cleanup runtime files"
   echo ""
   echo "    options:"
