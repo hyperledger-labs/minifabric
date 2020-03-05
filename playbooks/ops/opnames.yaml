@@ -14,3 +14,4 @@ OPNAMES:
   dashup: "dashboard up"
   dashdown: "dashboard down"
   nodeimport: "node import"
+  discover: "discover"
