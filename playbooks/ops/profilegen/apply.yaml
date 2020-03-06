@@ -2,10 +2,16 @@
 - name: "Process keys"
   include_tasks: "{{ pjroot }}/playbooks/common/processkeys.yaml"
 
+- name: Make sure that profiles holding directory exists
+  file:
+    path: "{{ pjroot }}/vars/profiles"
+    state: "directory"
+    mode: 0775
+
 - name: Create profiles
   template:
     src: "{{ pjroot }}/playbooks/ops/profilegen/templates/{{ item.name }}"
-    dest: "{{ pjroot }}/vars/{{ item.target }}"
+    dest: "{{ pjroot }}/vars/profiles/{{ item.target }}"
   with_items:
     - "{{ {'name': 'pyprofile.j2', 'target': CHANNEL_NAME+'_network.json'} }}"
     - "{{ {'name': 'goprofile.j2', 'target': CHANNEL_NAME+'_connection.json'} }}"
