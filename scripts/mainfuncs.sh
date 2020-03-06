@@ -116,7 +116,7 @@ function networkUp() {
   -e "CC_VERSION=$CC_VERSION" -e "CHANNEL_NAME=$CHANNEL_NAME" -e "IMAGETAG=$IMAGETAG" \
   -e "CC_PARAMETERS=$CC_PARAMETERS" -e "EXPOSE_ENDPOINTS=$EXPOSE_ENDPOINTS"           \
   -e "ADDRS=$ADDRS" -e "TRANSIENT_DATA=$TRANSIENT_DATA" -e "CC_PRIVATE=$CC_PRIVATE"   \
-  -e "CC_POLICY=$CC_POLICY" fabops.yaml
+  -e "CC_POLICY=$CC_POLICY" -e "CURRENT_ORG=$CURRENT_ORG" fabops.yaml
   echo 'Running Nodes:'
   docker ps -a --format "{{.Names}}:{{.Ports}}"
 }
@@ -128,7 +128,7 @@ function networkDown() {
   -e "CC_VERSION=$CC_VERSION" -e "CHANNEL_NAME=$CHANNEL_NAME" -e "IMAGETAG=$IMAGETAG" \
   -e "CC_PARAMETERS=$CC_PARAMETERS"  -e "EXPOSE_ENDPOINTS=$EXPOSE_ENDPOINTS"          \
   -e "ADDRS=$ADDRS" -e "TRANSIENT_DATA=$TRANSIENT_DATA" -e "CC_PRIVATE=$CC_PRIVATE"   \
-  -e "CC_POLICY=$CC_POLICY" minifabric.yaml
+  -e "CC_POLICY=$CC_POLICY" -e "CURRENT_ORG=$CURRENT_ORG" minifabric.yaml
 }
 
 function networkRestart() {
