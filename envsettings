@@ -11,4 +11,4 @@ declare XX_EXPOSE_ENDPOINTS='false'
 declare XX_BLOCK_NUMBER='newest'
 declare XX_CC_PRIVATE='false'
 declare XX_CC_POLICY=''
-declare XX_ORG_MSPID=org0examplecom
+declare XX_CURRENT_ORG=org0.example.com
