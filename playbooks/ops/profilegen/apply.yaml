@@ -13,8 +13,8 @@
     src: "{{ pjroot }}/playbooks/ops/profilegen/templates/{{ item.name }}"
     dest: "{{ pjroot }}/vars/profiles/{{ item.target }}"
   with_items:
-    - "{{ {'name': 'pyprofile.j2', 'target': CHANNEL_NAME+'_network.json'} }}"
-    - "{{ {'name': 'goprofile.j2', 'target': CHANNEL_NAME+'_connection.json'} }}"
-    - "{{ {'name': 'goprofileyaml.j2', 'target': CHANNEL_NAME+'_connection.yaml'} }}"
+    - "{{ {'name': 'pyprofile.j2', 'target': CHANNEL_NAME+'_network_for_pysdk.json'} }}"
+    - "{{ {'name': 'goprofile.j2', 'target': CHANNEL_NAME+'_connection_for_gosdk.json'} }}"
+    - "{{ {'name': 'goprofileyaml.j2', 'target': CHANNEL_NAME+'_connection_for_gosdk.yaml'} }}"
     - "{{ {'name': 'endpoints.j2', 'target': 'endpoints.yaml'} }}"
     - "{{ {'name': 'vscodenodefile.j2', 'target': 'vscodenodefile.json'} }}"

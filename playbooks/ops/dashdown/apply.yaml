@@ -1,4 +1,4 @@
 ---
-- name: Shutting down the {{ DASH_ORG }} dashboard
+- name: Shutting down the {{ CURRENT_ORG }} dashboard
   command: >-
-    docker rm -f dashboard.{{ DASH_ORG }}
+    docker rm -f dashboard.{{ CURRENT_ORG }}

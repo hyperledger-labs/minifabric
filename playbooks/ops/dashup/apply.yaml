@@ -1,11 +1,11 @@
 ---
 - name: Set the path variable
   set_fact:
-    certpath: "/keyfiles/peerOrganizations/{{ DASH_ORG }}/users/Admin@{{ DASH_ORG }}/msp"
+    certpath: "/keyfiles/peerOrganizations/{{ CURRENT_ORG }}/users/Admin@{{ CURRENT_ORG }}/msp"
 
 - name: Find Admin user private key
   find:
-    paths: "{{ pjroot }}/vars/keyfiles/peerOrganizations/{{ DASH_ORG }}/users/Admin@{{ DASH_ORG }}/msp/keystore"
+    paths: "{{ pjroot }}/vars/keyfiles/peerOrganizations/{{ CURRENT_ORG }}/users/Admin@{{ CURRENT_ORG }}/msp/keystore"
     patterns: '*_sk'
     recurse: no
     file_type: file
@@ -14,22 +14,22 @@
 - name: Get the private key file name
   set_fact:
     keyfilename: "{{ privatekey.files[0].path.split('/')[-1] }}"
-    dashitem: "{{ alldash|selectattr('org', 'equalto', DASH_ORG) | list }}"
+    dashitem: "{{ alldash|selectattr('org', 'equalto', CURRENT_ORG) | list }}"
 
 - name: Start up consortium dashboard container
   command: >-
     docker run -d --network minifab --name {{ dashitem[0].fullname }}
     -v {{hostroot}}/vars/keyfiles:/keyfiles
-    -v {{hostroot}}/vars/profiles/{{CHANNEL_NAME}}_connection.json:/cmdash/connection.json
+    -v {{hostroot}}/vars/profiles/{{CHANNEL_NAME}}_connection_for_gosdk.json:/cmdash/connection.json
     -v {{hostroot}}/vars/profiles/endpoints.yaml:/cmdash/endpoints.yaml
-    -e org={{ DASH_ORG }} -e profile=/cmdash/connection.json
+    -e org={{ CURRENT_ORG }} -e profile=/cmdash/connection.json
     -e channel={{ CHANNEL_NAME }} -e chaincode=cmcc -e port=8080
-    -e cert={{ certpath }}/signcerts/Admin@{{ DASH_ORG }}-cert.pem
+    -e cert={{ certpath }}/signcerts/Admin@{{ CURRENT_ORG }}-cert.pem
     -e key={{ certpath }}/keystore/{{ keyfilename }}
     {{ dashitem[0].portmap }}
     hfrd/cmdash:latest
 
-- name: "{{ DASH_ORG }} dashboard"
+- name: "{{ CURRENT_ORG }} dashboard"
   debug:
     msg: "Dashboard port: {{ dashitem[0].port }}"
   tags: [print_action]

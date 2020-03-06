@@ -47,7 +47,7 @@ case $optkey in
   -e|--expose-endpoints)
     EXPOSE_ENDPOINTS="$2";shift;shift;;
   -o|--organization)
-    DASH_ORG="$2";shift;shift;;
+    CURRENT_ORG="$2";shift;shift;;
   -t|--transient-parameters)
     TRANSIENT_DATA="$2";shift;shift;;
   -r|--chaincode-private)
@@ -75,6 +75,7 @@ echo "    CHAINCODE_POLICY=$CC_POLICY"
 echo "    TRANSIENT_DATA=$TRANSIENT_DATA"
 echo "    BLOCK_NUMBER=$BLOCK_NUMBER"
 echo "    EXPOSE_ENDPOINTS=$EXPOSE_ENDPOINTS"
+echo "    CURRENT_ORG=$CURRENT_ORG"
 echo "    HOST_ADDRESSES=$ADDRS"
 
 CC_PARAMETERS=$(echo $CC_PARAMETERS|base64)
