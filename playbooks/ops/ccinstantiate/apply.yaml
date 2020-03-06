@@ -4,7 +4,7 @@
 
 - name: Select a peer and orderer for chaincode instantiation.
   set_fact:
-    actingpeer: "{{ allpeers | random }}"
+    actingpeer: "{{ allpeers|selectattr('org','equalto',CURRENT_ORG)|list|random }}"
     actingorderer: "{{ allorderers | random }}"
     isuffix: "{{ (fabric.release is version('2.0', '>='))|ternary('2', '')}}"
 

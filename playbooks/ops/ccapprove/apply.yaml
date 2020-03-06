@@ -1,7 +1,7 @@
 ---
 - name: Select a peer and orderer for signing off configuration changes.
   set_fact:
-    actingpeer: "{{ allpeers | random }}"
+    actingpeer: "{{ allpeers|selectattr('org','equalto',CURRENT_ORG)|list|random }}"
     actingorderer: "{{ allorderers | random }}"
 
 - name: Create channel sign off script
