@@ -3,7 +3,7 @@
 cd /vars
 
 export PEER_TLS_ROOTCERT_FILE=/vars/keyfiles/peerOrganizations/{{ actingpeer.org }}/users/Admin@{{ actingpeer.org }}/tls/ca.crt
-export ADMINPRIVATEKEY=/vars/keyfiles/peerOrganizations/{{ actingpeer.org }}/users/Admin@{{ actingpeer.org }}/msp/keystore/priv_sk
+export ADMINPRIVATEKEY=/vars/{{ allkeys['Admin@'+actingpeer.org].pkey }}
 export ADMINCERT=/vars/keyfiles/peerOrganizations/{{ actingpeer.org }}/users/Admin@{{ actingpeer.org }}/msp/signcerts/Admin@{{ actingpeer.org }}-cert.pem
 
 discover endorsers --peerTLSCA $PEER_TLS_ROOTCERT_FILE \
