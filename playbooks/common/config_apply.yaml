@@ -18,9 +18,6 @@
   when: envflag.stat.exists == true
   include_vars: "{{ pjroot }}/vars/node_vars.json"
 
-- debug:
-    var: hostvars
-
 - name: Process spec file to generate various variables
   when: envflag.stat.exists == false
   block:

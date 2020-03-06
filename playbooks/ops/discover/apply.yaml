@@ -1,6 +1,6 @@
 ---
-- debug:
-    msg: "Channel query on channel {{ CHANNEL_NAME }}"
+- name: "Process keys"
+  include_tasks: "{{ pjroot }}/playbooks/common/processkeys.yaml"
 
 - name: Select a peer and orderer for channel query.
   set_fact:

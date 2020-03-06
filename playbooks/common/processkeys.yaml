@@ -1,40 +1,60 @@
-- name: Find all user and node private keys
-  find:
-    paths: "{{ pjroot }}/vars/keyfiles"
-    patterns: '*_sk'
-    recurse: yes
-    file_type: file
-  register: privatekeys
+- name: Check if key vars available
+  stat:
+    path: "{{ pjroot }}/vars/key_vars.json"
+  register: keyflag
 
-- name: Set all user, peer and orderer keys
-  set_fact:
-    allkeys: >-
-      {{ allkeys | default({}) |
-        combine({ item.path.split('/')[-4]: {'pkey':item.path.split('/')[-8:]|join('/'),
-        'path':item.path, 'key':item.path.split('/')[-4],
-        'org':item.path.split('/')[-6], 'type':item.path.split('/')[-5] }}) }}
-  when: item.path.find('/peers/') > 0 or item.path.find('/users/') >0 or item.path.find('/orderers/') > 0
-  with_items: "{{ privatekeys.files }}"
-  no_log: yes
+- name: "Load key vars"
+  when: keyflag.stat.exists == true
+  include_vars:
+    file: "{{ pjroot }}/vars/key_vars.json"
+    name: allkeys
 
-- name: Add ca keys
-  set_fact:
-    allkeys: >-
-      {{ allkeys | default({}) |
-        combine({ item.path.split('/')[-3]: {'pkey':item.path.split('/')[-5:]|join('/'),
-        'path':item.path, 'key':item.path.split('/')[-3],
-        'org':item.path.split('/')[-3], 'type':item.path.split('/')[-2] }}) }}
-  when: item.path.find('/ca/') > 0
-  with_items: "{{ privatekeys.files }}"
-  no_log: yes
+- name: "Load key vars"
+  when: keyflag.stat.exists == false
+  block:
+  - name: Find all user and node private keys
+    find:
+      paths: "{{ pjroot }}/vars/keyfiles"
+      patterns: '*_sk'
+      recurse: yes
+      file_type: file
+    register: privatekeys
 
-- name: Add ca tls keys
-  set_fact:
-    allkeys: >-
-      {{ allkeys | default({}) |
-        combine({ item.path.split('/')[-3]+'.tlsca': {'pkey':item.path.split('/')[-5:]|join('/'),
-        'path':item.path, 'key':item.path.split('/')[-3],
-        'org':item.path.split('/')[-3], 'type':item.path.split('/')[-2] }}) }}
-  when: item.path.find('/tlsca/') > 0
-  with_items: "{{ privatekeys.files }}"
-  no_log: yes
+  - name: Set all user, peer and orderer keys
+    set_fact:
+      allkeys: >-
+        {{ allkeys | default({}) |
+          combine({ item.path.split('/')[-4]: {'pkey':item.path.split('/')[-8:]|join('/'),
+          'path':item.path, 'key':item.path.split('/')[-4],
+          'org':item.path.split('/')[-6], 'type':item.path.split('/')[-5] }}) }}
+    when: item.path.find('/peers/') > 0 or item.path.find('/users/') >0 or item.path.find('/orderers/') > 0
+    with_items: "{{ privatekeys.files }}"
+    no_log: yes
+
+  - name: Add ca keys
+    set_fact:
+      allkeys: >-
+        {{ allkeys | default({}) |
+          combine({ item.path.split('/')[-3]: {'pkey':item.path.split('/')[-5:]|join('/'),
+          'path':item.path, 'key':item.path.split('/')[-3],
+          'org':item.path.split('/')[-3], 'type':item.path.split('/')[-2] }}) }}
+    when: item.path.find('/ca/') > 0
+    with_items: "{{ privatekeys.files }}"
+    no_log: yes
+
+  - name: Add ca tls keys
+    set_fact:
+      allkeys: >-
+        {{ allkeys | default({}) |
+          combine({ item.path.split('/')[-3]+'.tlsca': {'pkey':item.path.split('/')[-5:]|join('/'),
+          'path':item.path, 'key':item.path.split('/')[-3],
+          'org':item.path.split('/')[-3], 'type':item.path.split('/')[-2] }}) }}
+    when: item.path.find('/tlsca/') > 0
+    with_items: "{{ privatekeys.files }}"
+    no_log: yes
+
+  - name: Produce the key var file
+    copy:
+      dest: "{{ pjroot }}/vars/key_vars.json"
+      content: >-
+        {{ allkeys | to_nice_json(indent=2) }}
