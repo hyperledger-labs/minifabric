@@ -1,0 +1,19 @@
+- name: Create directories for the mspid
+  file:
+    path: "{{ pjroot }}/vars/discover/{{ CHANNEL_NAME }}/{{ item }}"
+    state: "directory"
+    mode: 0775
+  with_items:
+  - "{{ theorg.key }}"
+
+- name: Save certs
+  when: theorg.value[item.name] is defined
+  copy:
+    dest: "{{ pjroot }}/vars/discover/{{ CHANNEL_NAME}}/{{ theorg.key }}/{{ item.target }}"
+    content: >-
+      {{ theorg.value[item.name]|first|b64decode|trim }}
+  with_items:
+  - "{{ {'name': 'admins', 'target': 'admin' } }}"
+  - "{{ {'name': 'root_certs', 'target': 'cert' } }}"
+  - "{{ {'name': 'tls_root_certs', 'target': 'tlscert' } }}"
+  

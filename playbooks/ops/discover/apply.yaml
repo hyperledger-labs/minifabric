@@ -2,6 +2,12 @@
 - name: "Process keys"
   include_tasks: "{{ pjroot }}/playbooks/common/processkeys.yaml"
 
+- name: Make sure that dynamically found object holding directory exists
+  file:
+    path: "{{ pjroot }}/vars/discover"
+    state: "directory"
+    mode: 0775
+
 - name: Select a peer and orderer for channel query.
   set_fact:
     actingpeer: "{{ allpeers|selectattr('org','equalto',CURRENT_ORG)|list|random }}"
@@ -18,7 +24,47 @@
   command: >-
     docker exec cli /vars/run/discover.sh
 
-- name: Channel discover results
-  debug:
-    msg: "Channel configuration file: ./vars/{{ CHANNEL_NAME }}_{{ CC_NAME }}_endorsers.json"
-  tags: [print_action]
+- name: Check if channel config file exists
+  stat:
+    path: "{{ pjroot }}/vars/discover/{{ CHANNEL_NAME }}_config.json"
+  register: exflag
+
+- name: Process the channel config file
+  when: exflag.stat.exists == true
+  block:
+  - name: "Load channel config vars"
+    include_vars:
+      file: "{{ pjroot }}/vars/discover/{{ CHANNEL_NAME }}_config.json"
+      name: channel_cfg
+
+  - name: Make sure that channel config vars directory exists
+    file:
+      path: "{{ pjroot }}/vars/discover/{{ CHANNEL_NAME }}"
+      state: "directory"
+      mode: 0775
+
+  - name: Save various certs
+    loop: "{{ channel_cfg.msps | dict2items }}"
+    loop_control:
+      loop_var: theorg
+    include_tasks: "playbooks/ops/discover/channelconfig.yaml"
+  
+  - name: Save the channel endpoints
+    copy:
+      dest: "{{ pjroot }}/vars/discover/{{ CHANNEL_NAME}}/ordererendpoints.json"
+      content: >-
+        {{ channel_cfg.orderers | to_nice_json(indent=2) }}
+
+  - name: Remove the temparary file
+    command: "rm -rf {{ pjroot }}/vars/discover/{{ CHANNEL_NAME }}_config.json"
+
+- name: Check if channel chaincode endorser config exists
+  stat:
+    path: "{{ pjroot }}/vars/discover/{{ CHANNEL_NAME }}_{{ CC_NAME }}_endorsers.json"
+  register: exflag
+
+- name: Remove the temparary file
+  when: exflag.stat.exists == true
+  command: >-
+    mv {{ pjroot }}/vars/discover/{{ CHANNEL_NAME }}_{{ CC_NAME }}_endorsers.json
+    {{ pjroot }}/vars/discover/{{ CHANNEL_NAME }}/{{ CC_NAME }}_endorsers.json
