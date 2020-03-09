@@ -52,4 +52,5 @@
         loop_var: op
       when: >-
         status_flag == "Success" and (allpeers|length) > 0 and
-        ( (allorderers|length) > 0 or (ext_orderers is defined and (ext_orderers|length) > 0) )
+        ( allops[0] == 'nodeimport' or (allorderers|length) > 0 or
+         (ext_orderers is defined and (ext_orderers|length) > 0) )
