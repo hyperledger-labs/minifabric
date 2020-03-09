@@ -1,13 +1,6 @@
 ---
-- name: Select an orderer for peer channel join.
-  when: allorderers|length > 0
-  set_fact:
-    actingorderer: "{{ allorderers | random }}"
-
-- name: Select an orderer for peer channel join.
-  when: allorderers|length == 0 and ext_orderers is defined
-  set_fact:
-    actingorderer: "{{ ext_orderers | random }}"
+- name: "Select an orderer node"
+  include_tasks: "{{ pjroot }}/playbooks/common/ordererselection.yaml"
 
 - name: Select a peer for channel query.
   set_fact:
