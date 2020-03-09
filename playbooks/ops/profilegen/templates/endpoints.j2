@@ -9,3 +9,15 @@
     "type": "orderer"
     "tlsCACerts": "{{lookup('file', pjroot+'/vars/keyfiles/ordererOrganizations/'+orderer.org+'/orderers/'+orderer.fullname+'/tls/ca.crt')|b64encode}}"
 {% endfor %}
+{% if ext_orderers is defined and ext_orderers != '' %}
+{% for orderer in ext_orderers %}
+  - "fullname": "{{ orderer.fullname }}"
+    "mspid": "{{ orderer.mspid }}"
+    "name": "{{ orderer.name }}"
+    "url": "{{ orderer.url}}"
+    "port": "{{ orderer.port }}"
+    "org": "{{ orderer.org }}"
+    "type": "orderer"
+    "tlsCACerts": "{{lookup('file', pjroot+'/vars/keyfiles/ordererOrganizations/'+orderer.org+'/tlsca/tlsca.crt')|b64encode}}"
+{% endfor %}
+{% endif %}

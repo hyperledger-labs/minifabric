@@ -1,10 +1,16 @@
 ---
-- debug:
-    msg: "Joining peer {{ joinpeer.fullname }} to channel {{ CHANNEL_NAME }}"
-
 - name: Select an orderer for peer channel join.
+  when: allorderers|length > 0
   set_fact:
     actingorderer: "{{ allorderers | random }}"
+
+- name: Select an orderer for peer channel join.
+  when: allorderers|length == 0 and ext_orderers is defined
+  set_fact:
+    actingorderer: "{{ ext_orderers | random }}"
+
+- name: Set the acting peer to be the join peer
+  set_fact:
     actingpeer: "{{ joinpeer }}"
 
 - name: Create chanel join script

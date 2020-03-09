@@ -1,5 +1,4 @@
----
-- name: Ensure certificate directory is clean
+- name: "Ensure certificate directory is clean"
   file:
     path: "{{ pjroot }}/vars/keyfiles"
     state: "{{ item }}"
@@ -7,7 +6,16 @@
     - "absent"
     - "directory"
 
-- stat:
+- name: Remove the cached node var file
+  file:
+    path: "{{ pjroot }}/vars/{{ item }}"
+    state: "absent"
+  with_items:
+    - "key_vars.json"
+    - "node_vars.json"
+
+- name: "Check if user provided crypto config file exists"
+  stat:
     path: "{{ pjroot }}/vars/my-crypto-config.yaml"
   register: cryc
 
@@ -25,7 +33,7 @@
 
 - name: Set effecctive release
   set_fact:
-    truerelease: "{{ (fabric.release == '1.4') | ternary('1.4.5', fabric.release) }}"
+    truerelease: "{{ (fabric.release == '1.4') | ternary('1.4.6', fabric.release) }}"
 
 - name: Create config tx file
   template:
@@ -48,4 +56,4 @@
 - name: Package all the certs to one file
   archive:
     path: "{{ pjroot }}/vars/keyfiles"
-    dest: "{{ pjroot }}/vars/certs.tgz"  
+    dest: "{{ pjroot }}/vars/certs.tgz"
