@@ -8,9 +8,9 @@
   vars_files:
     - "./spec.yaml"
   tasks:
-    - name: "Fabric networks"
+    - name: "Fabric network"
       debug:
-        msg: "{{ mode }}"
+        msg: "{{ (mode == 'apply')|ternary('setting up', 'cleaning') }}"
       tags: [print_action]
     - set_fact:
         status_flag: "Success"
