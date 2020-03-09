@@ -9,4 +9,7 @@ export CORE_PEER_MSPCONFIGPATH=/vars/keyfiles/peerOrganizations/{{ actingpeer.or
 {% if actingorderer is defined and actingorderer != '' %}
 export ORDERER_TLS_CA=/vars/keyfiles/ordererOrganizations/{{ actingorderer.org}}/orderers/{{ actingorderer.fullname }}/tls/ca.crt
 export ORDERER_ADDRESS={{ actingorderer.url }}:{{ actingorderer.port }}
+{% elif extorderer is defined and extorderer != '' %}
+export ORDERER_TLS_CA=/vars/keyfiles/ordererOrganizations/{{ extorderer.org}}/tlsca/tlsca.crt
+export ORDERER_ADDRESS={{ extorderer.url }}:{{ extorderer.port }}
 {% endif %}

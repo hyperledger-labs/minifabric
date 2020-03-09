@@ -1,6 +1,6 @@
 - name: Get external node endpoints and certs
   include_vars:
-    file: "{{ pjroot }}/vars/extendpoints.yaml"
+    file: "{{ pjroot }}/vars/endpoints.yaml"
     name: exnodes
 
 - name: Add external orderers to the orderer list
@@ -20,14 +20,14 @@
 
 - name: Create external node cert directory
   file:
-    path: "{{ pjroot }}/vars/keyfiles/ordererOrganizations/{{ item.org }}/{{item.type}}s/{{ item.fullname }}/tls"
+    path: "{{ pjroot }}/vars/keyfiles/ordererOrganizations/{{ item }}/tlsca"
     state: "directory"
-  with_items: "{{ exnodes.ordererEndpoints }}"
+  with_items: "{{ ext_ordererorgs }}"
   no_log: True
 
 - name: Save external node certificates
   copy:
-    dest: "{{ pjroot}}/vars/keyfiles/ordererOrganizations/{{ item.org }}/{{item.type}}s/{{item.fullname}}/tls/ca.crt"
+    dest: "{{ pjroot}}/vars/keyfiles/ordererOrganizations/{{ item.org }}/tlsca/tlsca.crt"
     content: |
       {{ item.tlsCACerts | b64decode }}
   with_items: "{{ exnodes.ordererEndpoints }}"

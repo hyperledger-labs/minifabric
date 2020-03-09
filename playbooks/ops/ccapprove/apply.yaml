@@ -1,8 +1,17 @@
 ---
-- name: Select a peer and orderer for signing off configuration changes.
+- name: Select an orderer for chaincode approval
+  when: allorderers|length > 0
+  set_fact:
+    actingorderer: "{{ allorderers | random }}"
+
+- name: Select an orderer for chaincode approval
+  when: (allorderers|length) == 0 and (ext_orderers|length) > 0
+  set_fact:
+    actingorderer: "{{ ext_orderers | random }}"
+
+- name: Select a peer for chaincode status query.
   set_fact:
     actingpeer: "{{ allpeers|selectattr('org','equalto',CURRENT_ORG)|list|random }}"
-    actingorderer: "{{ allorderers | random }}"
 
 - name: Create channel sign off script
   template:

@@ -1,9 +1,9 @@
 ---
-- name: No orderer is needed
+- name: Set the peer to have chaincode installed
   set_fact:
     actingpeer: "{{ installpeer }}"
 
-- name: Select right cc install file
+- name: Select right cc install script file
   set_fact:
     isuffix: "{{ (fabric.release is version('2.0', '>='))|ternary('2', '')}}"
 

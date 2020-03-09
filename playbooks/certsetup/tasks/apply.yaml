@@ -1,5 +1,6 @@
 ---
-- stat:
+- name: "Check keyfiles directory"
+  stat:
     path: "{{ pjroot }}/vars/keyfiles"
   register: certsexists
 
