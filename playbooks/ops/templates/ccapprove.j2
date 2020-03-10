@@ -2,12 +2,17 @@
 # Script to approve chaincode
 {% include "envsetting.j2" %}
 
-PKID=$(peer lifecycle chaincode queryinstalled -O json | jq -r '.installed_chaincodes | .[] | select(.package_id|startswith("{{ CC_NAME}}_{{ CC_VERSION }}:")) | .package_id')
+peer lifecycle chaincode queryinstalled -O json | jq -r '.installed_chaincodes | .[] | select(.package_id|startswith("{{ CC_NAME}}_{{ CC_VERSION }}:"))' > ccstatus.json
+
+PKID=$(jq '.package_id' ccstatus.json | xargs)
+REF=$(jq '.references.{{ CHANNEL_NAME }}' ccstatus.json)
 
 SID=$(peer lifecycle chaincode querycommitted -C {{ CHANNEL_NAME }} -O json \
   | jq -r '.chaincode_definitions|.[]|select(.name=="{{ CC_NAME }}")|.sequence' || true)
 if [[ -z $SID ]]; then
   SEQUENCE=1
+elif [[ -z $REF ]]; then
+  SEQUENCE=$SID
 else
   SEQUENCE=$((1+$SID))
 fi
@@ -20,13 +25,13 @@ export CORE_PEER_TLS_ROOTCERT_FILE=/vars/keyfiles/peerOrganizations/{{ approvepe
 export CORE_PEER_MSPCONFIGPATH=/vars/keyfiles/peerOrganizations/{{ approvepeer.org }}/users/Admin@{{ approvepeer.org }}/msp
 export CORE_PEER_ADDRESS={{ approvepeer.url }}:{{ approvepeer.port }}
 
-approved=$(peer lifecycle chaincode checkcommitreadiness --channelID {{ CHANNEL_NAME }} \
-  --name {{ CC_NAME }} --version {{ CC_VERSION }} --init-required --sequence $SEQUENCE --tls \
-  --cafile $ORDERER_TLS_CA --output json | jq -r '.approvals.{{ approvepeer.org.split('.')|join('') }}')
+# approved=$(peer lifecycle chaincode checkcommitreadiness --channelID {{ CHANNEL_NAME }} \
+#   --name {{ CC_NAME }} --version {{ CC_VERSION }} --init-required --sequence $SEQUENCE --tls \
+#   --cafile $ORDERER_TLS_CA --output json | jq -r '.approvals.{{ approvepeer.org.split('.')|join('') }}')
 
-if [[ "$approved" == "false" ]]; then
+# if [[ "$approved" == "false" ]]; then
   peer lifecycle chaincode approveformyorg --channelID {{ CHANNEL_NAME}} --name {{ CC_NAME }} \
     --version {{ CC_VERSION }} --init-required --package-id $PKID \
     --sequence $SEQUENCE -o $ORDERER_ADDRESS --tls --cafile $ORDERER_TLS_CA
-fi
+# fi
 {% endfor %}
