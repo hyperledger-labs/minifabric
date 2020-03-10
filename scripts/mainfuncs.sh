@@ -110,7 +110,7 @@ function networkUp() {
   -e "CC_POLICY=$CC_POLICY" minifabric.yaml
 
   ansible-playbook -i hosts                                                           \
-  -e "mode=channelcreate,channeljoin,anchorupdate,discover,profilegen,ccinstall,ccapprove,ccinstantiate"  \
+  -e "mode=channelcreate,channeljoin,anchorupdate,profilegen,ccinstall,ccapprove,ccinstantiate,discover"  \
   -e "hostroot=$hostroot" -e "CC_LANGUAGE=$CC_LANGUAGE"                               \
   -e "DB_TYPE=$DB_TYPE" -e "CHANNEL_NAME=$CHANNEL_NAME" -e "CC_NAME=$CC_NAME"         \
   -e "CC_VERSION=$CC_VERSION" -e "CHANNEL_NAME=$CHANNEL_NAME" -e "IMAGETAG=$IMAGETAG" \
