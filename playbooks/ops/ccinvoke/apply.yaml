@@ -22,11 +22,14 @@
   block:
   - name: load the endorser configuration file
     include_vars: "{{ pjroot }}/vars/discover/{{ CHANNEL_NAME }}/{{ CC_NAME }}_endorsers.json"
+  - name: Select a random layout to use as endorsers
+    set_fact:
+      layout: "{{ Layouts|random }}"
   - name: Select the list of the endorsers
     set_fact:
       endorsers: >-
         {{ endorsers + EndorsersByGroups[item.key][0:(item.value|int)] }}  
-    with_items: "{{ Layouts[0].quantities_by_group|dict2items }}"
+    with_items: "{{ layout.quantities_by_group|dict2items }}"
 
 - name: Create chaincode invocation script
   template:
