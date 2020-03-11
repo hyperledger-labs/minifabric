@@ -1,0 +1,51 @@
+- name: Get user id from the key
+  set_fact:
+    userid: "{{ walletuser.key.split('@')[0] }}"
+
+- name: Make sure that org directory exists
+  file:
+    path: "{{ pjroot }}/vars/profiles/wallets/{{ walletuser.org }}/{{ userid }}"
+    state: "directory"
+    mode: 0775
+
+- name: get the cert pubkey from private key
+  command: >-
+    openssl ec -in {{ pjroot }}/vars/{{walletuser.pkey }}
+    -text -noout -conv_form uncompressed        
+  register: keycontent
+
+- set_fact:
+    rawkey: "{{ keycontent.stdout.split('pub:')[1].split('ASN1 OID:')[0] }}"
+
+- name: get the sha256 hash for private key file name
+  shell: >-
+    echo "{{ rawkey }}" | xxd -r -p | sha256sum
+  register: keyname
+
+- name: trim the trailing space and dash
+  set_fact:
+    filename: "{{ keyname.stdout.split(' ')[0] }}"
+    msppath: "{{ walletuser.pkey.split('/')[0:6] | join('/') }}"
+
+- name: Create the public key from certificate
+  command: >-
+    openssl x509 -pubkey -noout -in
+    {{ pjroot }}/vars/{{ msppath }}/signcerts/{{ walletuser.key }}-cert.pem
+  register: pubkeycontent
+
+- name: Save the public key
+  copy:
+    dest: "{{ pjroot }}/vars/profiles/wallets/{{ walletuser.org }}/{{ userid }}/{{ filename }}-pub"
+    content: >-
+      {{ pubkeycontent.stdout }}
+
+- name: Create the private key file
+  command: >-
+    cp {{ pjroot }}/vars/{{ walletuser.pkey }}
+    {{ pjroot }}/vars/profiles/wallets/{{ walletuser.org }}/{{ userid }}/{{ filename }}-priv
+
+- name: Create the wallet json file
+  template:
+    src: "{{ pjroot }}/playbooks/ops/profilegen/templates/userwallet.j2"
+    dest: "{{ pjroot }}/vars/profiles/wallets/{{ walletuser.org }}/{{ userid }}/{{ userid }}"
+  
