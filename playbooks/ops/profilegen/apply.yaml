@@ -4,9 +4,12 @@
 
 - name: Make sure that profiles holding directory exists
   file:
-    path: "{{ pjroot }}/vars/profiles"
-    state: "directory"
+    path: "{{ pjroot }}/vars/profiles/wallets"
+    state: "{{ item }}"
     mode: 0775
+  with_items:
+    - "absent"
+    - "directory"
 
 - name: Create profiles
   template:
@@ -18,3 +21,16 @@
     - "{{ {'name': 'goprofileyaml.j2', 'target': CHANNEL_NAME+'_connection_for_gosdk.yaml'} }}"
     - "{{ {'name': 'endpoints.j2', 'target': 'endpoints.yaml'} }}"
     - "{{ {'name': 'vscodenodefile.j2', 'target': 'vscodenodefile.json'} }}"
+
+- name: Get all users
+  set_fact:
+    allusers: "{{ allusers|default([]) + [item.value] }}"
+  when: item.value.type == 'users'
+  with_items: "{{ allkeys|dict2items }}"
+
+- name: Create wallets for all users
+  loop: "{{ allusers }}"
+  loop_control:
+    loop_var: walletuser
+  include_tasks: "playbooks/ops/profilegen/walletgen.yaml"
+  
