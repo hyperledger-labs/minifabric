@@ -4,7 +4,7 @@
 
 - name: Make sure that profiles holding directory exists
   file:
-    path: "{{ pjroot }}/vars/profiles/wallets"
+    path: "{{ pjroot }}/vars/profiles/vscode/wallets"
     state: "{{ item }}"
     mode: 0775
   with_items:
@@ -20,7 +20,7 @@
     - "{{ {'name': 'goprofile.j2', 'target': CHANNEL_NAME+'_connection_for_gosdk.json'} }}"
     - "{{ {'name': 'goprofileyaml.j2', 'target': CHANNEL_NAME+'_connection_for_gosdk.yaml'} }}"
     - "{{ {'name': 'endpoints.j2', 'target': 'endpoints.yaml'} }}"
-    - "{{ {'name': 'vscodenodefile.j2', 'target': 'vscodenodefile.json'} }}"
+    - "{{ {'name': 'vscodenodefile.j2', 'target': 'vscode/vscodenodefile.json'} }}"
 
 - name: Get all users
   set_fact:
@@ -33,4 +33,9 @@
   loop_control:
     loop_var: walletuser
   include_tasks: "playbooks/ops/profilegen/walletgen.yaml"
-  
+
+- name: Package wallets and vscode endpints to one file
+  archive:
+    path: "{{ pjroot }}/vars/profiles/vscode"
+    dest: "{{ pjroot }}/vars/vscode.tgz"
+ 

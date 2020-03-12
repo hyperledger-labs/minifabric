@@ -3,7 +3,7 @@
 {% for node in (allpeers + allorderers) %}
   {
     "name": "{{ node.fullname }}",
-    "api_url": "{{ node.url }}:{{ node.port }}",
+    "api_url": "grpcs://{{ node.url }}:{{ node.port }}",
     "type": "fabric-{{ node.type }}",
     "msp_id": "{{ node.mspid }}",
     "pem": "{{lookup('file', pjroot+'/vars/keyfiles/'+node.type+'Organizations/'+node.org+'/'+node.type+'s/'+node.fullname+'/tls/ca.crt')|b64encode}}",
@@ -17,7 +17,7 @@
   {
     "name": "{{ ca.fullname }}",
     "ca_name": "{{ ca.fullname }}",
-    "api_url": "{{ ca.url }}:{{ ca.port }}",
+    "api_url": "https://{{ ca.url }}:{{ ca.port }}",
     "type": "fabric-ca",
     "msp_id": "{{ ca.mspid }}",
     "pem": "{{lookup('file', pjroot+'/vars/keyfiles/'+orgtype+'Organizations/'+ca.org+'/ca/'+ca.fullname+'-cert.pem')|b64encode}}",
