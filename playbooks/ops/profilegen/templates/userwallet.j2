@@ -5,6 +5,6 @@
   "enrollmentSecret": "",
   "enrollment": {
      "signingIdentity": "{{ filename }}",
-     "identity": {"certificate": "{{ lookup('file', pjroot+'/vars/'+msppath+'/signcerts/'+walletuser.key+'-cert.pem') | b64encode }}" }
+     "identity": {"certificate": "{{ usercert }}" }
   }
 } 

@@ -4,7 +4,7 @@
 
 - name: Make sure that org directory exists
   file:
-    path: "{{ pjroot }}/vars/profiles/wallets/{{ walletuser.org }}/{{ userid }}"
+    path: "{{ pjroot }}/vars/profiles/vscode/wallets/{{ walletuser.org }}/{{ userid }}"
     state: "directory"
     mode: 0775
 
@@ -35,17 +35,25 @@
 
 - name: Save the public key
   copy:
-    dest: "{{ pjroot }}/vars/profiles/wallets/{{ walletuser.org }}/{{ userid }}/{{ filename }}-pub"
+    dest: "{{ pjroot }}/vars/profiles/vscode/wallets/{{ walletuser.org }}/{{ userid }}/{{ filename }}-pub"
     content: >-
       {{ pubkeycontent.stdout }}
 
 - name: Create the private key file
   command: >-
     cp {{ pjroot }}/vars/{{ walletuser.pkey }}
-    {{ pjroot }}/vars/profiles/wallets/{{ walletuser.org }}/{{ userid }}/{{ filename }}-priv
+    {{ pjroot }}/vars/profiles/vscode/wallets/{{ walletuser.org }}/{{ userid }}/{{ filename }}-priv
+
+- name: Get the certfile content
+  set_fact:
+    usercert: "{{ lookup('file', pjroot+'/vars/'+msppath+'/signcerts/'+walletuser.key+'-cert.pem') }}"
+
+- name: Make the certfile content to be newline separated long string
+  set_fact:
+    usercert: "{{ usercert | regex_replace('(\r\n)', '\\\\n') }}"
 
 - name: Create the wallet json file
   template:
     src: "{{ pjroot }}/playbooks/ops/profilegen/templates/userwallet.j2"
-    dest: "{{ pjroot }}/vars/profiles/wallets/{{ walletuser.org }}/{{ userid }}/{{ userid }}"
+    dest: "{{ pjroot }}/vars/profiles/vscode/wallets/{{ walletuser.org }}/{{ userid }}/{{ userid }}"
   
