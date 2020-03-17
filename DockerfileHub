@@ -6,7 +6,7 @@ FROM alpine/git AS BUILD
 
 RUN cd /tmp && git init minifabric && cd minifabric                && \
     git remote add origin https://github.com/litong01/minifabric   && \
-    git pull --depth=1 origin master && mv plugins /tmp            && \
+    git pull --depth=1 origin 0.1.0 && mv plugins /tmp            && \
     rm -f .dockerignore .gitignore Dockerfile DockerfileHub 
 
 FROM alpine:latest
