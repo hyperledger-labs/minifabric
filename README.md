@@ -1,4 +1,7 @@
 # Minifabric
+
+[中文说明](./README.zh.md)
+
 If you like to learn Hyperledger Fabric or develop your smart contract, or
 just want to get a feel about Hyperledger Fabric, Minifabric is the tool to
 get you started. Minifabric can stand up a Fabric network on a small machine
