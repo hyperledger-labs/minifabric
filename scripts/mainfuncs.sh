@@ -75,16 +75,14 @@ function doDefaults() {
   fi
   source ./vars/envsettings
   for value in ${params[@]}; do
-    eval "tt=${!value}"
-    if [ -z ${tt} ]; then
+    if [ -z ${!value+x} ]; then
       tt="$value=$"XX_"$value"
       eval "$tt"
     fi
   done
   echo "#!/bin/bash"> ./vars/envsettings
   for value in ${params[@]}; do
-    tt="${!value}"
-    echo 'declare XX_'$value="'"$tt"'" >> ./vars/envsettings
+    echo 'declare XX_'$value="'"${!value}"'" >> ./vars/envsettings
   done
 }
 
