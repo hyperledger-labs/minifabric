@@ -60,6 +60,9 @@ esac
 done
 
 isValidateCMD
+if [ ! -z ${CC_PARAMETERS+x} ]; then CC_PARAMETERS=$(echo $CC_PARAMETERS|base64); fi
+if [ ! -z ${CC_POLICY+x} ]; then CC_POLICY=$(echo $CC_POLICY|base64); fi
+if [ ! -z ${TRANSIENT_DATA+x} ]; then TRANSIENT_DATA=$(echo $TRANSIENT_DATA|base64); fi
 doDefaults
 
 echo "Minifab Execution Context:"
@@ -69,18 +72,18 @@ echo "    PEER_DATABASE_TYPE=$DB_TYPE"
 echo "    CHAINCODE_LANGUAGE=$CC_LANGUAGE"
 echo "    CHAINCODE_NAME=$CC_NAME"
 echo "    CHAINCODE_VERSION=$CC_VERSION"
-echo "    CHAINCODE_PARAMETERS=$CC_PARAMETERS"
+echo "    CHAINCODE_PARAMETERS=$(echo $CC_PARAMETERS|base64 -d)"
 echo "    CHAINCODE_PRIVATE=$CC_PRIVATE"
-echo "    CHAINCODE_POLICY=$CC_POLICY"
-echo "    TRANSIENT_DATA=$TRANSIENT_DATA"
+echo "    CHAINCODE_POLICY=$(echo $CC_POLICY|base64 -d)"
+echo "    TRANSIENT_DATA=$(echo $TRANSIENT_DATA|base64 -d)"
 echo "    BLOCK_NUMBER=$BLOCK_NUMBER"
 echo "    EXPOSE_ENDPOINTS=$EXPOSE_ENDPOINTS"
 echo "    CURRENT_ORG=$CURRENT_ORG"
 echo "    HOST_ADDRESSES=$ADDRS"
 
-CC_PARAMETERS=$(echo $CC_PARAMETERS|base64)
-CC_POLICY=$(echo $CC_POLICY|base64)
-TRANSIENT_DATA=$(echo $TRANSIENT_DATA|base64)
+# CC_PARAMETERS=$(echo $CC_PARAMETERS|base64)
+# CC_POLICY=$(echo $CC_POLICY|base64)
+# TRANSIENT_DATA=$(echo $TRANSIENT_DATA|base64)
 
 if [ -z "$hostroot" ]; then hostroot=$(pwd); fi
 echo "    WORKING_DIRECTORY: $hostroot"
