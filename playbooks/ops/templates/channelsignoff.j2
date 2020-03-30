@@ -6,7 +6,6 @@ export FABRIC_CFG_PATH=/vars
 
 {% include "envsetting.j2" %}
 
-if [ ! -f {{ CHANNEL_NAME }}_update_envelope.pb ]; then
 # 1. Fetch the channel configuration
 peer channel fetch config config_block.pb -o $ORDERER_ADDRESS \
   --cafile $ORDERER_TLS_CA --tls -c {{CHANNEL_NAME}}
@@ -38,7 +37,6 @@ echo '{"payload":{"header":{"channel_header":{"channel_id":"{{ CHANNEL_NAME }}",
 # 8. Encode the json format into protobuf format
 configtxlator proto_encode --input {{ CHANNEL_NAME }}_update_envelope.json \
   --type common.Envelope --output {{ CHANNEL_NAME }}_update_envelope.pb
-fi
 
 # 9. Need to sign channel update envelop by each org admin
 {% for org in peerorgs %}
