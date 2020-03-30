@@ -1,0 +1,20 @@
+---
+- name: Do chaincode for release 2.0 or greater
+  when: fabric.release is version('2.0', '>=')
+  block:
+  - name: "Select an orderer node"
+    include_tasks: "{{ pjroot }}/playbooks/common/ordererselection.yaml"
+
+  - name: Select a peer and orderer for chaincode commit.
+    set_fact:
+      actingpeer: "{{ allpeers|selectattr('org','equalto',CURRENT_ORG)|list|random }}"
+
+  - name: Create chaincode commit script
+    template:
+      src: "{{ pjroot }}/playbooks/ops/templates/cccommit2.j2"
+      dest: "{{ pjroot }}/vars/run/cccommit.sh"
+      mode: +x
+
+  - name: Run the chaincode commit script on cli container
+    command: >-
+      docker exec cli /vars/run/cccommit.sh

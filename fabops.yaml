@@ -13,12 +13,10 @@
         allops: "{{ mode.split(',')|list }}"
         status_flag: "Success"
 
-    - set_fact:
-        OPNAMES: "{{ OPNAMES | combine({'ccinstantiate': 'cc commit'}) }}"
-      when: IMAGETAG is version('2.0', '>=')
-
-    - set_fact:
-        allops: "{{ allops | difference(['ccapprove']) }}"
+    - name: Remove approve and commit from the operation list if release is less than 2.0
+      set_fact:
+        allops: "{{ allops | difference(['ccapprove', 'cccommit']) }}"
+        OPNAMES: "{{ OPNAMES | combine({'ccinstantiate': 'cc instantiate'}) }}"
       when: IMAGETAG is version('2.0', '<')
 
     - meta: end_play
