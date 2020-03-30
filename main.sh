@@ -54,6 +54,8 @@ case $optkey in
     CC_PRIVATE="$2";shift;shift;;
   -y|--chaincode-policy)
     CC_POLICY="$2";shift;shift;;
+  -d|--init-required)
+    CC_INIT_REQUIRED="$2";shift;shift;;
   *) # unknown option
     echo "$1 is a not supported option"; exit 1;;
 esac
@@ -72,6 +74,7 @@ echo "    PEER_DATABASE_TYPE=$DB_TYPE"
 echo "    CHAINCODE_LANGUAGE=$CC_LANGUAGE"
 echo "    CHAINCODE_NAME=$CC_NAME"
 echo "    CHAINCODE_VERSION=$CC_VERSION"
+echo "    CHAINCODE_INIT_REQUIRED=$CC_INIT_REQUIRED"
 echo "    CHAINCODE_PARAMETERS=$(echo $CC_PARAMETERS|base64 -d)"
 echo "    CHAINCODE_PRIVATE=$CC_PRIVATE"
 echo "    CHAINCODE_POLICY=$(echo $CC_POLICY|base64 -d)"

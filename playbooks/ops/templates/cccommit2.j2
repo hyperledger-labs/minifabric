@@ -1,0 +1,29 @@
+#!/bin/bash
+# Script to instantiate chaincode
+{% include "envsetting.j2" %}
+SID=$(peer lifecycle chaincode querycommitted -C {{ CHANNEL_NAME }} -O json \
+  | jq -r '.chaincode_definitions|.[]|select(.name=="{{ CC_NAME }}")|.sequence' || true)
+
+if [[ -z $SID ]]; then
+  SEQUENCE=1
+else
+  SEQUENCE=$((1+$SID))
+fi
+
+peer lifecycle chaincode commit -o $ORDERER_ADDRESS --channelID {{ CHANNEL_NAME }} \
+  --name {{ CC_NAME }} --version {{ CC_VERSION }} --sequence $SEQUENCE \
+{% for anorg in peerorgs %}
+{%   set onepeer = allpeers|selectattr('org', 'equalto', anorg)|list|random %}
+  --peerAddresses {{ onepeer.url }}:{{ onepeer.port }} \
+  --tlsRootCertFiles /vars/keyfiles/peerOrganizations/{{ anorg }}/peers/{{ onepeer.fullname }}/tls/ca.crt \
+{% endfor %}
+{% if (CC_INIT_REQUIRED|lower) == 'true' %}
+  --init-required \
+{% endif %}
+{% if (CC_PRIVATE|lower) == 'true' %}
+  --collections-config /vars/{{CC_NAME}}_collection_config.json \
+{% endif %}
+{% if CC_POLICY != 'Cg==' %}
+  --signature-policy '{{ CC_POLICY|b64decode|trim }}' \
+{% endif %}
+  --cafile $ORDERER_TLS_CA --tls

@@ -1,19 +1,20 @@
 ---
-- name: "Select an orderer node"
-  include_tasks: "{{ pjroot }}/playbooks/common/ordererselection.yaml"
-
-- name: Select a peer for chaincode status query.
-  set_fact:
-    actingpeer: "{{ allpeers|selectattr('org','equalto',CURRENT_ORG)|list|random }}"
-
-- name: Create channel sign off script
-  template:
-    src: "{{ pjroot }}/playbooks/ops/templates/ccapprove.j2"
-    dest: "{{ pjroot }}/vars/run/ccapprove.sh"
-    mode: +x
+- name: Do chaincode approval for release 2.0 or greater
   when: fabric.release is version('2.0', '>=')
+  block:
+  - name: "Select an orderer node"
+    include_tasks: "{{ pjroot }}/playbooks/common/ordererselection.yaml"
 
-- name: Run the channel signing off script on cli container
-  command: >-
-    docker exec cli /vars/run/ccapprove.sh
-  when: fabric.release is version('2.0', '>=')
+  - name: Select a peer for chaincode status query.
+    set_fact:
+      actingpeer: "{{ allpeers|selectattr('org','equalto',CURRENT_ORG)|list|random }}"
+
+  - name: Create channel sign off script
+    template:
+      src: "{{ pjroot }}/playbooks/ops/templates/ccapprove.j2"
+      dest: "{{ pjroot }}/vars/run/ccapprove.sh"
+      mode: +x
+
+  - name: Run the channel signing off script on cli container
+    command: >-
+      docker exec cli /vars/run/ccapprove.sh

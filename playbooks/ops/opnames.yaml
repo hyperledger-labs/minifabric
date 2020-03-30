@@ -1,7 +1,8 @@
 OPNAMES:
   ccinstall: "cc install"
   ccapprove: "cc approve"
-  ccinstantiate: "cc instantiate"
+  cccommit: "cc commit"
+  ccinstantiate: "cc initialize"
   ccinvoke: "cc invoke"
   channelcreate: "channel create"
   channeljoin: "channel join"
