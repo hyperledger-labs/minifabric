@@ -18,7 +18,7 @@
   register: endorserflag
 
 - name: Creating endorser list
-  when: endorserflag.stat.exists == true
+  when: endorserflag.stat.exists == true and endorserflag.stat.size > 2
   block:
   - name: load the endorser configuration file
     include_vars: "{{ pjroot }}/vars/discover/{{ CHANNEL_NAME }}/{{ CC_NAME }}_endorsers.json"
@@ -29,7 +29,7 @@
     set_fact:
       endorsers: >-
         {{ endorsers + EndorsersByGroups[item.key][0:(item.value|int)] }}  
-    with_items: "{{ layout.quantities_by_group|dict2items }}"
+    with_items: "{{ layout.quantities_by_group|default({})|dict2items }}"
 
 - name: Create chaincode invocation script
   template:
