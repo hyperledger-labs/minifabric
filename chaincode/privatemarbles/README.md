@@ -22,27 +22,27 @@ minifab install -n privatemarbles -r true
 ]
 
 # Approve,commit,initialize the chaincode
-minifab approve,commit,initialize -p '' 
+minifab approve,commit,initialize -p ''
 
 # To init marble
-MARBLE=$( echo '{"name":"marble1","color":"blue","size":35,"owner":"tom","price":99}' | base64 -w 0 )
+MARBLE=$( echo '{"name":"marble1","color":"blue","size":35,"owner":"tom","price":99}' | base64 | tr -d \\n )
 minifab invoke -p '"initMarble"' -t '{"marble":"'$MARBLE'"}'
 
-MARBLE=$( echo '{"name":"marble2","color":"red","size":50,"owner":"tom","price":102}' | base64 -w 0 )
+MARBLE=$( echo '{"name":"marble2","color":"red","size":50,"owner":"tom","price":102}' | base64 | tr -d \\n )
 minifab invoke -p '"initMarble"' -t '{"marble":"'$MARBLE'"}'
 
-MARBLE=$( echo '{"name":"marble3","color":"blue","size":70,"owner":"tom","price":103}' | base64 -w 0 )
+MARBLE=$( echo '{"name":"marble3","color":"blue","size":70,"owner":"tom","price":103}' | base64 | tr -d \\n )
 minifab invoke -p '"initMarble"' -t '{"marble":"'$MARBLE'"}'
 
 # To transfer marble
-MARBLE_OWNER=$( echo '{"name":"marble2","owner":"jerry"}' | base64 -w 0 )
+MARBLE_OWNER=$( echo '{"name":"marble2","owner":"jerry"}' | base64 | tr -d \\n )
 minifab invoke -p '"transferMarble"' -t '{"marble_owner":"'$MARBLE_OWNER'"}'
-
-# To delete marble
-MARBLE_ID$( echo '{"name":"marble1"}' | base64 -w 0 )
-minifab invoke -p '"delete"' -t '{"marble_delete":"'$MARBLE_ID'"}'
 
 # To query marble
 minifab invoke -p '"readMarble","marble1"' -t ''
 minifab invoke -p '"readMarblePrivateDetails","marble1"' -t ''
 minifab invoke -p '"getMarblesByRange","marble1","marble4"' -t ''
+
+# To delete marble
+MARBLE_ID=$( echo '{"name":"marble1"}' | base64 | tr -d \\n )
+minifab invoke -p '"delete"' -t '{"marble_delete":"'$MARBLE_ID'"}'

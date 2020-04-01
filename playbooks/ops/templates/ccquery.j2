@@ -1,0 +1,11 @@
+#!/bin/bash
+# Script to instantiate chaincode
+{% include "envsetting.j2" %}
+peer chaincode query -o $ORDERER_ADDRESS --cafile $ORDERER_TLS_CA \
+  --tls -C {{CHANNEL_NAME}} -n {{ CC_NAME }}  \
+  --peerAddresses {{ actingpeer.url }}:{{ actingpeer.port }} \
+  --tlsRootCertFiles /vars/keyfiles/peerOrganizations/{{ actingpeer.org }}/peers/{{ actingpeer.fullname }}/tls/ca.crt \
+{% if TRANSIENT_DATA != 'Cg==' %}
+  --transient '{{ TRANSIENT_DATA|b64decode|trim }}' \
+{% endif %}
+  -c '{"Args":[{{ CC_PARAMETERS|b64decode|trim }}]}'

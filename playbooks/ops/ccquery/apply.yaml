@@ -1,0 +1,31 @@
+---
+- name: "Select an orderer node"
+  include_tasks: "{{ pjroot }}/playbooks/common/ordererselection.yaml"
+
+- name: Select a peer for chaincode invoke preparation
+  set_fact:
+    actingpeer: "{{ allpeers|selectattr('org','equalto',CURRENT_ORG)|list|random }}"
+    endorsers: "{{ [] }}"
+
+- name: Create chaincode query script
+  template:
+    src: "{{ pjroot }}/playbooks/ops/templates/ccquery.j2"
+    dest: "{{ pjroot }}/vars/run/ccquery.sh"
+    mode: +x
+
+- name: Run the chaincode query script on cli container
+  command: >-
+    docker exec cli /vars/run/ccquery.sh
+  register: theresult
+
+- name: "Chaincode query results"
+  debug:
+    msg: "{{ theresult.stderr_lines }}"
+  when: (theresult.stderr_lines|length) > 0
+  tags: [print_action]
+
+- name: "Chaincode query results"
+  debug:
+    msg: "{{ theresult.stdout_lines }}"
+  when: (theresult.stdout_lines|length) > 0
+  tags: [print_action]

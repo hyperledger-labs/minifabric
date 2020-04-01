@@ -4,6 +4,7 @@ OPNAMES:
   cccommit: "cc commit"
   ccinstantiate: "cc initialize"
   ccinvoke: "cc invoke"
+  ccquery: "cc query"
   channelcreate: "channel create"
   channeljoin: "channel join"
   blockquery: "block query"
