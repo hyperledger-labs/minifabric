@@ -62,9 +62,9 @@ esac
 done
 
 isValidateCMD
-if [ ! -z ${CC_PARAMETERS+x} ]; then CC_PARAMETERS=$(echo $CC_PARAMETERS|base64); fi
-if [ ! -z ${CC_POLICY+x} ]; then CC_POLICY=$(echo $CC_POLICY|base64); fi
-if [ ! -z ${TRANSIENT_DATA+x} ]; then TRANSIENT_DATA=$(echo $TRANSIENT_DATA|base64); fi
+if [ ! -z ${CC_PARAMETERS+x} ]; then CC_PARAMETERS=$(echo $CC_PARAMETERS|base64 | tr -d \\n); fi
+if [ ! -z ${CC_POLICY+x} ]; then CC_POLICY=$(echo $CC_POLICY|base64 | tr -d \\n); fi
+if [ ! -z ${TRANSIENT_DATA+x} ]; then TRANSIENT_DATA=$(echo $TRANSIENT_DATA|base64 | tr -d \\n); fi
 doDefaults
 
 echo "Minifab Execution Context:"
@@ -83,10 +83,6 @@ echo "    BLOCK_NUMBER=$BLOCK_NUMBER"
 echo "    EXPOSE_ENDPOINTS=$EXPOSE_ENDPOINTS"
 echo "    CURRENT_ORG=$CURRENT_ORG"
 echo "    HOST_ADDRESSES=$ADDRS"
-
-# CC_PARAMETERS=$(echo $CC_PARAMETERS|base64)
-# CC_POLICY=$(echo $CC_POLICY|base64)
-# TRANSIENT_DATA=$(echo $TRANSIENT_DATA|base64)
 
 if [ -z "$hostroot" ]; then hostroot=$(pwd); fi
 echo "    WORKING_DIRECTORY: $hostroot"
