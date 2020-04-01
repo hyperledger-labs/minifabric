@@ -25,7 +25,7 @@ minifab install -n privatemarbles -r true
 minifab approve,commit,initialize -p '' 
 
 # To init marble
-MARBLE=$( echo '{"name":"marble1","color":"blue","size":35,"owner":"tom","price":99}"' | base64 -w 0 )
+MARBLE=$( echo '{"name":"marble1","color":"blue","size":35,"owner":"tom","price":99}' | base64 -w 0 )
 minifab invoke -p '"initMarble"' -t '{"marble":"'$MARBLE'"}'
 
 MARBLE=$( echo '{"name":"marble2","color":"red","size":50,"owner":"tom","price":102}' | base64 -w 0 )
