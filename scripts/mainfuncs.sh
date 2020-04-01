@@ -13,7 +13,7 @@ FUNCNAMES=([up]=networkUp [netup]=netUp [down]=networkDown \
   [restart]=networkRestart [generate]=generateCerts [cleanup]=cleanup)
 OPNAMES=([install]='ccinstall' [approve]='ccapprove' [instantiate]='ccinstantiate' \
   [initialize]='ccinstantiate' [commit]='cccommit' [invoke]='ccinvoke' [create]='channelcreate' \
-  [join]='channeljoin' [blockquery]='blockquery' [channelquery]='channelquery' \
+  [query]='ccquery' [join]='channeljoin' [blockquery]='blockquery' [channelquery]='channelquery' \
   [profilegen]='profilegen' [channelsign]='channelsign' [channelupdate]='channelupdate' \
   [anchorupdate]='anchorupdate' [dashup]='dashup' [dashdown]='dashdown' \
   [nodeimport]='nodeimport' [discover]='discover')
@@ -35,7 +35,8 @@ function printHelp() {
   echo "      - 'instantiate'  - instantiate chaincode for fabric release < 2.0"
   echo "      - 'initialize'  - initialize chaincode for fabric release >= 2.0"
   echo "      - 'commit'  - commit chaincode for fabric releases greater or equal to 2.0"
-  echo "      - 'invoke'  - invoke a chaincode method"
+  echo "      - 'invoke'  - run chaincode invoke method"
+  echo "      - 'query'  - run chaincode query method"
   echo "      - 'create'  - create application channel"
   echo "      - 'join'  - join all peers currently in the network to a channel"
   echo "      - 'blockquery'  - do channel block query and produce a channel tx json file"
@@ -57,7 +58,7 @@ function printHelp() {
   echo "    -v|--chaincode-version    - chaincode version to be installed"
   echo "    -p|--chaincode-parameters - chaincode instantiation and invocation parameters"
   echo "    -t|--transient-parameters - chaincode instantiation and invocation transient parameters"
-  echo "    -r|--chaincode-private    - the chaincode instantiated processes private data"
+  echo "    -r|--chaincode-private    - flag if chaincode processes private data, default is false"
   echo "    -e|--expose-endpoints     - make all the node endpoints available outside of the server"
   echo "    -o|--organization         - organization to be used for org specific operations"
   echo "    -y|--chaincode-policy     - chaincode policy"
