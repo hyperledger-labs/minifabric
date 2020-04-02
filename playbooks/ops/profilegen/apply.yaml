@@ -20,6 +20,7 @@
     - "{{ {'name': 'goprofile.j2', 'target': CHANNEL_NAME+'_connection_for_gosdk.json'} }}"
     - "{{ {'name': 'goprofileyaml.j2', 'target': CHANNEL_NAME+'_connection_for_gosdk.yaml'} }}"
     - "{{ {'name': 'endpoints.j2', 'target': 'endpoints.yaml'} }}"
+    - "{{ {'name': 'anchorpeers.j2', 'target': 'anchorpeers.json'} }}"
     - "{{ {'name': 'vscodenodefile.j2', 'target': 'vscode/vscodenodefile.json'} }}"
 
 - name: Get all users
