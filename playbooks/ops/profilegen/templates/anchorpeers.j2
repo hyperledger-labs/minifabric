@@ -2,17 +2,17 @@
 {
 {% for peerorg in peerorgs %}
   "{{ orgattrs[peerorg].mspid }}": {
-     "AnchorPeers": {
-       "mod_policy": "Admins",
-       "value": {
-         "anchor_peers": [
+    "AnchorPeers": {
+      "mod_policy": "Admins",
+      "value": {
+        "anchor_peers": [
 {% set orgpeers = allpeers|selectattr('org','equalto',peerorg)|list %}
 {% for apeer in orgpeers %}
            { "host": "{{ apeer.url }}", "port": "{{ apeer.port }}" }{{ '' if loop.last else ',' }}
 {% endfor %}
-         ]
-       },
-       "version": "0"
+        ]
+      },
+      "version": "0"
     }
   }{{ '' if loop.last else ',' }}
 {% endfor %}
