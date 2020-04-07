@@ -5,9 +5,11 @@ Hyperledger Fabric，迷你Fabric是让您快速开始的良好工具。迷
 您搭建Fabric网络，但也可以在多个大型机器上部署多节点Fabric网络。
 迷你Fabric虽然很小，但它可以让您体验Hyperledger Fabric的全部
 功能，比如channel创建，channel加入，链码安装，批准，实例化等。
-它还支持channel更新，私有数据收集，块查询等。您只需要的是[docker]（https://www.docker.com/）（18.03或更高版本）环境。
+它还支持channel更新，私有数据收集，块查询等。您只需要的是[docker](https://www.docker.com/)（18.03或更高版本）环境。
 迷你Fabric可在OS X和Linux上运行。 对于那些急于上手的人，请按照
-以下步骤开始操作。如果您想在动手之前了解更多信息，请阅读[迷你Fabric用户指南]（https://github.com/litong01/minifabric/blob/master/docs/README.md）。
+以下步骤开始操作，或参考[教学视频](https://v.youku.com/v_show/id_XNDYyMDU2OTY3Mg==.html?spm=a2hzp.8244740.0.0&f=52423582)
+
+如果您想在动手之前了解更多信息，请阅读[迷你Fabric用户指南(原文)](https://github.com/litong01/minifabric/blob/master/docs/README.md)。
 
 
 ### 下载工具
