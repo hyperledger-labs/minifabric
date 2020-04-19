@@ -50,7 +50,6 @@ minifab down
 
 Notes: If you are using windows system, command line parameter using double
 quotes will have to be replaced with \". For example:
-注意: 如果你使用Windows系统，命令行参数中所有双引号必须使用\"来代替。比如：
 ```
   minifab invoke -p '"invoke","a","b","4"'
 ```
