@@ -48,8 +48,8 @@ minifab up
 minifab down
 ```
 
-Notes: If you are using windows system, command line parameter using double
-quotes will have to be replaced with \". For example:
+Notes: If you are using windows system, command line parameters using double
+quotes will have to be replaced with `\"`. For example:
 ```
   minifab invoke -p '"invoke","a","b","4"'
 ```
