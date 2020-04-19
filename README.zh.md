@@ -33,33 +33,27 @@ mkdir vars && tar -xvf ~/chaincode.tgz -C vars
 ```
 mkdir -p ~/mywork && cd ~/mywork && curl -o minifab -sL https://tinyurl.com/twrt8zv && chmod +x minifab
 ```
-#### 如果你使用Windows 10系统
-```
-md %userprofile%\mywork & cd %userprofile%\mywork & curl -o minifab.cmd -sL https://tinyurl.com/yb3ouwm3
-```
-
-### ### 搭建Fabric网络:
-
-#### 如果你使用Linux或OS X系统
-```
-./minifab up
-```
 
 #### 如果你使用Windows 10系统
+```
+mkdir %userprofile%\mywork & cd %userprofile%\mywork & curl -o minifab.cmd -sL https://tinyurl.com/yb3ouwm3
+```
+
+### 让minifab在整个系统里使用起来更容易
+
+为了使用方便，你可以把minifab (Linux 和 OS X) 或 minifab.cmd (Windows) 脚本移到在系统路径里的一个目录， 这样在执行minifab各种操作时你就不需要每次都要指定路径了.
+
+### 搭建Fabric网络:
+
 ```
 minifab up
 ```
 
 ### 删除Fabric网络:
-#### 如果你使用Linux或OS X系统
-```
-./minifab down
-```
-
-#### 如果你使用Windows 10系统
 ```
 minifab down
 ```
+
 注意: 如果你使用Windows系统，命令行参数中所有双引号必须使用`\"`来代替。比如：
 ```
   minifab invoke -p '"invoke","a","b","4"'
@@ -68,5 +62,3 @@ minifab down
 ```
   minifab invoke -p \"invoke\",\"a\",\"b\",\"4\"
 ```
-
-
