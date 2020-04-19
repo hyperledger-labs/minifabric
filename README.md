@@ -13,37 +13,29 @@ It also supports channel update, private data collection, block query etc.
 All you need to start with is a [docker](https://www.docker.com/) (18.03 or newer) environment. Minifabric works on Linux, OS X and Windows. If you like to read more before jumping in, please read [Minifabric User Guide](https://github.com/litong01/minifabric/blob/master/docs/README.md). For those impatient, please follow the steps
 below to start things off.
 
-### Get the script and make it executable.
+### Get the script.
 
-#### If you have either Linux or OS X system
+#### For Linux or OS X system
 ```
 mkdir -p ~/mywork && cd ~/mywork && curl -o minifab -sL https://tinyurl.com/twrt8zv && chmod +x minifab
 ```
 
-#### If you have a windows system
+#### For windows 10
 ```
 mkdir %userprofile%\mywork & cd %userprofile%\mywork & curl -o minifab.cmd -sL https://tinyurl.com/yb3ouwm3
 ```
 
+### Make minifab available system wide
+
+Move the minifab (Linux and OS X) or minifab.cmd (Windows) script to a directory which is part of your execution path in your system, this is to make the later operations a bit easier, you will be able to run just minifab anywhere in your system without specify the path to the minifab script.
+
 ### Stand up a fabric network:
 
-#### For Linux or OS X
-```
-./minifab up
-```
-
-#### For Windows
 ```
 minifab up
 ```
 
 ### Tear down the fabric network when you do not need it any more:
-#### For Linux or OS X
-```
-./minifab down
-```
-
-#### For Windows 10
 ```
 minifab down
 ```
