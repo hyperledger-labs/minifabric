@@ -1,7 +1,7 @@
 #!/bin/bash
 declare XX_CHANNEL_NAME='mychannel'
 declare XX_CC_LANGUAGE='go'
-declare XX_IMAGETAG='2.0'
+declare XX_IMAGETAG='2.1'
 declare XX_CC_VERSION='1.0'
 declare XX_CC_NAME='simple'
 declare XX_DB_TYPE='golevel'
