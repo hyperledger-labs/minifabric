@@ -13,22 +13,6 @@ Hyperledger Fabric，迷你Fabric是让您快速开始的良好工具。迷
 
 
 ### 下载工具
-
-#### 如果你所在地难于访问境外的网站
-下载下面三个文件
-1. https://share.weiyun.com/5l2rQhO
-2. https://share.weiyun.com/5sfKniB
-3. https://share.weiyun.com/5bDTjJE
-
-把第一个文件命名为minifaball.tgz, 把第二个文件命名为minifab,把第三个文件命名为chaincode.tgz 然后执行下面三个命令
-```
-cat minifaball.tgz | docker load
-chmod +x minifab
-mkdir vars && tar -xvf ~/chaincode.tgz -C vars
-```
-
-#### 如果你所在地容易访问境外网站
-
 #### 如果你使用Linux或OS X系统
 ```
 mkdir -p ~/mywork && cd ~/mywork && curl -o minifab -sL https://tinyurl.com/twrt8zv && chmod +x minifab
@@ -41,7 +25,7 @@ mkdir %userprofile%\mywork & cd %userprofile%\mywork & curl -o minifab.cmd -sL h
 
 ### 让minifab在整个系统里使用起来更容易
 
-为了使用方便，你可以把minifab (Linux 和 OS X) 或 minifab.cmd (Windows) 脚本移到在系统路径里的一个目录， 这样在执行minifab各种操作时你就不需要每次都要指定路径了.
+为了使用方便，你可以把minifab (Linux 和 OS X) 或 minifab.cmd (Windows) 脚本移到在系统路径里的一个目录， 这样在执行minifab各种操作时你就不需要指定这个脚本的路径了.
 
 ### 搭建Fabric网络:
 
@@ -56,9 +40,9 @@ minifab down
 
 注意: 如果你使用Windows系统，命令行参数中所有双引号必须使用`\"`来代替。比如：
 ```
-  minifab invoke -p '"invoke","a","b","4"'
+minifab invoke -p '"invoke","a","b","4"'
 ```
 必须变成下面
 ```
-  minifab invoke -p \"invoke\",\"a\",\"b\",\"4\"
+minifab invoke -p \"invoke\",\"a\",\"b\",\"4\"
 ```

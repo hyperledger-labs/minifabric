@@ -27,7 +27,7 @@ mkdir %userprofile%\mywork & cd %userprofile%\mywork & curl -o minifab.cmd -sL h
 
 ### Make minifab available system wide
 
-Move the minifab (Linux and OS X) or minifab.cmd (Windows) script to a directory which is part of your execution path in your system, this is to make the later operations a bit easier, you will be able to run just minifab anywhere in your system without specify the path to the minifab script.
+Move the minifab (Linux and OS X) or minifab.cmd (Windows) script to a directory which is part of your execution path in your system, this is to make the later operations a bit easier, you will be able to run minifab command anywhere in your system without specify the path to the minifab script.
 
 ### Stand up a fabric network:
 
@@ -35,7 +35,7 @@ Move the minifab (Linux and OS X) or minifab.cmd (Windows) script to a directory
 minifab up
 ```
 
-### Tear down the fabric network when you do not need it any more:
+### Tear down the fabric network:
 ```
 minifab down
 ```
@@ -43,9 +43,9 @@ minifab down
 Notes: If you are using windows system, command line parameters using double
 quotes will have to be replaced with `\"`. For example:
 ```
-  minifab invoke -p '"invoke","a","b","4"'
+minifab invoke -p '"invoke","a","b","4"'
 ```
 must be changed to the following:
 ```
-  minifab invoke -p \"invoke\",\"a\",\"b\",\"4\"
+minifab invoke -p \"invoke\",\"a\",\"b\",\"4\"
 ```
