@@ -12,13 +12,13 @@ Hyperledger Fabric，迷你Fabric是让您快速开始的良好工具。迷
 如果您想在动手之前了解更多信息，请阅读[迷你Fabric用户指南(原文)](https://github.com/litong01/minifabric/blob/master/docs/README.md)。
 
 
-### 下载工具
-#### 如果你使用Linux或OS X系统
+### 1. 下载工具
+##### 如果你使用Linux或OS X系统
 ```
 mkdir -p ~/mywork && cd ~/mywork && curl -o minifab -sL https://tinyurl.com/twrt8zv && chmod +x minifab
 ```
 
-#### 如果你使用Windows 10系统
+##### 如果你使用Windows 10系统
 ```
 mkdir %userprofile%\mywork & cd %userprofile%\mywork & curl -o minifab.cmd -sL https://tinyurl.com/yb3ouwm3
 ```
@@ -27,22 +27,18 @@ mkdir %userprofile%\mywork & cd %userprofile%\mywork & curl -o minifab.cmd -sL h
 
 为了使用方便，你可以把minifab (Linux 和 OS X) 或 minifab.cmd (Windows) 脚本移到在系统路径里的一个目录， 这样在执行minifab各种操作时你就不需要指定这个脚本的路径了.
 
-### 搭建Fabric网络:
+### 2. 搭建Fabric网络:
 
 ```
 minifab up
 ```
 
-### 删除Fabric网络:
+### 3. 删除Fabric网络:
 ```
 minifab down
 ```
 
-注意: 如果你使用Windows系统，命令行参数中所有双引号必须使用`\"`来代替。比如：
+### 4. 如果想要更多了解minifabric的强大功能:
 ```
-minifab invoke -p '"invoke","a","b","4"'
-```
-必须变成下面
-```
-minifab invoke -p \"invoke\",\"a\",\"b\",\"4\"
+minifab
 ```
