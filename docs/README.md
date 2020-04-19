@@ -15,7 +15,7 @@ This tool helps Fabric users working with fabric network. It currently provides 
 12. Generate connection profiles and wallet files for fabric go/python sdks and vscode extensions
 
 ### Prerequsites
-This tool requires docker CE 18.03 or newer.
+This tool requires docker CE 18.03 or newer regardless which system you are using
 
 ### Get the script and make it executable
 ```
@@ -203,6 +203,20 @@ docker pull hfrd/minifab:latest
 ### See more available fabric commands
 ```
 minifab
+```
+
+### Windows system users
+
+If you are using windows system, command line parameters which contain double
+quotes will have to be replaced with `\"`. For example:
+
+In Linux and OS X, you may have a command like this
+```
+minifab invoke -p '"invoke","a","b","4"'
+```
+It will have to be changed to the following for windows:
+```
+minifab invoke -p \"invoke\",\"a\",\"b\",\"4\"
 ```
 
 ### For the people who has trouble to download images from docker hub
