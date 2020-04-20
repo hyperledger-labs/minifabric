@@ -44,7 +44,7 @@ minifab
 ```
 
 ### 5. 如果你从hub.docker.com下载docker镜像有困难
-你可以从 https://share.weiyun.com/5Updupi 下载(可能需要登录你自己的账户才能下载)压缩的docker镜像，然后使用下列命令在本地生成docker镜像
+你可以从 https://share.weiyun.com/5Updupi 下载(需要登录你自己的账户)压缩的docker镜像，然后使用下列命令在本地生成docker镜像
 ```
 docker load < fabric_2.1.tar.gz
 docker load < minifab.tar.gz
