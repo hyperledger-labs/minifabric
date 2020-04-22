@@ -1,0 +1,18 @@
+---
+- name: Remove all node volumes
+  command: >-
+    docker volume prune -f
+
+- name: Cleanup temporary files
+  find:
+    path: "{{ pjroot }}/vars"
+    file_type: any
+    patterns: "*"
+  register: toberemoved
+
+- name: Ansible remove file glob
+  file:
+    path: "{{ item.path }}"
+    state: absent
+  with_items: "{{ toberemoved.files }}"
+

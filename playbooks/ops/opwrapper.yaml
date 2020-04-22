@@ -1,0 +1,6 @@
+- name: "Running operation:"
+  debug:
+    msg: "{{ OPNAMES[op] }}"
+  tags: [print_action]
+
+- include_tasks: "playbooks/ops/{{ op }}/apply.yaml"

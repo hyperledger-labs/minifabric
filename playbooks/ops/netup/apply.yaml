@@ -19,7 +19,7 @@
 
 - name: Create env file for all nodes
   template:
-    src: "{{ pjroot }}/playbooks/nodes/templates/{{ item.type }}env.j2"
+    src: "{{ pjroot }}/playbooks/ops/netup/templates/{{ item.type }}env.j2"
     dest: "{{ pjroot }}/vars/run/{{ item.fullname }}.env"
   with_items: "{{ allpeers + allorderers + allcas }}"
 

@@ -1,0 +1,17 @@
+---
+- name: set two values
+  set_fact:
+    leftbrace: "{"
+    rightbrace: "}"
+
+- name: List all nodes
+  command: >-
+    docker ps -a --format 
+    '{{ leftbrace }}{{ leftbrace }} .Names {{ rightbrace }}{{ rightbrace }}|{{ leftbrace }}{{ leftbrace }} .Status {{ rightbrace }}{{ rightbrace }}'
+  register: nodelist
+
+- name: Node status
+  debug:
+    msg: "{{ item.split('|')[0][0:50] + ' : ' + item.split('|')[1] }}"
+  with_items: "{{ nodelist.stdout_lines }}"
+  tags: [print_action]

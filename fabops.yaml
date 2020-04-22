@@ -26,9 +26,10 @@
         msgops: "{{ (msgops|default([])) + [OPNAMES[item]] }}"
       with_items: "{{ allops }}"
 
-    - name: "Fabric operations"
+    - name: "Preparing for the following operations:"
       debug:
         msg: "{{ msgops|join(', ') }}"
+      when: msgops|length > 1
       tags: [print_action]
 
     - name: "Process configuration"
@@ -44,7 +45,7 @@
       when: exflag.stat.exists == true
 
     - name: Do all the requested fabric operations
-      include_tasks: "playbooks/ops/{{ op }}/apply.yaml"
+      include_tasks: "playbooks/ops/opwrapper.yaml"
       loop: "{{ allops }}"
       loop_control:
         loop_var: op

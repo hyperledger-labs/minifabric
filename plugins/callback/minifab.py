@@ -101,7 +101,7 @@ class CallbackModule(CallbackBase):
 
         if not self.printed_last_task:
             self.printed_last_task = True
-            line_length = 100
+            line_length = 60
             if self.last_skipped:
                 print()
             msg = colorize("# {0} {1}".format(task_name,
@@ -132,13 +132,8 @@ class CallbackModule(CallbackBase):
     def _print_host_or_item(self, host_or_item, changed, msg, diff, is_host, error, stdout, stderr):
         if is_host:
             indent_level = 0
-            name = colorize(host_or_item.name, 'not_so_bold')
         else:
-            indent_level = 4
-            if isinstance(host_or_item, dict):
-                if 'key' in host_or_item.keys():
-                    host_or_item = host_or_item['key']
-            name = colorize(to_text(host_or_item), 'bold')
+            indent_level = 2
 
         if error:
             color = 'failed'
@@ -147,21 +142,16 @@ class CallbackModule(CallbackBase):
 
         msg = colorize(msg, color)
 
-        line_length = 100
-        spaces = ' ' * (40 - len(name) - indent_level)
-        line = "{0}  * {1}{2}".format(' ' * indent_level, name, spaces)
-
-        print("{0} {1}".format(line, ' ' * (line_length - len(line))))
-        print(self._indent_text(msg, indent_level + 4))
+        print(self._indent_text(msg, indent_level + 2))
 
         if diff:
             self._print_diff(diff, indent_level)
         if stdout:
             stdout = colorize(stdout, 'failed')
-            print(self._indent_text(stdout, indent_level + 4))
+            print(self._indent_text(stdout, indent_level + 2))
         if stderr:
             stderr = colorize(stderr, 'failed')
-            print(self._indent_text(stderr, indent_level + 4))
+            print(self._indent_text(stderr, indent_level + 2))
 
     def v2_playbook_on_play_start(self, play):
         """Run on start of the play."""
@@ -239,7 +229,7 @@ class CallbackModule(CallbackBase):
             self._print_task()
             self.last_skipped = False
 
-            line_length = 100
+            line_length = 60
             spaces = ' ' * (31 - len(result._host.name) - 4)
 
             line = "  * {0}{1}- {2}".format(colorize(result._host.name, 'not_so_bold'),
