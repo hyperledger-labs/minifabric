@@ -9,4 +9,3 @@
     - "genesis.block"
     - "keyfiles"
     - "run"
-  when: removecert == true

@@ -7,16 +7,20 @@
 
 # This script defines the main capabilities of this project
 
-declare -A FUNCNAMES
 declare -A OPNAMES
-FUNCNAMES=([up]=networkUp [netup]=netUp [down]=networkDown \
-  [restart]=networkRestart [generate]=generateCerts [cleanup]=cleanup)
-OPNAMES=([install]='ccinstall' [approve]='ccapprove' [instantiate]='ccinstantiate' \
-  [initialize]='ccinstantiate' [commit]='cccommit' [invoke]='ccinvoke' [create]='channelcreate' \
-  [query]='ccquery' [join]='channeljoin' [blockquery]='blockquery' [channelquery]='channelquery' \
-  [profilegen]='profilegen' [channelsign]='channelsign' [channelupdate]='channelupdate' \
+LINE0='imageget,certgen,netup,channelcreate,channeljoin,anchorupdate,'
+LINE1='profilegen,ccinstall,ccapprove,cccommit,ccinstantiate,discover'
+OPNAMES=([up]="$LINE0$LINE1" [netup]='imageget,certgen,netup' \
+  [restart]='netdown,netup' [generate]='certrem,certgen' \
+  [cleanup]='netdown,filerem' [stats]='netstats' \
+  [down]='netdown' [install]='ccinstall' [approve]='ccapprove' \
+  [instantiate]='ccinstantiate' [initialize]='ccinstantiate' \
+  [commit]='cccommit' [invoke]='ccinvoke' [create]='channelcreate' \
+  [query]='ccquery' [join]='channeljoin' [blockquery]='blockquery' \
+  [channelquery]='channelquery' [profilegen]='profilegen' \
+  [channelsign]='channelsign' [channelupdate]='channelupdate' \
   [anchorupdate]='anchorupdate' [dashup]='dashup' [dashdown]='dashdown' \
-  [nodeimport]='nodeimport' [discover]='discover')
+  [nodeimport]='nodeimport' [discover]='discover' [imageget]='imageget')
 
 # Print the usage message
 function printHelp() {
@@ -47,19 +51,20 @@ function printHelp() {
   echo "      - 'nodeimport' - import external node certs and endpoints"
   echo "      - 'discover' - disocver channel endorsement policy"
   echo "      - 'cleanup'  - remove all the nodes and cleanup runtime files"
+  echo "      - 'stats'  - list all nodes and status"
   echo ""
   echo "    options:"
   echo "    -c|--channel-name         - channel name to use (defaults to \"mychannel\")"
   echo "    -s|--database-type        - the database backend to use: goleveldb (default) or couchdb"
-  echo "    -l|--chaincode-language   - the programming language of the chaincode being deployed: go (default), node, or java"
-  echo "    -i|--fabric-release       - the fabric release to be used to launch the network (defaults to \"2.0\")"
+  echo "    -l|--chaincode-language   - the language of the chaincode: go (default), node, or java"
+  echo "    -i|--fabric-release       - the fabric release to be used to launch the network (defaults to \"2.1\")"
   echo "    -n|--chaincode-name       - chaincode name to be installed/instantiated/approved"
   echo "    -b|--block-number         - block number to be queried"
   echo "    -v|--chaincode-version    - chaincode version to be installed"
   echo "    -p|--chaincode-parameters - chaincode instantiation and invocation parameters"
   echo "    -t|--transient-parameters - chaincode instantiation and invocation transient parameters"
   echo "    -r|--chaincode-private    - flag if chaincode processes private data, default is false"
-  echo "    -e|--expose-endpoints     - make all the node endpoints available outside of the server"
+  echo "    -e|--expose-endpoints     - flag if node endpoints should be exposed, default is false"
   echo "    -o|--organization         - organization to be used for org specific operations"
   echo "    -y|--chaincode-policy     - chaincode policy"
   echo "    -d|--init-required        - chaincode initialization flag, default is true"
@@ -87,67 +92,6 @@ function doDefaults() {
   done
 }
 
-function netUp() {
-  ansible-playbook -i hosts -e "mode=apply"                                           \
-  -e "hostroot=$hostroot" -e "regcerts=false" -e "CC_LANGUAGE=$CC_LANGUAGE"           \
-  -e "DB_TYPE=$DB_TYPE" -e "CHANNEL_NAME=$CHANNEL_NAME" -e "CC_NAME=$CC_NAME"         \
-  -e "CC_VERSION=$CC_VERSION" -e "CHANNEL_NAME=$CHANNEL_NAME" -e "IMAGETAG=$IMAGETAG" \
-  -e "CC_PARAMETERS=$CC_PARAMETERS" -e "EXPOSE_ENDPOINTS=$EXPOSE_ENDPOINTS"           \
-  -e "ADDRS=$ADDRS" -e "TRANSIENT_DATA=$TRANSIENT_DATA" -e "CC_PRIVATE=$CC_PRIVATE"   \
-  -e "CC_INIT_REQUIRED=$CC_INIT_REQUIRED" minifabric.yaml
-  docker ps -a --format "{{.Names}}:{{.Ports}}"
-}
-
-
-function networkUp() {
-  ansible-playbook -i hosts -e "mode=apply"                                           \
-  -e "hostroot=$hostroot" -e "regcerts=false" -e "CC_LANGUAGE=$CC_LANGUAGE"           \
-  -e "DB_TYPE=$DB_TYPE" -e "CHANNEL_NAME=$CHANNEL_NAME" -e "CC_NAME=$CC_NAME"         \
-  -e "CC_VERSION=$CC_VERSION" -e "CHANNEL_NAME=$CHANNEL_NAME" -e "IMAGETAG=$IMAGETAG" \
-  -e "CC_PARAMETERS=$CC_PARAMETERS" -e "EXPOSE_ENDPOINTS=$EXPOSE_ENDPOINTS"           \
-  -e "ADDRS=$ADDRS" -e "TRANSIENT_DATA=$TRANSIENT_DATA" -e "CC_PRIVATE=$CC_PRIVATE"   \
-  -e "CC_POLICY=$CC_POLICY" -e "CC_INIT_REQUIRED=$CC_INIT_REQUIRED" minifabric.yaml
-
-  ansible-playbook -i hosts                                                           \
-  -e "mode=channelcreate,channeljoin,anchorupdate,profilegen,ccinstall,ccapprove,cccommit,ccinstantiate,discover" \
-  -e "hostroot=$hostroot" -e "CC_LANGUAGE=$CC_LANGUAGE"                               \
-  -e "DB_TYPE=$DB_TYPE" -e "CHANNEL_NAME=$CHANNEL_NAME" -e "CC_NAME=$CC_NAME"         \
-  -e "CC_VERSION=$CC_VERSION" -e "CHANNEL_NAME=$CHANNEL_NAME" -e "IMAGETAG=$IMAGETAG" \
-  -e "CC_PARAMETERS=$CC_PARAMETERS" -e "EXPOSE_ENDPOINTS=$EXPOSE_ENDPOINTS"           \
-  -e "ADDRS=$ADDRS" -e "TRANSIENT_DATA=$TRANSIENT_DATA" -e "CC_PRIVATE=$CC_PRIVATE"   \
-  -e "CC_POLICY=$CC_POLICY" -e "CURRENT_ORG=$CURRENT_ORG"                             \
-  -e "CC_INIT_REQUIRED=$CC_INIT_REQUIRED" fabops.yaml
-  echo 'Running Nodes:'
-  docker ps -a --format "{{.Names}}:{{.Ports}}"
-}
-
-function networkDown() {
-  ansible-playbook -i hosts -e "mode=destroy"                                         \
-  -e "hostroot=$hostroot"  -e "removecert=false" -e "CC_LANGUAGE=$CC_LANGUAGE"        \
-  -e "DB_TYPE=$DB_TYPE" -e "CHANNEL_NAME=$CHANNEL_NAME" -e "CC_NAME=$CC_NAME"         \
-  -e "CC_VERSION=$CC_VERSION" -e "CHANNEL_NAME=$CHANNEL_NAME" -e "IMAGETAG=$IMAGETAG" \
-  -e "CC_PARAMETERS=$CC_PARAMETERS"  -e "EXPOSE_ENDPOINTS=$EXPOSE_ENDPOINTS"          \
-  -e "ADDRS=$ADDRS" -e "TRANSIENT_DATA=$TRANSIENT_DATA" -e "CC_PRIVATE=$CC_PRIVATE"   \
-  -e "CC_POLICY=$CC_POLICY" -e "CURRENT_ORG=$CURRENT_ORG"                             \
-  -e "CC_INIT_REQUIRED=$CC_INIT_REQUIRED" minifabric.yaml
-}
-
-function networkRestart() {
-  networkDown
-  networkUp
-}
-
-function generateCerts() {
-  ansible-playbook -i hosts -e "mode=apply"                                           \
-  -e "hostroot=$hostroot"  -e "regcerts=true" -e "CC_LANGUAGE=$CC_LANGUAGE"           \
-  -e "DB_TYPE=$DB_TYPE" -e "CHANNEL_NAME=$CHANNEL_NAME" -e "CC_NAME=$CC_NAME"         \
-  -e "CC_VERSION=$CC_VERSION" -e "CHANNEL_NAME=$CHANNEL_NAME" -e "IMAGETAG=$IMAGETAG" \
-  -e "CC_PARAMETERS=$CC_PARAMETERS"  -e "EXPOSE_ENDPOINTS=$EXPOSE_ENDPOINTS"          \
-  -e "ADDRS=$ADDRS" -e "TRANSIENT_DATA=$TRANSIENT_DATA" -e "CC_PRIVATE=$CC_PRIVATE"   \
-  -e "CC_POLICY=$CC_POLICY" -e "CC_INIT_REQUIRED=$CC_INIT_REQUIRED"                   \
-  minifabric.yaml --skip-tags "nodes"
-}
-
 function doOp() {
   ansible-playbook -i hosts                                                           \
   -e "mode=$1" -e "hostroot=$hostroot" -e "CC_LANGUAGE=$CC_LANGUAGE"                  \
@@ -159,12 +103,6 @@ function doOp() {
   -e "CC_POLICY=$CC_POLICY" -e "CC_INIT_REQUIRED=$CC_INIT_REQUIRED" fabops.yaml
 }
 
-function cleanup {
-  networkDown
-  rm -rf vars/*
-}
-
-funcname=''
 funcparams=''
 
 function isValidateCMD() {
@@ -173,15 +111,9 @@ function isValidateCMD() {
     exit
   fi
   readarray -td, cmds < <(printf '%s' "$MODE")
-  hasNet=0;hasOp=0
   for i in "${cmds[@]}"; do
     key=$(echo "${i,,}"|xargs)
-    if [ ! -z "${FUNCNAMES[$key]}" ]; then
-      hasNet=1
-      funcname="${FUNCNAMES[$key]}"
-    elif  [ ! -z "${OPNAMES[$key]}" ]; then
-      hasOp=1
-      funcname='doOp'
+    if  [ ! -z "${OPNAMES[$key]}" ]; then
       if [ -z "$funcparams" ]; then
         funcparams="${OPNAMES[$key]}"
       else
@@ -192,15 +124,12 @@ function isValidateCMD() {
       exit 1
     fi
   done
-  if [[ $(($hasNet+$hasOp)) == 0 ]]; then
+  if [[ $funcparams == '' ]]; then
     printHelp
     exit
-  elif [[ $(($hasNet+$hasOp)) > 1 ]]; then
-    echo 'Mixing network setting up and operation commands is not allowed!'
-    exit 1
   fi
 }
 
 function startMinifab() {
-  time $funcname $funcparams
+  time doOp $funcparams
 }

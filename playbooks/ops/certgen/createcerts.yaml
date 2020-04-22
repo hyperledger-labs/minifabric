@@ -6,6 +6,11 @@
     - "absent"
     - "directory"
 
+- name: Make sure that run directory exists
+  file:
+    path: "{{ pjroot }}/vars/run"
+    state: "directory"
+
 - name: Remove the cached node var file
   file:
     path: "{{ pjroot }}/vars/{{ item }}"
@@ -27,7 +32,7 @@
 
 - name: Create crypto-config file
   template:
-    src: "{{ pjroot }}/playbooks/certsetup/templates/crypto-config.j2"
+    src: "{{ pjroot }}/playbooks/ops/certgen/templates/crypto-config.j2"
     dest: "{{ pjroot }}/vars/crypto-config.yaml"
   when: cryc.stat.exists == false
 
@@ -37,12 +42,12 @@
 
 - name: Create config tx file
   template:
-    src: "{{ pjroot }}/playbooks/certsetup/templates/configtx.j2"
+    src: "{{ pjroot }}/playbooks/ops/certgen/templates/configtx.j2"
     dest: "{{ pjroot }}/vars/configtx.yaml"
 
 - name: Create certs and channel artifacts script
   template:
-    src: "{{ pjroot }}/playbooks/certsetup/templates/certtxgen.j2"
+    src: "{{ pjroot }}/playbooks/ops/certgen/templates/certtxgen.j2"
     dest: "{{ pjroot }}/vars/run/certtxgen.sh"
     mode: +x
 

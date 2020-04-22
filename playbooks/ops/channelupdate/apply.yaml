@@ -1,7 +1,4 @@
 ---
-- debug:
-    msg: "Channel update on channel {{ CHANNEL_NAME }}"
-
 - name: Select a peer and orderer for channel query.
   set_fact:
     actingpeer: "{{ None }}"

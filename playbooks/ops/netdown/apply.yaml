@@ -62,7 +62,3 @@
 - name: Delete fabric docker network if it exists
   command: "docker network rm minifab"
   when: netstat.stdout != ""
-
-- name: Remove volumes not being used
-  command: >-
-    docker volume prune -f
