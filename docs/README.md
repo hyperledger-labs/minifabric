@@ -226,4 +226,4 @@ hyperledger/fabric-baseos:amd64-0.4.18
 For other Fabric releases which is equal to or greater than 1.4.1, replace the tag accordingly.
 
 ### A series of the video on how to develop Fabric with Minifabric
-The links to the [series of 6 videos](https://www.youtube.com/playlist?list=PL0MZ85B_96CExhq0YdHLPS5cmSBvSmwyO)
+The link to the [series of 6 videos](https://www.youtube.com/playlist?list=PL0MZ85B_96CExhq0YdHLPS5cmSBvSmwyO) on how to develop Hyperledger Fabric using Minifabric
