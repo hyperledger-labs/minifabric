@@ -185,13 +185,12 @@ changes take affects.
 ### To add a new organization to your Fabric network
 To add a new organization to your network takes few steps, please follow the below steps:
 
-1. Get channel configuration by running `minifab channelquery` command, this command will produce a file named ./vars/<channel_name>_config.json
-2. Find the JoinRequest file for the new organization which should have been produced by Minifabric when the new organization was also setup by Minifabric in vars directory. if your network was not setup by Minifabric, then you should create this file by other means.
-3. Edit the <channel_name>_config.json file and add the all content of the JoinRequest file to the channel configuration file.
+1. Get channel configuration by running `minifab channelquery` command, this command will produce a file named `./vars/<channel_name>_config.json`
+2. Find the JoinRequest file for the new organization which should have been produced by Minifabric when the new organization was also setup by Minifabric in `vars` under your working directory. if your network was not setup by Minifabric, then you should create this file by other means.
+3. Edit the `<channel_name>_config.json` file and add the all content of the JoinRequest file to the channel configuration file, make sure that the new content is placed in parallel to the existing organizations.
 4. Run 'minifab channelsign,channelupdate' command.
 
-Once all the steps are done correctly, the new organization is now part of your channel. The admin of the new orgnization can now join their peers to that channel.
-The entire process was demostrated in this [video](https://www.youtube.com/watch?v=c1Ab57IrgZg&list=PL0MZ85B_96CExhq0YdHLPS5cmSBvSmwyO&index=5&t=3s), please watch the video for a demostration. 
+Once all the steps are done correctly, the new organization is now part of your channel. The admin of the new orgnization can now join their peers to that channel. The entire process was demostrated in this [video](https://www.youtube.com/watch?v=c1Ab57IrgZg&list=PL0MZ85B_96CExhq0YdHLPS5cmSBvSmwyO&index=5&t=3s), please watch the video for a demostration. 
 
 ### Execution context
 Minifab uses many settings throughout all the operations. These settings can be changed any time you run a minifab command and these settings will be saved in the vars/envsetting file. Each time a command is executed, that file will be loaded and settings specified in the command line will be written into that file. All the settings saved and specified in the command  make the current execution context. They include chaincode name, chaincode invocation parameter, chaincode version, chaincode language, channel name, fabric release, endpoint exposure and block query number. 
