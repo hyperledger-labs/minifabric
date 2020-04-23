@@ -11,6 +11,24 @@ It currently provides the following functions:
 6. Private data collection support
 7. Generate connection profiles and wallet files for fabric go/python sdks and vscode extensions
 
+The table of the content
+========================
+1. [Prerequsites](#prerequsites)
+2. [Working directory](#working-directory)
+3. [Stand up a Fabric network](#stand-up-a-fabric-network)
+4. [Tear down the fabric network](#tear-down-the-fabric-network)
+5. [The normal process of working with Hyperledger Fabric](#the-normal-process-of-working-with-hyperledger-fabric)
+6. [Setup a network using a different spec](#setup-a-network-using-a-different-spec)
+7. [To install your own chaincode](#to-install-your-own-chaincode)
+8. [To upgrade your chaincode](#to-upgrade-your-chaincode)
+9. [To invoke chaincode methods](#to-invoke-chaincode-methods)
+10. [Query blocks](#query-blocks)
+11. [Update channel configuration](#update-channel-configuration)
+12. [To add a new organization to your Fabric network](#to-add-a-new-organization-to-your-fabric-network)
+13. [Execution context](#execution-context)
+14. [Update minifabric](#update-minifabric)
+15. [See more available Minifabric commands](#see-more-available-minifabric-commands)
+16. [Minifabric videos](#minifabric-videos)
 ### Prerequsites
 This tool requires **docker CE 18.03** or newer, Minifabric supports Linux, OS X and Windows 10
 
@@ -225,5 +243,5 @@ hyperledger/fabric-baseos:amd64-0.4.18
 
 For other Fabric releases which is equal to or greater than 1.4.1, replace the tag accordingly.
 
-### A series of the video on how to develop Fabric with Minifabric
-The link to the [series of 6 videos](https://www.youtube.com/playlist?list=PL0MZ85B_96CExhq0YdHLPS5cmSBvSmwyO) on how to develop Hyperledger Fabric using Minifabric
+### Minifabric videos
+If you like to learn more, please watch the [series of 6 videos](https://www.youtube.com/playlist?list=PL0MZ85B_96CExhq0YdHLPS5cmSBvSmwyO) on how to develop Hyperledger Fabric using Minifabric
