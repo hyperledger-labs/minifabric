@@ -43,6 +43,8 @@ minifab down
 minifab
 ```
 
+观看 the [series of 6 videos](https://www.youtube.com/playlist?list=PL0MZ85B_96CExhq0YdHLPS5cmSBvSmwyO) 来进一步了解如何使用Minifabric开发和安装Hyperledger Fabric并阅读[blog](https://www.hyperledger.org/blog/2020/04/29/minifabric-a-hyperledger-fabric-quick-start-tool-with-video-guides)
+
 ### 注意：如果你从hub.docker.com下载docker镜像有困难
 你可以从 https://share.weiyun.com/5Updupi 下载(需要登录你自己在微云上的账户)压缩的docker镜像，然后使用下列命令在本地生成docker镜像
 ```
