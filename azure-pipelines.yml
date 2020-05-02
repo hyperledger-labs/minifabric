@@ -19,5 +19,5 @@ steps:
   displayName: 'Setup minifabric network'
 
 - script: |
-    ./minifab up
+    ./minifab cleanup
   displayName: 'Tear down the network'
