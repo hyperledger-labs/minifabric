@@ -2,7 +2,7 @@
 - name: "Select an orderer node"
   include_tasks: "{{ pjroot }}/playbooks/common/ordererselection.yaml"
 
-- name: Select a peer and orderer for chaincode instantiation.
+- name: Select a peer for chaincode instantiation.
   set_fact:
     actingpeer: "{{ allpeers|selectattr('org','equalto',CURRENT_ORG)|list|random }}"
     isuffix: "{{ (fabric.release is version('2.0', '>='))|ternary('2', '')}}"

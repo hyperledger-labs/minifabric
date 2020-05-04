@@ -103,7 +103,7 @@ function doOp() {
   -e "CC_POLICY=$CC_POLICY" -e "CC_INIT_REQUIRED=$CC_INIT_REQUIRED" fabops.yaml
 }
 
-funcparams=''
+funcparams='optionverify'
 
 function isValidateCMD() {
   if [ -z $MODE ] || [[ '-h' == "$MODE" ]] || [[ '--help' == "$MODE" ]]; then
@@ -114,17 +114,13 @@ function isValidateCMD() {
   for i in "${cmds[@]}"; do
     key=$(echo "${i,,}"|xargs)
     if  [ ! -z "${OPNAMES[$key]}" ]; then
-      if [ -z "$funcparams" ]; then
-        funcparams="${OPNAMES[$key]}"
-      else
-        funcparams="$funcparams","${OPNAMES[$key]}"
-      fi
+      funcparams="$funcparams","${OPNAMES[$key]}"
     else
       echo "'"${i}"'"' is a not supported command!'
       exit 1
     fi
   done
-  if [[ $funcparams == '' ]]; then
+  if [[ $funcparams == 'optionverify' ]]; then
     printHelp
     exit
   fi

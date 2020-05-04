@@ -5,7 +5,7 @@
   - name: "Select an orderer node"
     include_tasks: "{{ pjroot }}/playbooks/common/ordererselection.yaml"
 
-  - name: Select a peer and orderer for chaincode commit.
+  - name: Select a peer for chaincode commit.
     set_fact:
       actingpeer: "{{ allpeers|selectattr('org','equalto',CURRENT_ORG)|list|random }}"
 
