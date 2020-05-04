@@ -9,15 +9,13 @@ trigger:
 pool:
   vmImage: 'ubuntu-latest'
 
-steps:
-- script: |
-    docker build -t hfrd/minifab:latest .
-  displayName: 'Build up the minifabric container'
-
-- script: |
-    ./minifab up
-  displayName: 'Setup minifabric network'
-
-- script: |
-    ./minifab cleanup
-  displayName: 'Tear down the network'
+stages:
+- stage: BuildAndTests
+  jobs:
+  - template: ci/fabric-release-test.yml
+    parameters:
+      param:
+      - '1.4.1'
+      - '1.4.6'
+      - '2.0.0'
+      - '2.1.0'
