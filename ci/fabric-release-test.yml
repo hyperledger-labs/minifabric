@@ -1,0 +1,15 @@
+parameters:
+  param: []
+
+jobs:
+- ${{ each release in parameters.param }}:
+  - job: Test Fabric Release ${{ release }}
+    steps:
+    - script: docker build -t hfrd/minifab:latest .
+      displayName: 'Build up the minifabric container'
+
+    - script: ./minifab up -i ${{ release }}
+      displayName: 'Setup minifabric network'
+
+    - script: ./minifab cleanup
+      displayName: 'Tear down the network'
