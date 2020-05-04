@@ -15,7 +15,11 @@ stages:
   - template: ci/fabric-release-test.yml
     parameters:
       param:
-      - '1.4.1'
-      - '1.4.6'
-      - '2.0.0'
-      - '2.1.0'
+      - name: 'Release_1_4_1'
+        number: '1.4.1'
+      - name: 'Release_1_4_6'
+        number: '1.4.6'
+      - name: 'Release_2_0_0'
+        number: '2.0.0'
+      - name: 'Release_2_1_0'
+        number: '2.1.0'
