@@ -1,0 +1,6 @@
+---
+- name: Verify the organization option
+  fail:
+    msg: "Default option org is {{ CURRENT_ORG }} which does not exist in your spec, use -o to specify one"
+  when: CURRENT_ORG not in allorgs
+  tags: [print_action]

@@ -24,3 +24,4 @@ OPNAMES:
   netdown: "shutdown network"
   filerem: "cleanup working directory"
   netstats: "network status"
+  optionverify: "verify options"
