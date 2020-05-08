@@ -11,3 +11,10 @@ fabric:
   - "orderer1.example.com"
   - "orderer2.example.com"
   - "orderer3.example.com"
+  settings:
+    ca:
+      FABRIC_LOGGING_SPEC: DEBUG
+    peer:
+      FABRIC_LOGGING_SPEC: DEBUG
+    orderer:
+      FABRIC_LOGGING_SPEC: DEBUG

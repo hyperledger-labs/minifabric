@@ -92,6 +92,26 @@ If you successfully complete each of the tasks in the list, you basically have v
 ### Setup a network using a different spec
 When you simply do `minifab up`, Minifabric uses the Minifabric provided Fabric network spec file to stand up a Fabric network. In many cases, you probably do not want that kind of the network, you probably want to use different organization names, node names, number of organizations, number of peers etc, to layout your own Fabric network, simply download this [spec](https://github.com/litong01/minifabric/blob/master/spec.yaml) file, place it in your working directory, then change it to what you like, then run the `minifab up` command. If you already have a Fabric network running on this machine, you will need to remove the running Fabric network to avoid any naming conflicts.
 
+When you have your own network spec file, you can further customize your node by utilizing the setting
+section of network spec file. You can have a `settings` section like the following in your spec file.
+You can place any ca, peer, or orderer node configuration parameters under each node type.
+
+```
+  cas:
+     ...
+  peers:
+     ...
+  orderers:
+     ...
+  settings:
+    ca:
+      FABRIC_LOGGING_SPEC: ERROR
+    peer:
+      FABRIC_LOGGING_SPEC: INFO
+    orderer:
+      FABRIC_LOGGING_SPEC: DEBUG
+```
+
 ### To install your own chaincode
 To install your own chaincode, create the following subdirectory in your working directory:
 ```

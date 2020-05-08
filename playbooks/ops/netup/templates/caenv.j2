@@ -6,3 +6,8 @@ FABRIC_CA_SERVER_TLS_ENABLED=true
 FABRIC_CA_SERVER_TLS_KEYFILE=/certs/ca/{{ allkeys[item.org].pkey.split('/')[-1] }}
 FABRIC_CA_SERVER_TLS_CERTFILE=/certs/ca/{{ item.fullname }}-cert.pem
 FABRIC_CA_SERVER_PORT=7054
+{% if fabric.settings is defined and fabric.settings.ca is defined %}
+{% for setting in (fabric.settings.ca|dict2items) %}
+{{ setting.key }}={{ setting.value }}
+{% endfor %}
+{% endif %}
