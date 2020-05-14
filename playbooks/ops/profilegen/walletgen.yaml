@@ -2,47 +2,9 @@
   set_fact:
     userid: "{{ walletuser.key.split('@')[0] }}"
 
-- name: Make sure that org directory exists
-  file:
-    path: "{{ pjroot }}/vars/profiles/vscode/wallets/{{ walletuser.org }}/{{ userid }}"
-    state: "directory"
-    mode: 0775
-
-- name: get the cert pubkey from private key
-  command: >-
-    openssl ec -in {{ pjroot }}/vars/{{walletuser.pkey }}
-    -text -noout -conv_form uncompressed        
-  register: keycontent
-
-- set_fact:
-    rawkey: "{{ keycontent.stdout.split('pub:')[1].split('ASN1 OID:')[0] }}"
-
-- name: get the sha256 hash for private key file name
-  shell: >-
-    echo "{{ rawkey }}" | xxd -r -p | sha256sum
-  register: keyname
-
-- name: trim the trailing space and dash
+- name: Get the msppath
   set_fact:
-    filename: "{{ keyname.stdout.split(' ')[0] }}"
     msppath: "{{ walletuser.pkey.split('/')[0:6] | join('/') }}"
-
-- name: Create the public key from certificate
-  command: >-
-    openssl x509 -pubkey -noout -in
-    {{ pjroot }}/vars/{{ msppath }}/signcerts/{{ walletuser.key }}-cert.pem
-  register: pubkeycontent
-
-- name: Save the public key
-  copy:
-    dest: "{{ pjroot }}/vars/profiles/vscode/wallets/{{ walletuser.org }}/{{ userid }}/{{ filename }}-pub"
-    content: >-
-      {{ pubkeycontent.stdout }}
-
-- name: Create the private key file
-  command: >-
-    cp {{ pjroot }}/vars/{{ walletuser.pkey }}
-    {{ pjroot }}/vars/profiles/vscode/wallets/{{ walletuser.org }}/{{ userid }}/{{ filename }}-priv
 
 - name: Get the certfile content
   set_fact:
@@ -52,8 +14,73 @@
   set_fact:
     usercert: "{{ usercert | regex_replace('(\r\n)', '\\\\n') }}"
 
-- name: Create the wallet json file
-  template:
-    src: "{{ pjroot }}/playbooks/ops/profilegen/templates/userwallet.j2"
-    dest: "{{ pjroot }}/vars/profiles/vscode/wallets/{{ walletuser.org }}/{{ userid }}/{{ userid }}"
-  
+- name: Steps to deal with wallets with release lower than 2.0
+  when: IMAGETAG is version('2.0', '<')
+  block:
+  - name: Make sure that org directory exists
+    file:
+      path: "{{ pjroot }}/vars/profiles/vscode/wallets/{{ walletuser.org }}/{{ userid }}"
+      state: "directory"
+      mode: 0775
+
+  - name: get the cert pubkey from private key
+    command: >-
+      openssl ec -in {{ pjroot }}/vars/{{walletuser.pkey }}
+      -text -noout -conv_form uncompressed
+    register: keycontent
+
+  - set_fact:
+      rawkey: "{{ keycontent.stdout.split('pub:')[1].split('ASN1 OID:')[0] }}"
+
+  - name: get the sha256 hash for private key file name
+    shell: >-
+      echo "{{ rawkey }}" | xxd -r -p | sha256sum
+    register: keyname
+
+  - name: trim the trailing space and dash
+    set_fact:
+      filename: "{{ keyname.stdout.split(' ')[0] }}"
+
+  - name: Create the public key from certificate
+    command: >-
+      openssl x509 -pubkey -noout -in
+      {{ pjroot }}/vars/{{ msppath }}/signcerts/{{ walletuser.key }}-cert.pem
+    register: pubkeycontent
+
+  - name: Save the public key
+    copy:
+      dest: "{{ pjroot }}/vars/profiles/vscode/wallets/{{ walletuser.org }}/{{ userid }}/{{ filename }}-pub"
+      content: >-
+        {{ pubkeycontent.stdout }}
+
+  - name: Create the private key file
+    command: >-
+      cp {{ pjroot }}/vars/{{ walletuser.pkey }}
+      {{ pjroot }}/vars/profiles/vscode/wallets/{{ walletuser.org }}/{{ userid }}/{{ filename }}-priv
+
+  - name: Create the wallet json file
+    template:
+      src: "{{ pjroot }}/playbooks/ops/profilegen/templates/userwallet.j2"
+      dest: "{{ pjroot }}/vars/profiles/vscode/wallets/{{ walletuser.org }}/{{ userid }}/{{ userid }}"
+
+- name: Steps to deal with wallets with release equals or greater than 2.0
+  when: IMAGETAG is version('2.0', '>=')
+  block:
+  - name: Make sure that org directory exists
+    file:
+      path: "{{ pjroot }}/vars/profiles/vscode/wallets/{{ walletuser.org }}"
+      state: "directory"
+      mode: 0775
+
+  - name: Get the certfile content
+    set_fact:
+      userkey: "{{ lookup('file', pjroot+'/vars/'+ walletuser.pkey) }}"
+
+  - name: Make the certfile content to be newline separated long string
+    set_fact:
+      userkey: "{{ userkey | regex_replace('(\r\n)', '\\\\n') }}"
+
+  - name: Create the wallet json file
+    template:
+      src: "{{ pjroot }}/playbooks/ops/profilegen/templates/userwallet2.j2"
+      dest: "{{ pjroot }}/vars/profiles/vscode/wallets/{{ walletuser.org }}/{{ userid }}.id"
