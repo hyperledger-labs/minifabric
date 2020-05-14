@@ -40,7 +40,7 @@
       ],
       "adminPrivateKey": {},
       "signedCert": {
-        "path": "/keyfiles/{{ orgattrs[org].certpath }}/{{ org }}/ca/{{ orgcas[0].fullname }}-cert.pem"
+        "path": "./keyfiles/{{ orgattrs[org].certpath }}/{{ org }}/ca/{{ orgcas[0].fullname }}-cert.pem"
       }
 {%    endif %}
     }{{ '' if loop.last else ',' }}
@@ -49,12 +49,12 @@
   "orderers": {
 {% for orderer in allorderers %}
     "{{ orderer.fullname }}": {
-      "url": "{{ orderer.url }}:{{ orderer.port }}",
+      "url": "grpcs://{{ orderer.url }}:{{ orderer.port }}",
       "grpcOptions": {
         "ssl-target-name-override": "{{ orderer.fullname }}"
       },
       "tlsCACerts": {
-        "path": "{{ '/keyfiles/ordererOrganizations/'+orderer.org+'/orderers/'+orderer.fullname+'/tls/ca.crt' }}"
+        "path": "{{ './keyfiles/ordererOrganizations/'+orderer.org+'/orderers/'+orderer.fullname+'/tls/ca.crt' }}"
       }
     }{{ '' if loop.last else ',' }}
 {% endfor %}
@@ -62,12 +62,12 @@
   "peers": {
 {% for peer in allpeers %}
     "{{ peer.fullname }}": {
-      "url": "{{ peer.url }}:{{ peer.port }}",
+      "url": "grpcs://{{ peer.url }}:{{ peer.port }}",
       "grpcOptions": {
         "ssl-target-name-override": "{{ peer.fullname }}"
       },
       "tlsCACerts": {
-        "path": "/keyfiles/peerOrganizations/{{ peer.org }}/peers/{{ peer.fullname }}/tls/ca.crt"
+        "path": "./keyfiles/peerOrganizations/{{ peer.org }}/peers/{{ peer.fullname }}/tls/ca.crt"
       }
     }{{ '' if loop.last else ',' }}
 {% endfor %}
