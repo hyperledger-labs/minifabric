@@ -19,6 +19,8 @@
     - "{{ {'name': 'pyprofile.j2', 'target': CHANNEL_NAME+'_network_for_pysdk.json'} }}"
     - "{{ {'name': 'goprofile.j2', 'target': CHANNEL_NAME+'_connection_for_gosdk.json'} }}"
     - "{{ {'name': 'goprofileyaml.j2', 'target': CHANNEL_NAME+'_connection_for_gosdk.yaml'} }}"
+    - "{{ {'name': 'nodeprofile.j2', 'target': CHANNEL_NAME+'_connection_for_nodesdk.json'} }}"
+    - "{{ {'name': 'nodeprofileyaml.j2', 'target': CHANNEL_NAME+'_connection_for_nodesdk.yaml'} }}"
     - "{{ {'name': 'endpoints.j2', 'target': 'endpoints.yaml'} }}"
     - "{{ {'name': 'anchorpeers.j2', 'target': 'anchorpeers.json'} }}"
     - "{{ {'name': 'vscodenodefile.j2', 'target': 'vscode/vscodenodefile.json'} }}"

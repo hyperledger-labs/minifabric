@@ -1,0 +1,75 @@
+{
+  "name": "fabric-network",
+  "x-type": "hlfv1",
+  "version": "1.1.0",
+  "channels": {
+    "{{ CHANNEL_NAME }}": {
+      "orderers": [
+{% for orderer in allorderers %}
+        "{{ orderer.fullname }}"{{ '' if loop.last else ',' }}
+{% endfor %}
+      ],
+      "peers": [
+{% for peer in allpeers %}
+        "{{ peer.fullname }}"{{ '' if loop.last else ',' }}
+{% endfor %}
+      ]
+    }
+  },
+  "organizations": {
+{% for org in allorgs %}
+{%  set orgcas = allcas|selectattr('org', 'equalto', org)|list %}
+{%  set orgelements = allkeys.values() | selectattr("org", "equalto", org) | list %}
+    "{{ org }}": {
+      "mspid": "{{ org.split('.')|join('') }}",
+      "peers": [
+{% for peer in allpeers|selectattr('org', 'equalto', org)|list %}
+        "{{ peer.fullname }}"{{ '' if loop.last else ',' }}
+{% endfor %}
+      ],
+      "orderers": [
+{% for orderer in allorderers|selectattr('org', 'equalto', org)|list %}
+        "{{ orderer.fullname }}"{{ '' if loop.last else ',' }}
+{% endfor %}
+      ]{{ ',' if (orgcas|length) > 0 else ''}}
+{%    if orgcas|length > 0 %}
+      "certificateAuthorities": [
+{%      for ca in orgcas %}
+        "{{ ca.fullname }}"{{ '' if loop.last else ',' }}
+{%      endfor %}
+      ],
+      "adminPrivateKey": {},
+      "signedCert": {
+        "path": "/keyfiles/{{ orgattrs[org].certpath }}/{{ org }}/ca/{{ orgcas[0].fullname }}-cert.pem"
+      }
+{%    endif %}
+    }{{ '' if loop.last else ',' }}
+{% endfor %}
+  },
+  "orderers": {
+{% for orderer in allorderers %}
+    "{{ orderer.fullname }}": {
+      "url": "{{ orderer.url }}:{{ orderer.port }}",
+      "grpcOptions": {
+        "ssl-target-name-override": "{{ orderer.fullname }}"
+      },
+      "tlsCACerts": {
+        "path": "{{ '/keyfiles/ordererOrganizations/'+orderer.org+'/orderers/'+orderer.fullname+'/tls/ca.crt' }}"
+      }
+    }{{ '' if loop.last else ',' }}
+{% endfor %}
+  },
+  "peers": {
+{% for peer in allpeers %}
+    "{{ peer.fullname }}": {
+      "url": "{{ peer.url }}:{{ peer.port }}",
+      "grpcOptions": {
+        "ssl-target-name-override": "{{ peer.fullname }}"
+      },
+      "tlsCACerts": {
+        "path": "/keyfiles/peerOrganizations/{{ peer.org }}/peers/{{ peer.fullname }}/tls/ca.crt"
+      }
+    }{{ '' if loop.last else ',' }}
+{% endfor %}
+  }
+}
