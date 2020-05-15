@@ -49,7 +49,4 @@
       loop: "{{ allops }}"
       loop_control:
         loop_var: op
-      when: >-
-        status_flag == "Success" and (allpeers|length) > 0 and
-        ( allops[0] == 'nodeimport' or (allorderers|length) > 0 or
-         (ext_orderers is defined and (ext_orderers|length) > 0) )
+      when: status_flag == "Success"
