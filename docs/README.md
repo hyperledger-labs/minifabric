@@ -219,8 +219,8 @@ When you use minifabric sets up your fabric network, Minifabric will enable peer
 metric capabilities. The port to serve health check and metrics is normally called operation port, this port
 is a different port than the Fabric node service GRPC port. Minifabric always sets the operation port to 7061
 for peer and 7060 for orderer. Notice that the defalt service GRPC port for peer node is 7051, the default
-port for orderer node is 7050. When you choose to expose node endpoints outside of your host (-e option of
-minifab command), the operation port will also be mapped to a host port so that the operation port is accessible to tools running outside of the host. If you choose not to expose endpoints, then health and metrics will also be hidden from outside of the host and can only be accessed internally. To make things a
+port for orderer node is 7050, Minifabric adds 10 to the GRPC port for the operation port. When you choose to
+expose node endpoints outside of your host (-e option of minifab command), the operation port will also be mapped to a host port so that the operation port is accessible to tools running outside of the host. If you choose not to expose endpoints, then health and metrics will also be hidden from outside of the host and can only be accessed internally. To make things a
 bit easier, the opreation port for a node will be always 1000 higher than the node GRPC port. For example, if
 a peer node is running on docker host which has IP address of 9.8.7.6 and its GRPC 7051 port is mapped to
 7001, then the operation port will be 8001. As mentioned in other part of this document, you will have to make
