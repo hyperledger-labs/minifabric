@@ -216,12 +216,14 @@ Once all the steps are done correctly, the new organization is now part of your 
 
 ### Check node health and metrics
 When you use minifabric sets up your fabric network, Minifabric will enable peer and orderer node health and
-metrics. Regardless you choose to expose endpoint or not, peer and orderer node health and metrics services are enabled. The service port will be always set to 7061 for peer and 7060 for orderer node. When you choose
-to expose node endpoints, these port will be mapped to the external ports. A health and metrics service port
-always be set to the node endpoint port plus 1000. For example, if your peer1 is at 9.8.7.6 and its external
-port is set to 8051, then the health and metrics service port will be 9051. As mentioned in other part of
-this document, you will have to make sure that the block of these ports on your host are available. With the
-above example, you can access health and metrics at the following endpoints:
+metrics. The port to serve health check and metrics is normally called operation port. Minifabric will
+always set the operation port to 7061 for peer and 7060 for orderer. Notice that the defalt service port for
+peer node is 7051, the default port for orderer node is 7050, which are Fabric GRPC port, they provide
+blockchain service.  When you choose to expose node endpoints outside of your host (-e option of minifab command), the operation port will be mapped to a host port so that the operation port is accessible to tools running outside of the host. If you choose not to expose endpoints, then health and metrics can only be accessed internally. To make things a bit easier, the opreation port for a node will be always 1000 higher
+than the node port. For example, if your peer1 is running on docker host which has IP address of 9.8.7.6 and
+its port is mapped to 8051, then the operation port will be 9051. As mentioned in other part of this document,
+you will have to make sure that the block of these ports on your host are available. Using the above example,
+you can access health and metrics at the following endpoints:
 
 ```
 node:      9.8.7.6:8051
