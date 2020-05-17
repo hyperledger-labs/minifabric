@@ -10,6 +10,7 @@ It currently provides the following functions:
 5. Query blocks and transactions
 6. Private data collection support
 7. Generate connection profiles and wallet files for fabric go/python sdks and vscode extensions
+8. Fabric node health and metrics enabled
 
 The table of the content
 ========================
@@ -25,10 +26,11 @@ The table of the content
 10. [Query blocks](#query-blocks)
 11. [Update channel configuration](#update-channel-configuration)
 12. [To add a new organization to your Fabric network](#to-add-a-new-organization-to-your-fabric-network)
-13. [Execution context](#execution-context)
-14. [Update minifabric](#update-minifabric)
-15. [See more available Minifabric commands](#see-more-available-minifabric-commands)
-16. [Minifabric videos](#minifabric-videos)
+13. [Check node health and metrics](#check-node-health-and-metrics)
+14. [Execution context](#execution-context)
+15. [Update minifabric](#update-minifabric)
+16. [See more available Minifabric commands](#see-more-available-minifabric-commands)
+17. [Minifabric videos](#minifabric-videos)
 ### Prerequsites
 This tool requires **docker CE 18.03** or newer, Minifabric supports Linux, OS X and Windows 10
 
@@ -211,6 +213,21 @@ To add a new organization to your network takes few steps, please follow the bel
 4. Run 'minifab channelsign,channelupdate' command.
 
 Once all the steps are done correctly, the new organization is now part of your channel. The admin of the new orgnization can now join their peers to that channel. The entire process was demostrated in this [video](https://www.youtube.com/watch?v=c1Ab57IrgZg&list=PL0MZ85B_96CExhq0YdHLPS5cmSBvSmwyO&index=5&t=3s), please watch the video for a demostration. 
+
+### Check node health and metrics
+When you use minifabric sets up your fabric network, Minifabric will enable peer and orderer node health and
+metrics. Regardless you choose to expose endpoint or not, peer and orderer node health and metrics services are enabled. The service port will be always set to 7061 for peer and 7060 for orderer node. When you choose
+to expose node endpoints, these port will be mapped to the external ports. A health and metrics service port
+always be set to the node endpoint port plus 1000. For example, if your peer1 is at 9.8.7.6 and its external
+port is set to 8051, then the health and metrics service port will be 9051. As mentioned in other part of
+this document, you will have to make sure that the block of these ports on your host are available. With the
+above example, you can access health and metrics at the following endpoints:
+
+```
+node:      9.8.7.6:8051
+health:    9.8.7.6:9051/healthz
+metrics:   9.8.7.6:9051/metrics
+```
 
 ### Execution context
 Minifab uses many settings throughout all the operations. These settings can be changed any time you run a minifab command and these settings will be saved in the vars/envsetting file. Each time a command is executed, that file will be loaded and settings specified in the command line will be written into that file. All the settings saved and specified in the command  make the current execution context. They include chaincode name, chaincode invocation parameter, chaincode version, chaincode language, channel name, fabric release, endpoint exposure and block query number. 
