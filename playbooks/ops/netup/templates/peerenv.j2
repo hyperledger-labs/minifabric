@@ -28,3 +28,6 @@ CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS={{ item.fullname }}.couchdb:5984
 {{ setting.key }}={{ setting.value }}
 {% endfor %}
 {% endif %}
+CORE_OPERATIONS_LISTENADDRESS={{ item.fullname }}:7061
+CORE_OPERATIONS_TLS_ENABLED=false
+CORE_METRICS_PROVIDER=prometheus
