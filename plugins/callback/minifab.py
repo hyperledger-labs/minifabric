@@ -165,7 +165,12 @@ class CallbackModule(CallbackBase):
     def _print_task_result(self, result, error=False, **kwargs):
         """Run when a task finishes correctly."""
 
-        if 'print_action' in result._task.tags or error or self._display.verbosity > 1:
+        if 'print_multi' in result._task.tags:
+            self._print_task()
+            alllines = result._result.get('msg', [])
+            for r in alllines:
+                print(colorize(str('  ' + r), 'ok'))
+        elif 'print_action' in result._task.tags or error or self._display.verbosity > 1:
             self._print_task()
             self.last_skipped = False
             msg = to_text(result._result.get('msg', '')) or\
