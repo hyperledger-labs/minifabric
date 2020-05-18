@@ -8,9 +8,9 @@
 # This script defines the main capabilities of this project
 
 declare -A OPNAMES
-LINE0='imageget,certgen,netup,channelcreate,channeljoin,anchorupdate,'
+LINE0='imageget,certgen,netup,netstats,channelcreate,channeljoin,anchorupdate,'
 LINE1='profilegen,ccinstall,ccapprove,cccommit,ccinstantiate,discover'
-OPNAMES=([up]="$LINE0$LINE1" [netup]='imageget,certgen,netup' \
+OPNAMES=([up]="$LINE0$LINE1" [netup]='imageget,certgen,netup,netstats' \
   [restart]='netdown,netup' [generate]='certrem,certgen' \
   [cleanup]='netdown,filerem' [stats]='netstats' \
   [down]='netdown' [install]='ccinstall' [approve]='ccapprove' \

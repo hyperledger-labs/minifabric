@@ -10,8 +10,29 @@
     '{{ leftbrace }}{{ leftbrace }} .Names {{ rightbrace }}{{ rightbrace }}|{{ leftbrace }}{{ leftbrace }} .Status {{ rightbrace }}{{ rightbrace }}'
   register: nodelist
 
-- name: Node status
-  debug:
-    msg: "{{ item.split('|')[0][0:50] + ' : ' + item.split('|')[1] }}"
+- name: Organize node status
+  set_fact:
+    nstatus: >-
+      {{ nstatus|default([]) + [item.split('|')[0][0:50] + ' : ' + item.split('|')[1]] }}
   with_items: "{{ nodelist.stdout_lines }}"
-  tags: [print_action]
+
+- name: Create node health query script
+  template:
+    src: "{{ pjroot }}/playbooks/ops/templates/stats.j2"
+    dest: "{{ pjroot }}/vars/run/stats.sh"
+    mode: +x
+
+- name: Run the health query script on cli container
+  command: >-
+    docker exec cli /vars/run/stats.sh
+  register: theresult
+
+- name: Docker node status
+  debug:
+    msg: "{{ nstatus }}"
+  tags: [print_multi]
+
+- name: "Fabric network peer and orderer node health status"
+  debug:
+    msg: "{{ theresult.stdout_lines }}"
+  tags: [print_multi]
