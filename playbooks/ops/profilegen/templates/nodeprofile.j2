@@ -37,11 +37,7 @@
 {%      for ca in orgcas %}
         "{{ ca.fullname }}"{{ '' if loop.last else ',' }}
 {%      endfor %}
-      ],
-      "adminPrivateKey": {},
-      "signedCert": {
-        "path": "./keyfiles/{{ orgattrs[org].certpath }}/{{ org }}/ca/{{ orgcas[0].fullname }}-cert.pem"
-      }
+      ]
 {%    endif %}
     }{{ '' if loop.last else ',' }}
 {% endfor %}
@@ -54,7 +50,7 @@
         "ssl-target-name-override": "{{ orderer.fullname }}"
       },
       "tlsCACerts": {
-        "path": "{{ './keyfiles/ordererOrganizations/'+orderer.org+'/orderers/'+orderer.fullname+'/tls/ca.crt' }}"
+        "pem": "{{ lookup('file', pjroot+'/vars/keyfiles/ordererOrganizations/'+orderer.org+'/orderers/'+orderer.fullname+'/tls/ca.crt')|regex_replace('(\n)', '\\\\n') }}"
       }
     }{{ '' if loop.last else ',' }}
 {% endfor %}
@@ -67,7 +63,7 @@
         "ssl-target-name-override": "{{ peer.fullname }}"
       },
       "tlsCACerts": {
-        "path": "./keyfiles/peerOrganizations/{{ peer.org }}/peers/{{ peer.fullname }}/tls/ca.crt"
+        "pem": "{{ lookup('file', pjroot+'/vars/keyfiles/peerOrganizations/'+peer.org+'/peers/'+peer.fullname+'/tls/ca.crt')|regex_replace('(\n)', '\\\\n') }}"
       }
     }{{ '' if loop.last else ',' }}
 {% endfor %}
