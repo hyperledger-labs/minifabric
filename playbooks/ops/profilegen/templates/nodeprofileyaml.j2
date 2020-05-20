@@ -31,10 +31,6 @@
 {%    for ca in orgcas %}
     - "{{ ca.fullname }}"
 {%    endfor %}
-    adminPrivateKey:
-      pem:
-    signedCert:
-      path: "./keyfiles/{{ orgattrs[org].certpath }}/{{ org }}/ca/{{ orgcas[0].fullname }}-cert.pem"
 {%  endif %}
 {% endfor %}
 
@@ -45,7 +41,7 @@
     "grpcOptions":
       "ssl-target-name-override": "{{ orderer.fullname }}"
     "tlsCACerts":
-      "path": "./keyfiles/ordererOrganizations/{{ orderer.org }}/orderers/{{ orderer.fullname }}/tls/ca.crt"
+      "pem": "{{ lookup('file', pjroot+'/vars/keyfiles/ordererOrganizations/'+orderer.org+'/orderers/'+orderer.fullname+'/tls/ca.crt')|regex_replace('(\n)', '\\\\n') }}"
 {% endfor %}
 
 "peers":
@@ -55,5 +51,5 @@
     "grpcOptions":
       "ssl-target-name-override": "{{ peer.fullname }}"
     "tlsCACerts":
-      "path": "./keyfiles/peerOrganizations/{{ peer.org }}/peers/{{ peer.fullname }}/tls/ca.crt"
+      "pem": "{{ lookup('file', pjroot+'/vars/keyfiles/peerOrganizations/'+peer.org+'/peers/'+peer.fullname+'/tls/ca.crt')|regex_replace('(\n)', '\\\\n') }}"
 {% endfor %}
