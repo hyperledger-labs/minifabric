@@ -42,7 +42,7 @@
       set_fact:
         allcas: |
           {{ allcas + [{ 'org':item.split('.')[1:] | join("."), 'portmap':'',
-            'url': item, 'port': '7054', 'mspid': item.split('.')[1:] | join(''),
+            'url': item, 'port': '7054', 'mspid': item.split('.')[1:] | join('-'),
             'name':item.split('.')[0], 'fullname': item, 'type': 'ca' }] }}
       with_items: "{{ fabric.cas }}"
       when: fabric.cas is defined
@@ -51,7 +51,7 @@
       set_fact:
         allpeers: |
           {{ allpeers + [{'org':item.split('.')[1:] | join("."), 'portmap':'',
-            'url': item, 'port': '7051', 'mspid': item.split('.')[1:] | join(''),
+            'url': item, 'port': '7051', 'mspid': item.split('.')[1:] | join('-'),
             'name':item.split('.')[0], 'fullname': item, 'type': 'peer' }] }}
       with_items: "{{ fabric.peers }}"
       when: fabric.peers is defined
@@ -60,7 +60,7 @@
       set_fact:
         allorderers: |
           {{ allorderers + [{ 'org':item.split('.')[1:] | join("."), 'portmap':'',
-            'url': item, 'port': '7050', 'mspid': item.split('.')[1:] | join(''),
+            'url': item, 'port': '7050', 'mspid': item.split('.')[1:] | join('-'),
             'name':item.split('.')[0], 'fullname': item, 'type': 'orderer' }] }}
       with_items: "{{ fabric.orderers }}"
       when: fabric.orderers is defined
@@ -74,7 +74,7 @@
           {{ allcas + [{ 'org':item.split('.')[1:] | join("."),
             'url': ipaddr, 'port': nodeport, 'oport': (nodeport|int+1000)|string,
             'portmap':'-p '+nodeport+':7054',
-            'mspid': item.split('.')[1:] | join(''),
+            'mspid': item.split('.')[1:] | join('-'),
             'name':item.split('.')[0], 'fullname': item, 'type': 'ca' }] }}
         nodeport: "{{ nodeport|int + 1 }}"
       with_items: "{{ fabric.cas }}"
@@ -86,7 +86,7 @@
           {{ allpeers + [{'org':item.split('.')[1:] | join("."),
             'url': ipaddr, 'port': nodeport, 'oport': (nodeport|int+1000)|string,
             'portmap':'-p '+nodeport+':7051 -p '+((nodeport|int+1000)|string)+':7061',
-            'mspid': item.split('.')[1:] | join(''),
+            'mspid': item.split('.')[1:] | join('-'),
             'name':item.split('.')[0], 'fullname': item, 'type': 'peer' }] }}
         nodeport: "{{ nodeport|int + 1 }}"
       with_items: "{{ fabric.peers }}"
@@ -98,7 +98,7 @@
           {{ allorderers + [{ 'org':item.split('.')[1:] | join("."),
             'url': ipaddr, 'port': nodeport, 'oport': (nodeport|int+1000)|string,
             'portmap':'-p '+nodeport+':7050 -p '+((nodeport|int+1000)|string)+':7060',
-            'mspid': item.split('.')[1:] | join(''),
+            'mspid': item.split('.')[1:] | join('-'),
             'name':item.split('.')[0], 'fullname': item, 'type': 'orderer' }] }}
         nodeport: "{{ nodeport|int + 1 }}"
       with_items: "{{ fabric.orderers }}"
@@ -123,7 +123,7 @@
   - name: Set all org cert path
     set_fact:
       orgattrs: >-
-        {{ orgattrs | default({}) | combine({item: {'mspid': item.split('.')|join(''),
+        {{ orgattrs | default({}) | combine({item: {'mspid': item.split('.')|join('-'),
           'certpath': (item in peerorgs)|ternary('peerOrganizations', 'ordererOrganizations')}} ) }}
     with_items: "{{ allorgs }}"
 
@@ -137,7 +137,7 @@
     set_fact:
       alldash: |
         {{ alldash + [{ 'org':item, 'url': ipaddr, 'port': nodeport,
-          'mspid': item.split('.')| join(''), 'portmap':'-p '+nodeport+':8080',
+          'mspid': item.split('.')| join('-'), 'portmap':'-p '+nodeport+':8080',
           'name': 'dashboard', 'fullname': 'dashboard.'+item, 'type': 'dashboard' }] }}
       nodeport: "{{ nodeport|int + 1 }}"
     with_items: "{{ allorgs }}"
