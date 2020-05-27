@@ -1,6 +1,6 @@
 # Minifabric
 
-[中文说明](https://github.com/litong01/minifabric/blob/master/docs/README.zh.md)
+[中文说明](https://github.com/litong01/minifabric/blob/master/README.zh.md)
 
 If you like to learn Hyperledger Fabric or develop your smart contract, or
 just want to get a feel about Hyperledger Fabric, Minifabric is the tool to
