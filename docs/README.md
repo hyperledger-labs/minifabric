@@ -135,6 +135,10 @@ When you develop your own chaincode for 1.4.x, it is important to place all your
 
 If you do not have any chaincode, you can still run `minifab install -n simple` command, Minifabric will install that sample chaincode, command `minifab up` installs that chaincode if you do not specify another chaincode.
 
+In some of the areas, when you install golang written chaincode, the dependencies may not be pulled directory from google hosted site, in these cases, you
+will most likely need to use goproxy to bypass these restrictions. To do that, specify an accessible goproxy in the spec.yaml file. The default spec.yaml
+file has an example commented out, you can uncomment that and use your own go proxy to install go lang written chaincode.
+
 ### To upgrade your chaincode
 If you have changed your chaincode and like to upgrade the chaincode, you can simply install the chaincode with a higher version number, for example:
 ```

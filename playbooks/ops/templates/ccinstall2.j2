@@ -3,6 +3,10 @@
 {% include "envsetting.j2" %}
 cd /go/src/github.com/chaincode/{{ CC_NAME }}
 
+{% if fabric.goproxy is defined and CC_LANGUAGE == 'go' %}
+  go env -w GOPROXY={{ fabric.goproxy }}
+{% endif %}
+
 if [ ! -f "{{ CC_NAME }}_{{ CC_LANGUAGE}}_{{ CC_VERSION }}.tar.gz" ]; then
 {% if CC_LANGUAGE == 'go' %}
   cd {{ CC_LANGUAGE }}

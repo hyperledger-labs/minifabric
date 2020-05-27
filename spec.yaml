@@ -18,3 +18,8 @@ fabric:
       FABRIC_LOGGING_SPEC: DEBUG
     orderer:
       FABRIC_LOGGING_SPEC: DEBUG
+  ### use go proxy when default go proxy is restricted in some of the regions.
+  ### the default goproxy
+  # goproxy: "https://proxy.golang.org,direct"
+  ### the goproxy in China area
+  # goproxy: "https://goproxy.cn,direct"
