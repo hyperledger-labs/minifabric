@@ -67,5 +67,47 @@
       }
     }{{ '' if loop.last else ',' }}
 {% endfor %}
+  },
+  "certificateAuthorities": {
+{% for ca in allcas %}
+    "{{ ca.fullname }}": {
+      "url": "https://{{ ca.url }}:{{ ca.port }}",
+      "tlsCACerts": {
+        "path": "/keyfiles/{{ orgattrs[ca.org].certpath }}/{{ ca.org }}/ca/{{ ca.fullname}}-cert.pem"
+      },
+      "httpOptions": { "verify": "false" },
+      "caName": "{{ ca.name }}",
+      "registrar": { "enrollId": "admin", "enrollSecret": "adminpw"}
+    }{{ '' if loop.last else ',' }}
+{% endfor %}
+  },
+  "entityMatchers": {
+    "orderer": [
+{% for orderer in allorderers %}
+      { "mappedHost": "{{ orderer.fullname }}",
+        "pattern": "(\\w*){{ orderer.fullname }}(\\w*)",
+        "sslTargetOverrideUrlSubstitutionExp": "{{ orderer.fullname }}",
+        "urlSubstitutionExp": "{{ orderer.url }}:{{ orderer.port }}"
+      }{{ '' if loop.last else ',' }}
+{% endfor %}
+    ],
+    "peer": [
+{% for peer in allpeers %}
+      { "mappedHost": "{{ peer.fullname }}",
+        "pattern": "(\\w*){{ peer.fullname }}(\\w*)",
+        "sslTargetOverrideUrlSubstitutionExp": "{{ peer.fullname }}",
+        "urlSubstitutionExp": "{{ peer.url }}:{{ peer.port }}"
+      }{{ '' if loop.last else ',' }}
+{% endfor %}
+    ],
+  "certificateAuthorities": [
+{% for ca in allcas %}
+      { "mappedHost": "{{ ca.fullname }}",
+        "pattern": "(\\w*){{ ca.fullname }}(\\w*)",
+        "sslTargetOverrideUrlSubstitutionExp": "{{ ca.fullname }}",
+        "urlSubstitutionExp": "{{ ca.url }}:{{ ca.port }}"
+      }{{ '' if loop.last else ',' }}
+{% endfor %}
+    ]
   }
 }

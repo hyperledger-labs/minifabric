@@ -53,3 +53,17 @@
     "tlsCACerts":
       "pem": "{{ lookup('file', pjroot+'/vars/keyfiles/peerOrganizations/'+peer.org+'/peers/'+peer.fullname+'/tls/ca.crt')|regex_replace('(\n)', '\\\\n') }}"
 {% endfor %}
+
+"certificateAuthorities":
+{% for ca in allcas %}
+  "{{ ca.fullname }}":
+    "url": "https://{{ ca.url }}:{{ ca.port }}"
+    "tlsCACerts":
+      "path": "/keyfiles/{{ orgattrs[ca.org].certpath }}/{{ ca.org }}/ca/{{ ca.fullname }}-cert.pem"
+    "httpOptions":
+      "verify": "false"
+    "caName": "{{ ca.name }}"
+    "registrar":
+      "enrollId": "admin"
+      "enrollSecret": "adminpw"
+{% endfor %}
