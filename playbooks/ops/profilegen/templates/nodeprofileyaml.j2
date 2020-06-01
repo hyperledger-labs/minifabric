@@ -17,7 +17,7 @@
 {%  set orgcas = allcas|selectattr('org', 'equalto', org)|list %}
 {%  set orgelements = allkeys.values() | selectattr('org', 'equalto', org) | list %}
   "{{ org }}":
-    "mspid": "{{ org.split('.')|join('') }}"
+    "mspid": "{{ org.split('.')|join('-') }}"
     "peers":
 {%  for peer in allpeers|selectattr('org', 'equalto', org)|list %}
     - "{{ peer.fullname }}"
