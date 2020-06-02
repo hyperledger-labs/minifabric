@@ -7,6 +7,7 @@ FROM alpine/git AS BUILD
 RUN cd /tmp && git init minifabric && cd minifabric                && \
     git remote add origin https://github.com/litong01/minifabric   && \
     git pull --depth=1 origin master && mv plugins /tmp            && \
+    mv pypatch /tmp && \
     rm -f .dockerignore .gitignore Dockerfile DockerfileHub 
 
 FROM alpine:latest
@@ -17,10 +18,10 @@ ENV PYTHONUNBUFFERED=1
 
 RUN apk add --no-cache bash ansible docker-cli  openssl xxd && \
     if [ ! -e /usr/bin/python ]; then ln -sf python3 /usr/bin/python ; fi && \
-    wget -q https://raw.githubusercontent.com/dlitz/pycrypto/master/lib/Crypto/Random/Fortuna/FortunaGenerator.py \
-    -O /usr/lib/python3.8/site-packages/Crypto/Random/Fortuna/FortunaGenerator.py
+    mkdir -p /usr/lib/python3.8/site-packages/Crypto/Random/Fortuna
 
 COPY --from=build /tmp/minifabric /home
 COPY --from=build /tmp/plugins /usr/lib/python3.8/site-packages/ansible/plugins
+COPY --from=build /tmp/pypatch /usr/lib/python3.8/site-packages/Crypto/Random/Fortuna
 ENV PATH $PATH:/home/bin
 WORKDIR /home
