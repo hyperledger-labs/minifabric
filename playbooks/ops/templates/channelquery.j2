@@ -4,7 +4,7 @@ cp $FABRIC_CFG_PATH/core.yaml /vars/core.yaml
 cd /vars
 export FABRIC_CFG_PATH=/vars
 
-{% if actingorderer is defined %}
+{% if CHANNEL_NAME == 'systemchannel' %}
 export CORE_PEER_TLS_ENABLED=true
 export CORE_PEER_TLS_ROOTCERT_FILE=/vars/keyfiles/ordererOrganizations/{{ actingorderer.org }}/orderers/{{ actingorderer.fullname }}/tls/ca.crt
 export CORE_PEER_LOCALMSPID={{ actingorderer.org.split('.')|join('-') }}
