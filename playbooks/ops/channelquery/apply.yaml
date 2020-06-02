@@ -5,7 +5,12 @@
 - name: Select a peer for channel query.
   set_fact:
     actingpeer: "{{ allpeers|selectattr('org','equalto',CURRENT_ORG)|list|random }}"
-    isuffix: "{{ (fabric.release is version('2.0', '>='))|ternary('2', '')}}"
+  when: CHANNEL_NAME != 'systemchannel'
+
+- name: Select an orderer if it is a system channel query
+  set_fact:
+    actingorderer: "{{ allorderers | random }}"
+  when: CHANNEL_NAME == 'systemchannel'
 
 - name: Create channel query script
   template:
