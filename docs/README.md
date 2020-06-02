@@ -152,6 +152,8 @@ minifab instantiate
 Since you specified the chaincode name and version during the install, you do not have to specify again, Minifabric remembers what action was take last time. Minifabric accomplishes this by using it Execution Context which will be explained later in this document.
 
 ### Instantiate/Initialize newly installed/upgraded chaincode
+**IMPORTANT:** *This step is chaincode dependent. Only applicable when **init** method is required by the chaincode.*
+
 Before you can perform an invoke or a query to a newly installed/upgraded chaincode, it needs to be instantiated or initialized as follows:
 **Fabric < 2.0**
 ```
