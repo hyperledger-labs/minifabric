@@ -53,7 +53,7 @@
   "orderers": {
 {% for orderer in allorderers %}
     "{{ orderer.fullname }}": {
-      "url": "{{ orderer.url }}:{{ orderer.port }}",
+      "url": "grpcs://{{ orderer.url }}:{{ orderer.port }}",
       "grpcOptions": {
         "ssl-target-name-override": "{{ orderer.fullname }}"
       },
@@ -66,7 +66,7 @@
   "peers": {
 {% for peer in allpeers %}
     "{{ peer.fullname }}": {
-      "url": "{{ peer.url }}:{{ peer.port }}",
+      "url": "grpcs://{{ peer.url }}:{{ peer.port }}",
       "grpcOptions": {
         "ssl-target-name-override": "{{ peer.fullname }}"
       },
