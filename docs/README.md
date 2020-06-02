@@ -151,6 +151,17 @@ minifab instantiate
 
 Since you specified the chaincode name and version during the install, you do not have to specify again, Minifabric remembers what action was take last time. Minifabric accomplishes this by using it Execution Context which will be explained later in this document.
 
+### Instantiate/Initialize newly installed/upgraded chaincode
+Before you can perform an invoke or a query to a newly installed/upgraded chaincode, it needs to be instantiated or initialized as follows:
+**Fabric < 2.0**
+```
+minifab instantiate
+```
+**Fabric >= 2.0**
+```
+minifab initialize
+```
+
 ### To invoke chaincode methods
 Minifab utilizes the -p parameter to invoke a chaincode method. The -p parameter should include the method name and its parameters, minifab invoke command should follow this format:
 
