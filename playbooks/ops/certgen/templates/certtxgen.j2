@@ -5,10 +5,5 @@ configtxgen -profile OrdererGenesis -outputBlock genesis.block -channelID system
 
 {% for peerorg in peerorgs %}
 {% set mspid = orgattrs[peerorg].mspid %}
-  configtxgen -printOrg {{ mspid }} > JoinRequest_{{ mspid }}.json
-#   export ADMINCERT=$(cat /etc/hyperledger/fabric/keyfiles/peerOrganizations/{{ peerorg }}/users/Admin@{{ peerorg}}/msp/signcerts/Admin@{{ peerorg }}-cert.pem | base64)
-#   jq 'del(.values.MSP.value.config.fabric_node_ous)' JoinRequest_{{ mspid }}.json |\
-#   jq --arg admincert "$ADMINCERT" '.values.MSP.value.config.admins[0] |= . + $admincert' > OrgJoinRequest_{{ mspid }}.json
-
-#   rm -f JoinRequest_{{ mspid }}.json
+configtxgen -printOrg {{ mspid }} | jq > JoinRequest_{{ mspid }}.json
 {% endfor %}

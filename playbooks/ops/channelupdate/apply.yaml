@@ -1,9 +1,10 @@
 ---
-- name: Select a peer and orderer for channel query.
+- name: "Select an orderer node"
+  include_tasks: "{{ pjroot }}/playbooks/common/ordererselection.yaml"
+
+- name: Select a peer for channel query.
   set_fact:
     actingpeer: "{{ None }}"
-    actingorderer: "{{ allorderers | random }}"
-    isuffix: "{{ (fabric.release is version('2.0', '>='))|ternary('2', '')}}"
 
 - name: Create channel update script
   template:
