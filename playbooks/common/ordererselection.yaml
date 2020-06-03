@@ -1,9 +1,11 @@
 - name: Select an orderer from local orderer nodes
   when: allorderers|length > 0
   set_fact:
+    islocal: true
     actingorderer: "{{ allorderers | random }}"
 
 - name: Select an orderer from external orderer nodes
   when: (allorderers|length) == 0 and (ext_orderers|length) > 0
   set_fact:
+    islocal: false
     actingorderer: "{{ ext_orderers | random }}"

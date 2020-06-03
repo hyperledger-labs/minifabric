@@ -7,6 +7,10 @@ export CORE_PEER_LOCALMSPID={{ actingpeer.mspid }}
 export CORE_PEER_MSPCONFIGPATH=/vars/keyfiles/peerOrganizations/{{ actingpeer.org }}/users/Admin@{{ actingpeer.org }}/msp
 {% endif %}
 {% if actingorderer is defined and actingorderer != '' %}
-export ORDERER_TLS_CA=/vars/keyfiles/ordererOrganizations/{{ actingorderer.org}}/orderers/{{ actingorderer.fullname }}/tls/ca.crt
 export ORDERER_ADDRESS={{ actingorderer.url }}:{{ actingorderer.port }}
+{% if islocal == true %}
+export ORDERER_TLS_CA=/vars/keyfiles/ordererOrganizations/{{ actingorderer.org}}/orderers/{{ actingorderer.fullname }}/tls/ca.crt
+{% else %}
+export ORDERER_TLS_CA=/vars/keyfiles/ordererOrganizations/{{ actingorderer.org}}/tlsca/tlsca.crt
+{% endif %}
 {% endif %}
