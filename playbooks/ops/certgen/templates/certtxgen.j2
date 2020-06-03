@@ -5,5 +5,5 @@ configtxgen -profile OrdererGenesis -outputBlock genesis.block -channelID system
 
 {% for peerorg in peerorgs %}
 {% set mspid = orgattrs[peerorg].mspid %}
-configtxgen -printOrg {{ mspid }} | jq > JoinRequest_{{ mspid }}.json
+configtxgen -printOrg {{ mspid }} > JoinRequest_{{ mspid }}.json
 {% endfor %}
