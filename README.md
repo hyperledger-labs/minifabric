@@ -21,7 +21,7 @@ capabilities of Hyperledger Fabric.
 - node monitoring and health
 
 ## Prerequisites
-- [docker](https://www.docker.com/) (18.03 or newer) environment
+[docker](https://www.docker.com/) (18.03 or newer) environment
  
 ## Getting Started    
 
