@@ -6,34 +6,25 @@ If you like to learn Hyperledger Fabric or develop your smart contract, or
 just want to get a feel about Hyperledger Fabric, Minifabric is the tool to
 get you started. Minifabric can stand up a Fabric network on a small machine
 like a VirtualBox VM but also can deploy Fabric networks cross multiple production
-grade servers. 
+grade servers. Minifabric has been tested on Linux, OS X, Windows 10 and supports
+Fabric releases 1.4.1 or newer.
 
 ## Features
 
 Minifabric is small but it allows you to experience the full
 capabilities of Hyperledger Fabric.
 
-- channel create, channel update
-- channel join
-- chaincode install, approve, instantiation.
-- chaincode invoke, query
-    - [optional] private data collection
-- block query     
-
+- fabric network setup, expansion such as adding new organizations
+- channel query, create, join, channel update
+- chaincode install, approve, instantiation, invoke, query and private data collection
+- ledger operations query
 
 ## Prerequisites
-
-Supported OS | 
----- | 
-Linux | 
-OS X |
-Windows |  
-
 - [docker](https://www.docker.com/) (18.03 or newer) environment
  
 ## Getting Started    
 
-If you like to read more before jumping in, Watch the [series of 6 videos](https://www.youtube.com/playlist?list=PL0MZ85B_96CExhq0YdHLPS5cmSBvSmwyO) on how to develop Hyperledger Fabric using Minifabric and read the [blog](https://www.hyperledger.org/blog/2020/04/29/minifabric-a-hyperledger-fabric-quick-start-tool-with-video-guides)
+If you like to learn more before jumping in, Watch the [series of 6 videos](https://www.youtube.com/playlist?list=PL0MZ85B_96CExhq0YdHLPS5cmSBvSmwyO) on how to develop Hyperledger Fabric using Minifabric and read the [blog](https://www.hyperledger.org/blog/2020/04/29/minifabric-a-hyperledger-fabric-quick-start-tool-with-video-guides)
 
 For those impatient, please follow the steps below to start things off.
 
