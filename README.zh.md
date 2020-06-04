@@ -1,16 +1,41 @@
 # 迷你Fabric
+
 如果您想学习Hyperledger Fabric或开发智能合约，或者只是想了解
 Hyperledger Fabric，迷你Fabric是让您快速开始的良好工具。迷
-你Fabric可以用来在配置很小的电脑像VirtualBox上的一个虚机上为
+你Fabric可以用来在配置很低的电脑像VirtualBox上的一个虚机上为
 您搭建Fabric网络，但也可以在多个大型机器上部署多节点Fabric网络。
-迷你Fabric虽然很小，但它可以让您体验Hyperledger Fabric的全部
-功能，比如channel创建，channel加入，链码安装，批准，实例化等。
-它还支持channel更新，私有数据收集，块查询等。您只需要的是[docker](https://www.docker.com/)（18.03或更高版本）环境。
-迷你Fabric可在OS X, Linux和Windows上运行。 对于那些急于上手的人，请按照
-以下步骤开始操作，或参考[教学视频](https://v.youku.com/v_show/id_XNDYyMDU2OTY3Mg==.html?spm=a2hzp.8244740.0.0&f=52423582)
 
-如果您想在动手之前了解更多信息，请阅读[迷你Fabric用户指南(原文)](https://github.com/litong01/minifabric/blob/master/docs/README.md)。
 
+## 功能特性
+
+迷你Fabric虽然轻量，但它可以让您体验Hyperledger Fabric的全部
+功能
+
+- 通道创建和更新
+- 节点加入通道
+- 链码安装，审批，提交定义，初始化
+- 链码调用，查询
+    - [可选项] 私有数据集
+- 区块查询
+
+## 必要的运行环境
+
+操作系统支持 | 
+---- | 
+Linux | 
+OS X |
+Windows |  
+
+- [docker](https://www.docker.com/)（18.03或更高版本）
+
+## 入门指引
+
+如果您想在动手之前了解更多信息, 您可以
+- 观看 [系列视频](https://www.youtube.com/playlist?list=PL0MZ85B_96CExhq0YdHLPS5cmSBvSmwyO) 
+- 阅读 [Hyperledger博文](https://www.hyperledger.org/blog/2020/04/29/minifabric-a-hyperledger-fabric-quick-start-tool-with-video-guides) 
+
+
+对于那些急于上手的人，请按照以下步骤开始操作
 
 ### 1. 下载工具
 ##### 如果你使用Linux或OS X系统
@@ -42,8 +67,6 @@ minifab down
 ```
 minifab
 ```
-
-观看 the [series of 6 videos](https://www.youtube.com/playlist?list=PL0MZ85B_96CExhq0YdHLPS5cmSBvSmwyO) 来进一步了解如何使用Minifabric开发和安装Hyperledger Fabric并阅读[blog](https://www.hyperledger.org/blog/2020/04/29/minifabric-a-hyperledger-fabric-quick-start-tool-with-video-guides)
 
 ### 注意：如果你从hub.docker.com下载docker镜像有困难
 你可以从 https://share.weiyun.com/5Updupi 下载(需要登录你自己在微云上的账户)压缩的docker镜像，然后使用下列命令在本地生成docker镜像
