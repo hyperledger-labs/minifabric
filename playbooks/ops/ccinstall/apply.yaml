@@ -15,7 +15,7 @@
   when: status_flag == "Success"
 
 - set_fact:
-    policy: "{{ peerorgs | map('replace','.','') | list }}"
+    policy: "{{ peerorgs | map('replace','.','-') | list }}"
 - set_fact:
     policy: "{{ policy | map('regex_replace', '^(.*)$', 'SINGLEQUOTE\\1.memberSINGLEQUOTE') | list }}"
 - set_fact:
