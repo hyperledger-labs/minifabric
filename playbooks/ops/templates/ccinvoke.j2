@@ -1,5 +1,5 @@
 #!/bin/bash
-# Script to instantiate chaincode
+# Script to invoke chaincode
 {% include "envsetting.j2" %}
 peer chaincode invoke -o $ORDERER_ADDRESS --cafile $ORDERER_TLS_CA \
   --tls -C {{CHANNEL_NAME}} -n {{ CC_NAME }}  \
