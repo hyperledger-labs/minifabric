@@ -36,7 +36,7 @@ export CORE_PEER_ADDRESS={{ approvepeer.url }}:{{ approvepeer.port }}
     --collections-config /vars/{{CC_NAME}}_collection_config.json \
 {% endif %}
 {% if CC_POLICY != 'Cg==' %}
-    --signature-policy '{{ CC_POLICY|b64decode|trim }}' \
+    --signature-policy "{{ CC_POLICY|b64decode|trim }}" \
 {% endif %}
     --sequence $SEQUENCE -o $ORDERER_ADDRESS --tls --cafile $ORDERER_TLS_CA
 # fi
