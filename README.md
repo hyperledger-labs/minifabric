@@ -20,7 +20,7 @@ capabilities of Hyperledger Fabric.
 - channel query, create, join, channel update
 - chaincode install, approve, instantiation, invoke, query and private data collection
 - ledger height and block query
-- node monitoring and health
+- node monitoring, health check and discovery
 
 ## Prerequisites
 [docker](https://www.docker.com/) (18.03 or newer) environment
