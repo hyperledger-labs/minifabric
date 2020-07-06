@@ -11,7 +11,7 @@ like a VirtualBox VM but also can deploy Fabric networks cross multiple producti
 grade servers. Minifabric has been tested on Linux, OS X, Windows 10 and supports
 Fabric releases 1.4.1 or newer.
 
-## Features Highlight
+## Feature Highlight
 
 Minifabric is small but it allows you to experience the full
 capabilities of Hyperledger Fabric.
