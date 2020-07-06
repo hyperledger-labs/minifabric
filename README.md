@@ -16,7 +16,7 @@ Fabric releases 1.4.1 or newer.
 Minifabric is small but it allows you to experience the full
 capabilities of Hyperledger Fabric.
 
-- network setup and expansion such as adding new organizations
+- Fabric network setup and expansion such as adding new organizations
 - channel query, create, join, channel update
 - chaincode install, approve, instantiation, invoke, query and private data collection
 - ledger height and block query
