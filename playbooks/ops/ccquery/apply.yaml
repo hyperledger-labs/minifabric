@@ -15,7 +15,7 @@
 
 - name: Run the chaincode query script on cli container
   command: >-
-    docker exec cli /vars/run/ccquery.sh
+    docker exec {{ CLINAME }} /vars/run/ccquery.sh
   register: theresult
 
 - name: "Chaincode query results"

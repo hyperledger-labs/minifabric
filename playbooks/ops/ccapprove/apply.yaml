@@ -17,4 +17,4 @@
 
   - name: Run the channel signing off script on cli container
     command: >-
-      docker exec cli /vars/run/ccapprove.sh
+      docker exec {{ CLINAME }} /vars/run/ccapprove.sh

@@ -1,11 +1,11 @@
 ---
 - name: Query Fabric docker network
   command: >-
-    docker network ls -f 'name=minifab' -q
+    docker network ls -f name={{ NETNAME }} -q
   register: netstat
 
 - name: Create fabric docker network if it does not exist
-  command: "docker network create minifab"
+  command: "docker network create {{ NETNAME }}"
   when: netstat.stdout == ""
 
 - name: Create volumes for peer and orderer nodes
@@ -29,14 +29,14 @@
 
 - name: Start couchdb nodes if db type is set to couchdb
   command: >-
-    docker run -d --network minifab --name {{ item.fullname }}.couchdb
+    docker run -d --network {{ NETNAME }} --name {{ item.fullname }}.couchdb
     --hostname {{ item.fullname }}.couchdb hyperledger/fabric-couchdb:latest
   with_items: "{{ allpeers }}"
   when: (DB_TYPE|lower) == "couchdb"
 
 - name: Start all peer nodes
   command: >-
-    docker run -d --network minifab --name {{ item.fullname }} --hostname {{ item.fullname }}
+    docker run -d --network {{ NETNAME }} --name {{ item.fullname }} --hostname {{ item.fullname }}
     --env-file {{ pjroot }}/vars/run/{{ item.fullname }}.env {{ item.portmap }}
     -v /var/run/:/host/var/run
     -v {{ mpath }}/{{item.org}}/peers/{{item.fullname}}/msp:/etc/hyperledger/fabric/msp
@@ -44,6 +44,19 @@
     -v {{ item.fullname }}:/var/hyperledger/production
     hyperledger/fabric-peer:{{ fabric.release }} peer node start
   with_items: "{{ allpeers }}"
+  register: peerstat
+  ignore_errors: yes
+
+- name: "Check errors"
+  when: peerstat.failed is defined and peerstat.failed == true
+  block:
+  - name: Error!
+    debug:
+      msg: "{{ peerstat.results[0].stderr }}"
+    tags: [print_action]
+
+  - name: Exit play when there is an error
+    meta: end_play
 
 - name: Set absolute mounting path
   set_fact:
@@ -51,7 +64,7 @@
 
 - name: Start all orderer nodes
   command: >-
-    docker run -d --network minifab --name {{ item.fullname }} --hostname {{ item.fullname }}
+    docker run -d --network {{ NETNAME }} --name {{ item.fullname }} --hostname {{ item.fullname }}
     --env-file {{ pjroot }}/vars/run/{{ item.fullname }}.env {{ item.portmap }}
     -v {{ hostroot }}/vars/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
     -v {{ mpath }}/{{item.org}}/orderers/{{item.fullname}}/msp:/var/hyperledger/orderer/msp
@@ -59,6 +72,19 @@
     -v {{ item.fullname }}:/var/hyperledger/production/orderer
     hyperledger/fabric-orderer:{{ fabric.release }}
   with_items: "{{ allorderers }}"
+  register: ordererstat
+  ignore_errors: yes
+
+- name: "Check errors"
+  when: ordererstat.failed is defined and ordererstat.failed == true
+  block:
+  - name: Error!
+    debug:
+      msg: "{{ ordererstat.results[0].stderr }}"
+    tags: [print_action]
+
+  - name: Exit play when there is an error
+    meta: end_play
 
 - name: Set ca image release
   set_fact:
@@ -66,11 +92,24 @@
 
 - name: Start all ca nodes
   command: >-
-    docker run -d --network minifab --name {{ item.fullname }} --hostname {{ item.fullname }}
+    docker run -d --network {{ NETNAME }} --name {{ item.fullname }} --hostname {{ item.fullname }}
     --env-file {{ pjroot }}/vars/run/{{ item.fullname }}.env {{ item.portmap }}
     -v {{ hostroot }}/vars/keyfiles/{{ orgattrs[item.org].certpath }}/{{item.org}}:/certs
     hyperledger/fabric-ca:{{ desiredrelease }}
   with_items: "{{ allcas }}"
+  register: castat
+  ignore_errors: yes
+
+- name: "Check errors"
+  when: castat.failed is defined and castat.failed == true
+  block:
+  - name: Error!
+    debug:
+      msg: "{{ castat.results[0].stderr }}"
+    tags: [print_action]
+
+  - name: Exit play when there is an error
+    meta: end_play
 
 - name: Set tool gopath
   set_fact:
@@ -78,7 +117,7 @@
 
 - name: Start cli container for all fabric operations
   command: >-
-    docker run -dit --network minifab --name cli --hostname cli
+    docker run -dit --network {{ NETNAME }} --name {{ CLINAME }} --hostname {{ CLINAME }}
     -v /var/run/docker.sock:/var/run/docker.sock
     -v {{ hostroot }}/vars:/vars
     -v {{ hostroot }}/vars/chaincode:{{ gopath }}/src/github.com/chaincode

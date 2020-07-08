@@ -17,4 +17,4 @@
 
   - name: Run the chaincode commit script on cli container
     command: >-
-      docker exec cli /vars/run/cccommit.sh
+      docker exec {{ CLINAME }} /vars/run/cccommit.sh

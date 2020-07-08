@@ -6,7 +6,7 @@
 
 - name: List all nodes
   command: >-
-    docker ps -a --format 
+    docker ps -af network={{ NETNAME }} --format
     '{{ leftbrace }}{{ leftbrace }} .Names {{ rightbrace }}{{ rightbrace }}|{{ leftbrace }}{{ leftbrace }} .Status {{ rightbrace }}{{ rightbrace }}'
   register: nodelist
 
@@ -24,7 +24,7 @@
 
 - name: Run the health query script on cli container
   command: >-
-    docker exec cli /vars/run/stats.sh
+    docker exec {{ CLINAME }} /vars/run/stats.sh
   register: theresult
 
 - name: Docker node status
