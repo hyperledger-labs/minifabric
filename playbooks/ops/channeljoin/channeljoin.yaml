@@ -14,7 +14,7 @@
 
 - name: Run the channel join script on cli container
   command: >-
-    docker exec cli /vars/run/channeljoin.{{ actingpeer.fullname }}.sh
+    docker exec {{ CLINAME }} /vars/run/channeljoin.{{ actingpeer.fullname }}.sh
   register: result
 
 - name: Set the status flag based on the return value

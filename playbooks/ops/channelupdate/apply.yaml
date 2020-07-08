@@ -14,4 +14,4 @@
 
 - name: Run the channel update script on cli container
   command: >-
-    docker exec cli /vars/run/channelupdate.sh
+    docker exec {{ CLINAME }} /vars/run/channelupdate.sh

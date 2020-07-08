@@ -20,7 +20,7 @@
 
 - name: Run the block query script on cli container
   command: >-
-    docker exec cli /vars/run/blockquery.sh
+    docker exec {{ CLINAME }} /vars/run/blockquery.sh
 
 - set_fact:
     jsonVar: "{{ lookup('file', pjroot + '/vars/'+ CHANNEL_NAME+'_'+BLOCK_NUMBER+'_txs.json') | from_json }}"

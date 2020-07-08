@@ -24,7 +24,7 @@
 
 - name: Run the channel discover script on cli container
   command: >-
-    docker exec cli /vars/run/discover.sh
+    docker exec {{ CLINAME }} /vars/run/discover.sh
 
 - name: Check if channel config file exists
   stat:

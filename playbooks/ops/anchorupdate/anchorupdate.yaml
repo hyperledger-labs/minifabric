@@ -14,5 +14,5 @@
 
 - name: Run the anchor update script on cli container
   command: >-
-    docker exec cli /vars/run/anchorupdate.{{ updatingorg }}.sh
+    docker exec {{ CLINAME }} /vars/run/anchorupdate.{{ updatingorg }}.sh
 

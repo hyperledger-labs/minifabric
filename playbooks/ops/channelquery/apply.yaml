@@ -14,7 +14,7 @@
 
 - name: Run the channel query script on cli container
   command: >-
-    docker exec cli /vars/run/channelquery.sh
+    docker exec {{ CLINAME }} /vars/run/channelquery.sh
 
 - name: Channel configuration query results
   debug:

@@ -15,4 +15,4 @@
 
 - name: Run the chaincode instantiate script on cli container
   command: >-
-    docker exec cli /vars/run/ccinstantiate.sh
+    docker exec {{ CLINAME }} /vars/run/ccinstantiate.sh

@@ -14,4 +14,4 @@
 
 - name: Run the channel creation script on cli container
   command: >-
-    docker exec cli /vars/run/channelcreate.sh
+    docker exec {{ CLINAME }} /vars/run/channelcreate.sh

@@ -4,49 +4,26 @@
     leftbrace: "{"
     rightbrace: "}"
 
-- name: List all the chaincode containers
+- name: List all the containers on the network
   command: >-
-    docker ps -a --format
-    '{{ leftbrace }}{{ leftbrace }} .Names {{ rightbrace }}{{ rightbrace }}'
+    docker ps -aqf network={{ NETNAME }}
   register: containers
-
-- name: Remove the container
-  command: >-
-    docker rm -f {{ item }}
-  when: item.startswith('dev-') or item.startswith('dashboard.')
-  with_items: "{{ containers.stdout_lines}}"
 
 - name: List all the chaincode container images
   command: >-
-    docker images --format
-    '{{ leftbrace }}{{ leftbrace }} .Repository {{ rightbrace }}{{ rightbrace }}'
-  register: images
+    docker ps -af network={{ NETNAME }} --format
+    '{{ leftbrace }}{{ leftbrace }} .Image {{ rightbrace }}{{ rightbrace }}'
+  register: chaincodeimages
+
+- name: Remove the container
+  command: >-
+    docker rm -f {{ containers.stdout_lines | join(' ') }}
+  when: containers.stdout_lines | length > 0
 
 - name: Remove the chaincode container images
   command: >-
     docker rmi -f {{ item }}:latest
-  when: item.startswith('dev-')
-  with_items: "{{ images.stdout_lines}}"
-
-- name: Add couchdb containers if couchdb is used
-  set_fact:
-    allcontainers: >-
-      {{ allcontainers|default([]) + [item.fullname + '.couchdb'] }}
-  with_items: "{{ allpeers }}"
-  when: DB_TYPE == "couchdb"
-
-- name: Create all the known container list
-  set_fact:
-    allcontainers: >-
-      {{ allcontainers|default([]) + [item.fullname] }}
-  with_items: "{{ [{'fullname': 'cli'}] + allpeers + allorderers + allcas }}"
-
-- name: "Remove container {{ item }}"
-  include_tasks: "removecontainer.yaml"
-  loop: "{{ allcontainers }}"
-  loop_control:
-    loop_var: item
-  when: status_flag == "Success"
+  with_items: "{{ chaincodeimages.stdout_lines|select('match', '^dev-[.]*')|list }}"
 
 - name: Remove env file for all nodes
   file:
@@ -56,9 +33,9 @@
 
 - name: Query Fabric docker network
   command: >-
-    docker network ls -f 'name=minifab' -q
+    docker network ls -f name={{ NETNAME }} -q
   register: netstat
 
 - name: Delete fabric docker network if it exists
-  command: "docker network rm minifab"
+  command: "docker network rm {{ NETNAME }}"
   when: netstat.stdout != ""
