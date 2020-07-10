@@ -17,7 +17,7 @@
 - name: Tag ccenv image to be latest
   command: >-
     docker tag hyperledger/fabric-{{ image }}:{{ desiredrelease }} hyperledger/fabric-{{ image }}:latest
-  when: imagestate.stdout == '' and fabric.release is version('1.4.2', '<=') and image == 'ccenv'
+  when: imagestate.stdout == '' and fabric.release is version('1.4.7', '<=') and image == 'ccenv'
 
 - name: Set the status flag based on the return value
   set_fact:
