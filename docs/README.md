@@ -3,7 +3,7 @@ Minifabric is a tool to let you setup Fabric network, expand your network, insta
 
 It currently provides the following functions:
 
-1. Deploy a fabric network based on this [spec](https://github.com/litong01/minifabric/blob/master/spec.yaml) or your own spec
+1. Deploy a fabric network based on this [spec](https://github.com/litong01/minifabric/blob/master/spec.yaml) or [your own spec](#Setup-a-network-using-a-different-spec)
 2. Tear down the deployed fabric network
 3. Channel operations such as create, update, join peers to channels, channel update and channel query
 4. Chaincode operations such as install, approve, commit, upgrade, initialize, instantiate, invoke and query
@@ -92,11 +92,14 @@ Working with Hyperledger Fabric can be intimidating at first, the below list is 
 If you successfully complete each of the tasks in the list, you basically have verified that your Fabric network is working correctly. After the completion of these tasks, you may perform some more advanced operations such as channel query, channel update signoff, channel update. If you have multiple minifabric created Fabric network, you can even use the minifab to join all them together to make a bigger Fabric network.
 
 ### Setup a network using a different spec
-When you simply do `minifab up`, Minifabric uses the Minifabric provided Fabric network spec file to stand up a Fabric network. In many cases, you probably do not want that kind of the network, you probably want to use different organization names, node names, number of organizations, number of peers etc, to layout your own Fabric network, simply download this [spec](https://github.com/litong01/minifabric/blob/master/spec.yaml) file, place it in your working directory, then change it to what you like, then run the `minifab up` command. If you already have a Fabric network running on this machine, you will need to remove the running Fabric network to avoid any naming conflicts.
+When you simply do `minifab up`, Minifabric uses the network spec file `spec.yaml` in working directory to stand up a Fabric network. In many cases, you probably want to use different organization names, node names, number of organizations, number of peers etc, to layout your own Fabric network, 
+
+> If you already have a Fabric network running on this machine, you will need to remove the running Fabric network to avoid any naming conflicts.
 
 When you have your own network spec file, you can further customize your node by utilizing the setting
-section of network spec file. You can have a `settings` section like the following in your spec file.
-You can place any ca, peer, or orderer node configuration parameters under each node type.
+section of network spec file. 
+
+You can have a `settings` section like the following in your spec file.
 
 ```
   cas:
@@ -113,6 +116,20 @@ You can place any ca, peer, or orderer node configuration parameters under each 
     orderer:
       FABRIC_LOGGING_SPEC: DEBUG
 ```
+
+You can place any ca, peer, or orderer node configuration parameters under each node type.
+
+- **Organization Name** for each node is the rest part of domain name after first dot .
+- **mspid** for each Organization is the translated Organization Name by substituting all dot . with -
+- host **port** is generated as incremental sequences of starting port number (supplied in -e 7778)
+
+Example `peer` section
+
+> peer0.org1.com --> mspid = org1-com, organization name = org1.com hostPort=7778  
+> peer1.org1.com --> mspid = org1-com, organization name = org1.com hostPort=7779  
+> peer0.org2.com --> mspid = org2-com, organization name = org2.com hostPort=7780  
+
+Currently **docket network** name is not configurable but hard coded as `minifab`
 
 ### To install your own chaincode
 To install your own chaincode, create the following subdirectory in your working directory:
