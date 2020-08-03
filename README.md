@@ -31,12 +31,12 @@ If you like to learn more before jumping in, Watch the [series of 6 videos](http
 
 ### 1. Get the script.
 
-##### If you are using Linux or OS X
+##### If you are using Linux, OS X, or Windows 10 with WSL2
 ```
 mkdir -p ~/mywork && cd ~/mywork && curl -o minifab -sL https://tinyurl.com/twrt8zv && chmod +x minifab
 ```
 
-##### If you are using windows 10
+##### If you are using Windows 10 without WSL2 installed
 ```
 mkdir %userprofile%\mywork & cd %userprofile%\mywork & curl -o minifab.cmd -sL https://tinyurl.com/yb3ouwm3
 ```
@@ -56,9 +56,7 @@ minifab up
 minifab down
 ```
 
-### 4. To learn other minifab fucntions:
+### 4. To learn other minifab functions:
 ```
 minifab
 ```
-
-
