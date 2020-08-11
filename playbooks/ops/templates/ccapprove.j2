@@ -31,7 +31,10 @@ export CORE_PEER_ADDRESS={{ approvepeer.url }}:{{ approvepeer.port }}
 
 # if [[ "$approved" == "false" ]]; then
   peer lifecycle chaincode approveformyorg --channelID {{ CHANNEL_NAME}} --name {{ CC_NAME }} \
-    --version {{ CC_VERSION }} --init-required --package-id $PKID \
+    --version {{ CC_VERSION }} --package-id $PKID \
+{% if (CC_INIT_REQUIRED|lower) == 'true' %}
+  --init-required \
+{% endif %}
 {% if CC_PRIVATE == 'true' %}
     --collections-config /vars/{{CC_NAME}}_collection_config.json \
 {% endif %}
