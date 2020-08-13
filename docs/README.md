@@ -28,9 +28,10 @@ The table of the content
 12. [To add a new organization to your Fabric network](#to-add-a-new-organization-to-your-fabric-network)
 13. [Check node health and metrics](#check-node-health-and-metrics)
 14. [Execution context](#execution-context)
-15. [Update minifabric](#update-minifabric)
-16. [See more available Minifabric commands](#see-more-available-minifabric-commands)
-17. [Minifabric videos](#minifabric-videos)
+15. [Working with customised chaincode builders](#working-with-customised-chaincode-builders)
+16. [Update minifabric](#update-minifabric)
+17. [See more available Minifabric commands](#see-more-available-minifabric-commands)
+18. [Minifabric videos](#minifabric-videos)
 ### Prerequsites
 This tool requires **docker CE 18.03** or newer, Minifabric supports Linux, OS X and Windows 10
 
@@ -273,6 +274,17 @@ Minifab uses many settings throughout all the operations. These settings can be 
 All the default values are set by [envsettings](https://github.com/litong01/minifabric/blob/master/envsettings). Each of the values gets updated if specified in a command and saved back to `./vars/envsettings`. Users are strongly discouraged to manually change that file since it is basically a script, changes to that file should have been made by minifab command.
 
 Because of the execution context, when you execute a command, you do not really have to specify all the parameters necessary if the context do not need to be changed. For example, if you just executed a chaincode invoke command, and you like to execute invoke again, then you do not really need to specify the -n parameter since it is already in the current execution context. Same thing applies to every parameter listed in that file. You do not need to specify the parameter in a command unless you intend to use a new value in your command, once you do, the new value becomes part of the current execution context. 
+
+### Working with customised chaincode builders
+Fabric (v>2.0) allows users to work with customised chaincode builders and runtime environments. This is particularly useful for users operating inside of restricted networks, as chaincode builder images often need to access the external web for operations such as `npm install`. Once you have built a custom docker image, you can point minifab to it from `spec.yaml` e.g.
+```
+fabric:
+  settings:
+    peer:
+      CORE_CHAINCODE_BUILDER: hyperledger/fabric-ccenv:my2.2
+      CORE_CHAINCODE_NODE_RUNTIME: hyperledger/fabric-nodeenv:my2.2
+```
+where  `hyperledger/fabric-nodeenv:my2.2` is the name and tag for your custom image. Swap `NODE` for `GO` or `JAVA` for chaincodes written in those languages, respectively. Note that this sets the environment variable across all peer nodes (use multiple spec.yaml across multiple directories for more granular policy application).
 
 ### Update minifabric
 Minifabric development goes very fast. It is always a good idea to refresh your minifabric once in awhile by simply run the following script
