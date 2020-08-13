@@ -29,9 +29,9 @@ The table of the content
 13. [Check node health and metrics](#check-node-health-and-metrics)
 14. [Execution context](#execution-context)
 15. [Working with customised chaincode builders](#working-with-customised-chaincode-builders)
-15. [Update minifabric](#update-minifabric)
-16. [See more available Minifabric commands](#see-more-available-minifabric-commands)
-17. [Minifabric videos](#minifabric-videos)
+16. [Update minifabric](#update-minifabric)
+17. [See more available Minifabric commands](#see-more-available-minifabric-commands)
+18. [Minifabric videos](#minifabric-videos)
 ### Prerequsites
 This tool requires **docker CE 18.03** or newer, Minifabric supports Linux, OS X and Windows 10
 
