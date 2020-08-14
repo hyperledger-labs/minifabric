@@ -54,7 +54,7 @@ A working directory is a directory where all Minifabric commands should run from
 
 ### Stand up a Fabric network:
 
-To stand up a Fabric network, simply run `minifab up` command in your working directory. When the command finishes, you should have a Fabric network running normally using the latest Fabric release (currently 2.1.0) on your machine. You will also have an application channel named `mychannel` created, all peers defined in the network spec file joined into that channel, and a chaincode named `simple` installed and instantiated. This command is the command to use if you simply want to stand up a fabric network with channel and chaincode all ready for business. Since it executes majority of a Fabric network operations, the process will take a bit of time. It should normally completes in about 4 minutes giving that you have a good internet connection.
+To stand up a Fabric network, simply run `minifab up` command in your working directory. When the command finishes, you should have a Fabric network running normally using the latest Fabric release (currently 2.2.0) on your machine. You will also have an application channel named `mychannel` created, all peers defined in the network spec file joined into that channel, and a chaincode named `simple` installed and instantiated. This command is the command to use if you simply want to stand up a fabric network with channel and chaincode all ready for business. Since it executes majority of a Fabric network operations, the process will take around 4 minutes to complete id you have a reasonablely good internet connection since the process will also download hyperledger Fabric offical images from docker hub.
 
 If you like to use different version of fabric, simply specify the version using -i
 flag like below
@@ -78,7 +78,7 @@ You can use one of the two commands below to shut down Fabric network.
 minifab down
 minifab cleanup
 ```
-The first command simply removes all the docker containers which make up the fabric network, it will NOT remove any certificates or ledger data, you can run `minifab netup` later to restart the whole thing including chaincode containers if there are any. The seoncd command remove all the containers and cleanup the working directory
+The first command simply removes all the docker containers which make up the fabric network, it will NOT remove any certificates or ledger data, you can run `minifab netup` later to restart the whole thing including chaincode containers if there are any. The seoncd command remove all the containers and cleanup the working directory.
 
 ### The normal process of working with Hyperledger Fabric
 Working with Hyperledger Fabric can be intimidating at first, the below list is to show you the normal process of working with Fabric.
