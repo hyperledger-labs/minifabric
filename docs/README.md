@@ -32,6 +32,8 @@ The table of the content
 16. [Update minifabric](#update-minifabric)
 17. [See more available Minifabric commands](#see-more-available-minifabric-commands)
 18. [Minifabric videos](#minifabric-videos)
+19. [Build minifabric locally](#build-minifabric-locally)
+
 ### Prerequsites
 This tool requires **docker CE 18.03** or newer, Minifabric supports Linux, OS X and Windows 10
 
@@ -331,3 +333,12 @@ For other Fabric releases which is equal to or greater than 1.4.1, replace the t
 
 ### Minifabric videos
 If you like to learn more, please watch the [series of 6 videos](https://www.youtube.com/playlist?list=PL0MZ85B_96CExhq0YdHLPS5cmSBvSmwyO) on how to develop Hyperledger Fabric using Minifabric
+
+### Build minifabric locally
+Minifabric when installed onto your system is really just a short script. After you run at least one minifab command, a docker image named hfrd/minifab:latest will be automatically pulled down from docker hub. Through out the life cycle of minifabric, your system should only have this script and the docker image, to remove the minifabric, you only need to remove the script and the docker image. If you like to build the docker image yourself, please follow the steps below, the process applies to Linux, OS X and Windows:
+
+```
+git clone https://github.com/litong01/minifabric.git
+cd minifabric
+docker build -t hfrd/minifab:latest .
+```
