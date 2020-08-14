@@ -84,7 +84,7 @@ echo "    EXPOSE_ENDPOINTS=$EXPOSE_ENDPOINTS"
 echo "    CURRENT_ORG=$CURRENT_ORG"
 echo "    HOST_ADDRESSES=$ADDRS"
 
-if [ -z "$hostroot" ]; then hostroot=$(pwd); fi
+getRealRootDir
 echo "    WORKING_DIRECTORY: $hostroot"
 if [ ! -d "$(pwd)/vars/chaincode" ]; then
   cp -r $(pwd)/chaincode $(pwd)/vars/
