@@ -132,7 +132,7 @@ Example `peer` section
 > peer1.org1.com --> mspid = org1-com, organization name = org1.com hostPort=7779  
 > peer0.org2.com --> mspid = org2-com, organization name = org2.com hostPort=7780  
 
-Currently **docket network** name is not configurable but hard coded as `minifab`
+Currently **docket network** name is not configurable, it was automatically generated based on the working directory, this ensures that two different working directories will result two different docker networks. It allows you to setup two sites on same machine to mimic multiple organizations.
 
 ### To install your own chaincode
 To install your own chaincode, create the following subdirectory in your working directory:
