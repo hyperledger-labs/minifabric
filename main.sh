@@ -16,6 +16,7 @@
 export PATH=${PWD}/../bin:${PWD}:$PATH
 export FABRIC_CFG_PATH=${PWD}
 export VERBOSE=false
+export DOCKER_API_VERSION=1.39
 
 . scripts/mainfuncs.sh
 
