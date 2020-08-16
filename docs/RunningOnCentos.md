@@ -1,7 +1,7 @@
 # Running minifabric on Centos
 
 Since Centos by default has firewall enabled, without open up the masquerade, docker containers
-can not really function well, this doc outline couple necessary steps to help centos users to
+can not really function well, this doc outline necessary steps to help centos users to
 use minifabric.
 
 Make sure that your system has docker 18.03 or newer installed, then run the following two commands to enable masquerade
