@@ -33,6 +33,7 @@ The table of the content
 17. [See more available Minifabric commands](#see-more-available-minifabric-commands)
 18. [Minifabric videos](#minifabric-videos)
 19. [Build minifabric locally](#build-minifabric-locally)
+20. [Explorer your fabric network](#explorer-your-fabric-network)
 
 ### Prerequsites
 This tool requires **docker CE 18.03** or newer, Minifabric supports Linux, OS X and Windows 10
@@ -342,3 +343,19 @@ git clone https://github.com/litong01/minifabric.git
 cd minifabric
 docker build -t hfrd/minifab:latest .
 ```
+
+### Explorer your fabric network
+If you like to use a user interface to see your fabric network, you can easily boot up Hyperledger Explorer by running the following
+command:
+
+```
+minifab explorerup
+```
+
+To shutdown the Explorer, simply run the following command:
+
+```
+minifab explorerdown
+```
+
+Minifabric `cleanup` will also shutdown Hyperledger Explorer.

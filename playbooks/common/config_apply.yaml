@@ -130,22 +130,16 @@
   - name: Set up starting node port when all nodes private
     set_fact:
       nodeport: "7200"
-      ipaddr: "{{ ADDRS.split(',')[0] }}"
     when: (EXPOSE_ENDPOINTS|lower) == 'false'
 
-  - name: Get all dashboard object list
+  - name: Set explorer port
     set_fact:
-      alldash: |
-        {{ alldash + [{ 'org':item, 'url': ipaddr, 'port': nodeport,
-          'mspid': item.split('.')| join('-'), 'portmap':'-p '+nodeport+':8080',
-          'name': 'dashboard', 'fullname': 'dashboard.'+item, 'type': 'dashboard' }] }}
-      nodeport: "{{ nodeport|int + 1 }}"
-    with_items: "{{ allorgs }}"
+      explorer_port: "{{ nodeport|int + 1 }}"
 
   - name: Produce the node env file
     copy:
       dest: "{{ pjroot }}/vars/node_vars.json"
       content: >-
-        {{ {'allcas': allcas, 'allpeers': allpeers, 'allorderers': allorderers, 'alldash': alldash,
+        {{ {'allcas': allcas, 'allpeers': allpeers, 'allorderers': allorderers, 'explorer_port': explorer_port,
             'caorgs': caorgs, 'peerorgs': peerorgs, 'ordererorgs': ordererorgs, 'allorgs': allorgs,
             'orgattrs': orgattrs } | to_nice_json(indent=2) }}

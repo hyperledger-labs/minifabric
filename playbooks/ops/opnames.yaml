@@ -25,6 +25,8 @@ OPNAMES:
   filerem: "cleanup working directory"
   netstats: "network status"
   optionverify: "verify options"
+  explorerup: "start explorer"
+  explorerdown: "shutdown explorer"
 PRECONDITIONS:
   ccinstall: ['PEER']
   ccapprove: ['PEER', 'ORDERER']
@@ -52,3 +54,5 @@ PRECONDITIONS:
   filerem: []
   netstats: []
   optionverify: []
+  explorerup: []
+  explorerdown: []

@@ -19,7 +19,7 @@ OPNAMES=([up]="$LINE0$LINE1" [netup]='imageget,certgen,netup,netstats' \
   [query]='ccquery' [join]='channeljoin' [blockquery]='blockquery' \
   [channelquery]='channelquery' [profilegen]='profilegen' \
   [channelsign]='channelsign' [channelupdate]='channelupdate' \
-  [anchorupdate]='anchorupdate' [dashup]='dashup' [dashdown]='dashdown' \
+  [anchorupdate]='anchorupdate' [explorerup]='explorerup' [explorerdown]='explorerdown' \
   [nodeimport]='nodeimport' [discover]='discover' [imageget]='imageget')
 
 # Print the usage message
@@ -52,6 +52,8 @@ function printHelp() {
   echo "      - 'discover' - disocver channel endorsement policy"
   echo "      - 'cleanup'  - remove all the nodes and cleanup runtime files"
   echo "      - 'stats'  - list all nodes and status"
+  echo "      - 'explorerup'  - start up Hyperledger explorer"
+  echo "      - 'explorerdown'  - shutdown Hyperledger explorer"
   echo ""
   echo "    options:"
   echo "    -c|--channel-name         - channel name to use (defaults to \"mychannel\")"
