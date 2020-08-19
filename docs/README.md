@@ -33,7 +33,7 @@ The table of the content
 17. [See more available Minifabric commands](#see-more-available-minifabric-commands)
 18. [Minifabric videos](#minifabric-videos)
 19. [Build minifabric locally](#build-minifabric-locally)
-20. [Explorer your fabric network](#explorer-your-fabric-network)
+20. [Hook up Explorer to your fabric network](#hook-up-explorer-to-your-fabric-network)
 
 ### Prerequsites
 This tool requires **docker CE 18.03** or newer, Minifabric supports Linux, OS X and Windows 10
@@ -344,8 +344,8 @@ cd minifabric
 docker build -t hfrd/minifab:latest .
 ```
 
-### Explorer your fabric network
-If you like to use a user interface to see your fabric network, you can easily boot up Hyperledger Explorer by running the following
+### Hook up Explorer to your fabric network
+If you like to use a user interface to see your fabric network and its transactions, blocks, you can easily boot up Hyperledger Explorer by running the following
 command:
 
 ```
