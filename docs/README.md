@@ -351,7 +351,7 @@ command:
 ```
 minifab explorerup
 ```
-
+The login userid and password to Explorer are `exploreradmin` and `exploreradminpw`
 To shutdown the Explorer, simply run the following command:
 
 ```
