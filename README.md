@@ -19,7 +19,7 @@ capabilities of Hyperledger Fabric.
 - Fabric network setup and expansion such as adding new organizations
 - channel query, create, join, channel update
 - chaincode install, approve, instantiation, invoke, query and private data collection
-- ledger height and block query
+- ledger height and block query and Hyperledger Explorer support
 - node monitoring, health check and discovery
 
 ## Prerequisites
