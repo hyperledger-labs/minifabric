@@ -32,7 +32,7 @@
     "{{ org }}": {
       "mspid": "{{ org.split('.')|join('-') }}",
       "adminPrivateKey": {
-        "path": "/keyfiles/{{ orgattrs[org].certpath }}/{{ org }}/users/Admin@{{ org }}/msp/keystore/priv_sk"
+        "path": "/{{ allkeys['Admin@'+org].pkey }}"
       },
       "signedCert": {
         "path": "/keyfiles/{{ orgattrs[org].certpath }}/{{ org }}/users/Admin@{{ org }}/msp/signcerts/Admin@{{ org }}-cert.pem"
