@@ -25,7 +25,7 @@ else
   --transient '{{ TRANSIENT_DATA|b64decode|trim }}' \
 {% endif %}
 {% if CC_POLICY != 'Cg==' %}
-  --policy '{{ CC_POLICY|b64decode|trim }}' \ 
+  --policy '{{ CC_POLICY|b64decode|trim }}' \
 {% endif %}
   -c '{"Args":[{{ CC_PARAMETERS|b64decode|trim }}]}'
 fi
