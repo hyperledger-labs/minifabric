@@ -1,4 +1,6 @@
 ---
+# ROOTPATH should be set to the absolute path of crypto material
+# for example: export ROOTPATH=/home/ubuntu/mywork/vars/keyfiles
 "name": "fabric-network"
 "x-type": "hlfv1"
 "version": "1.0.0"
@@ -6,7 +8,7 @@
 {% set gopeer=allpeers|random %}
   "organization": "{{ gopeer.org }}"
   "cryptoconfig":
-    "path": "/keyfiles"
+    "path": "${ROOTPATH}"
   "connection":
     "timeout":
       "peer":
@@ -43,18 +45,22 @@
 
 "organizations":
 {% for org in allorgs %}
-{%  set orgelements = allkeys.values() | selectattr('org', 'equalto', org) | list %}
+{%  set orgtype = (org in peerorgs)|ternary('peer', 'orderer') %}
   "{{ org }}":
     "mspid": "{{ org.split('.')|join('-') }}"
-    "cryptoPath": "{{ org }}/users/{username}@{{ org}}/msp"
+    "cryptoPath": "{{ orgtype }}Organizations/{{ org }}/users/{username}@{{ org}}/msp"
+{% if orgtype == 'peer' %}
     "peers":
 {%   for peer in allpeers|selectattr('org', 'equalto', org)|list %}
     - "{{ peer.fullname }}"
 {%   endfor %}
+{% else %}
     "orderers":
 {%   for orderer in allorderers|selectattr('org', 'equalto', org)|list %}
+{%     set orgtype = 'orderer' %}
     - "{{ orderer.fullname }}"
 {%   endfor %}
+{% endif %}
     "certificateAuthorities":
 {%   for ca in allcas|selectattr('org', 'equalto', org)|list %}
     - "{{ ca.fullname }}"
@@ -68,7 +74,7 @@
     "grpcOptions":
       "ssl-target-name-override": "{{ orderer.fullname }}"
     "tlsCACerts":
-      "path": "/keyfiles/ordererOrganizations/{{ orderer.org }}/orderers/{{ orderer.fullname }}/tls/ca.crt"
+      "path": "${ROOTPATH}/ordererOrganizations/{{ orderer.org }}/orderers/{{ orderer.fullname }}/tls/ca.crt"
 {% endfor %}
 
 "peers":
@@ -78,7 +84,7 @@
     "grpcOptions":
       "ssl-target-name-override": "{{ peer.fullname }}"
     "tlsCACerts":
-      "path": "/keyfiles/peerOrganizations/{{ peer.org }}/peers/{{ peer.fullname }}/tls/ca.crt"
+      "path": "${ROOTPATH}/peerOrganizations/{{ peer.org }}/peers/{{ peer.fullname }}/tls/ca.crt"
 {% endfor %}
 
 "certificateAuthorities":
@@ -86,7 +92,7 @@
   "{{ ca.fullname }}":
     "url": "https://{{ ca.url }}:{{ ca.port }}"
     "tlsCACerts":
-      "path": "/keyfiles/{{ orgattrs[ca.org].certpath }}/{{ ca.org }}/ca/{{ ca.fullname }}-cert.pem"
+      "path": "${ROOTPATH}/{{ orgattrs[ca.org].certpath }}/{{ ca.org }}/ca/{{ ca.fullname }}-cert.pem"
     "httpOptions":
       "verify": "false"
     "caName": "{{ ca.name }}"
