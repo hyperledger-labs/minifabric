@@ -13,6 +13,7 @@ if [ -f 'go/go.mod' ] && [ ! -d 'go/vendor' ]; then
   export GOCACHE=on
 {% endif %}
   go mod vendor
+  export GO111MODULE=off
   cd -
 fi
 peer chaincode install --tls -l golang -v {{ CC_VERSION }} -n {{ CC_NAME }} \

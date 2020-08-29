@@ -123,15 +123,7 @@
     -v {{ hostroot }}/vars/chaincode:{{ gopath }}/src/github.com/chaincode
     hyperledger/fabric-tools:{{ fabric.release }}
 
-- name: Wait for orderer leader to be selected
+- name: sleep for 10 seconds and orderer nodes to select leader
+  wait_for:
+    timeout: 10
   when: allorderers | length > 0
-  block:
-    - name: check if RAFT leader has been selected
-      shell: >-
-        docker logs {{ (allorderers | random)['fullname'] }} 2>&1 | grep 'Start accepting requests as Raft leader'
-      register: electionstatus
-      ignore_errors: yes
-      no_log: True
-      until: (electionstatus.stdout | length) > 5
-      delay: 2
-      retries: 20
