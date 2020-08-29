@@ -13,3 +13,4 @@ declare XX_BLOCK_NUMBER='newest'
 declare XX_CC_PRIVATE='false'
 declare XX_CC_POLICY='Cg=='
 declare XX_CURRENT_ORG=org0.example.com
+declare XX_RUN_OUTPUT=minifab
