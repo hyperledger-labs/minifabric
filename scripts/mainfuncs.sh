@@ -95,7 +95,7 @@ function doDefaults() {
 }
 
 function doOp() {
-  ansible-playbook -i hosts                                                           \
+  ansible-playbook -i hosts -vvvv                                                     \
   -e "mode=$1" -e "hostroot=$hostroot" -e "CC_LANGUAGE=$CC_LANGUAGE"                  \
   -e "DB_TYPE=$DB_TYPE" -e "CHANNEL_NAME=$CHANNEL_NAME" -e "CC_NAME=$CC_NAME"         \
   -e "CC_VERSION=$CC_VERSION" -e "CHANNEL_NAME=$CHANNEL_NAME" -e "IMAGETAG=$IMAGETAG" \

@@ -119,12 +119,12 @@ Application: &ApplicationDefaults
 Orderer: &OrdererDefaults
   OrdererType: {{ (allorderers|length > 0)|ternary('etcdraft', 'solo') }}
 
-  BatchTimeout: 2s
+  BatchTimeout: {{ lookup('env','BatchTimeout') }}s
 
   BatchSize:
-    MaxMessageCount: 10
-    AbsoluteMaxBytes: 99 MB
-    PreferredMaxBytes: 512 KB
+    MaxMessageCount: {{ lookup('env','MaxMessageCount') }} 
+    AbsoluteMaxBytes: {{ lookup('env','AbsoluteMaxBytes') }} MB
+    PreferredMaxBytes: {{ lookup('env','PreferredMaxBytes') }} KB
 
 {% if allorderers | length > 0 %}
   Addresses:

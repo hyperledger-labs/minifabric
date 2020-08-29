@@ -2,9 +2,11 @@
 [ ! -d "$(pwd)/vars" ] && mkdir vars
 ADDRS=$(ifconfig|grep 'inet '|grep -v '\.1 '|tr -s ' '|awk '{$1=$1};1'|cut -d ' ' -f 2|cut -d '/' -f 1|paste -sd "," -)
 if [ -f "$(pwd)/spec.yaml" ]; then
-  docker run --rm --name minifab -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd)/vars:/home/vars \
+  docker run --rm --name minifab -e MaxMessageCount=$MaxMessageCount -e AbsoluteMaxBytes=$AbsoluteMaxBytes -e PreferredMaxBytes=$PreferredMaxBytes -e BatchTimeout=$BatchTimeout \
+  -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd)/vars:/home/vars \
   -v $(pwd)/spec.yaml:/home/spec.yaml -e "ADDRS=$ADDRS" hfrd/minifab:latest /home/main.sh "$@"
 else
-  docker run --rm --name minifab -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd)/vars:/home/vars \
+  docker run --rm --name minifab -e MaxMessageCount=$MaxMessageCount -e AbsoluteMaxBytes=$AbsoluteMaxBytes -e PreferredMaxBytes=$PreferredMaxBytes -e BatchTimeout=$BatchTimeout \
+  -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd)/vars:/home/vars \
   -e "ADDRS=$ADDRS" hfrd/minifab:latest /home/main.sh "$@"
 fi
