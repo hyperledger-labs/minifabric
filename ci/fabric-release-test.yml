@@ -8,7 +8,7 @@ jobs:
     - script: docker build -t hfrd/minifab:latest .
       displayName: 'Build up the minifabric container'
 
-    - script: ./minifab up -i ${{ release.number }}
+    - script: export MaxMessageCount=20 && export AbsoluteMaxBytes=120 && export PreferredMaxBytes=1024 && export BatchTimeout=4 && ./minifab up -i ${{ release.number }}
       displayName: 'Setup minifabric network'
 
     - script: ./minifab cleanup
