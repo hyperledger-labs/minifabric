@@ -57,6 +57,8 @@ case $optkey in
     CC_POLICY="$2";shift;shift;;
   -d|--init-required)
     CC_INIT_REQUIRED="$2";shift;shift;;
+  -f|--run-output)
+    RUN_OUTPUT="$2";shift;shift;;
   *) # unknown option
     echo "$1 is a not supported option"; exit 1;;
 esac

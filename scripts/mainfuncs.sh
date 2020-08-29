@@ -70,6 +70,7 @@ function printHelp() {
   echo "    -o|--organization         - organization to be used for org specific operations"
   echo "    -y|--chaincode-policy     - chaincode policy"
   echo "    -d|--init-required        - chaincode initialization flag, default is true"
+  echo "    -f|--run-output           - minifabric run time output callback, can be 'minifab'(default), 'default', 'dense'"
   echo "    -h|--help                 - print this message"
   echo
 }
@@ -77,7 +78,7 @@ function printHelp() {
 function doDefaults() {
   declare -a params=("CHANNEL_NAME" "CC_LANGUAGE" "IMAGETAG" "BLOCK_NUMBER" "CC_VERSION" \
     "CC_NAME" "DB_TYPE" "CC_PARAMETERS" "EXPOSE_ENDPOINTS" "CURRENT_ORG" "TRANSIENT_DATA" \
-    "CC_PRIVATE" "CC_POLICY" "CC_INIT_REQUIRED")
+    "CC_PRIVATE" "CC_POLICY" "CC_INIT_REQUIRED" "RUN_OUTPUT")
   if [ ! -f "./vars/envsettings" ]; then
     cp envsettings vars/envsettings
   fi
@@ -134,5 +135,6 @@ function getRealRootDir() {
 }
 
 function startMinifab() {
+  export ANSIBLE_STDOUT_CALLBACK=$RUN_OUTPUT
   time doOp $funcparams
 }
