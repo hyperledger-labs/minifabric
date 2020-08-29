@@ -19,6 +19,8 @@ stages:
         number: '1.4.1'
       - name: 'Release_1_4_6'
         number: '1.4.6'
+      - name: 'Release_1_4_8'
+        number: '1.4.8'
       - name: 'Release_2_0_0'
         number: '2.0.0'
       - name: 'Release_2_1_0'
