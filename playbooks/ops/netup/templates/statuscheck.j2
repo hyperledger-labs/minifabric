@@ -1,0 +1,11 @@
+#!/bin/bash
+# Script to check node readyness
+
+changes=0
+until [ $changes -ge 1 ]; do
+  val=$(wget -O- http://{{ (allorderers|random)['fullname'] }}:7060/metrics 2>&1 | grep '^consensus_etcdraft_leader_changes{channel=' || true)
+  if [ ! -z "$val" ]; then
+    changes=$(echo $val | cut -d ' ' -f 2)
+  fi
+  sleep 2
+done
