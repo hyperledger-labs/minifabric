@@ -2,7 +2,7 @@
   "name": "{{ NETNAME }}",
   "x-comment-0": "ROOTPATH should be set to the absolute path of crypto material starting directory",
   "x-comment-1": "for example: export ROOTPATH=/home/ubuntu/mywork/vars/keyfiles",
-  "x-type": "hlfv1",
+  "x-type": "hlfv-{{ fabric.release}}",
   "version": "1.0.0",
   "client": {
 {% set pypeer=allpeers|random %}

@@ -2,7 +2,7 @@
 # ROOTPATH should be set to the absolute path of crypto material starting directory
 # for example: export ROOTPATH=/home/ubuntu/mywork/vars/keyfiles
 "name": "{{ NETNAME }}"
-"x-type": "hlfv1"
+"x-type": "hlfv-{{ fabric.release }}"
 "version": "1.0.0"
 "client":
 {% set gopeer=allpeers|random %}
