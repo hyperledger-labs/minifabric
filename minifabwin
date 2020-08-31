@@ -25,6 +25,6 @@ set currentdir=%currentdir::=%
 set currentdir=//%currentdir%
 
 docker run --rm --name minifab -v /var/run/docker.sock:/var/run/docker.sock -v %CD%/vars:/home/vars ^
- -e "hostroot=%currentdir%" -e "ADDRS=!_alladdress!" hfrd/minifab:latest /home/main.sh %*
+ -e "hostroot=%currentdir%" -e "ADDRS=!_alladdress!" hfrd/minifab:0.3.0 /home/main.sh %*
 
 endlocal
