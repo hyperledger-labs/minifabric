@@ -21,6 +21,7 @@ capabilities of Hyperledger Fabric.
 - chaincode install, approve, instantiation, invoke, query and private data collection
 - ledger height and block query and Hyperledger Explorer support
 - node monitoring, health check and discovery
+- never pollute your environment
 
 ## Prerequisites
 [docker](https://www.docker.com/) (18.03 or newer) environment
@@ -31,7 +32,7 @@ If you like to learn more before jumping in, Watch the [series of 6 videos](http
 
 ### 1. Get the script.
 
-##### If you are using Linux, or OS X
+##### If you are using Linux (Ubuntu, Fedora, CentOS), or OS X
 ```
 mkdir -p ~/mywork && cd ~/mywork && curl -o minifab -sL https://tinyurl.com/twrt8zv && chmod +x minifab
 ```
@@ -51,9 +52,9 @@ Move the minifab (Linux and OS X) or minifab.cmd (Windows) script to a directory
 minifab up
 ```
 
-### 3. Tear down the fabric network:
+### 3. Tear down the fabric network and cleanup everything:
 ```
-minifab down
+minifab cleanup
 ```
 
 ### 4. To learn other minifab functions:
