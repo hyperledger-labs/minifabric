@@ -2,7 +2,7 @@
 
 [![Build Status](https://dev.azure.com/Hyperledger/Cello/_apis/build/status/litong01.minifabric?branchName=master)](https://dev.azure.com/Hyperledger/Cello/_build/latest?definitionId=107&branchName=master)
 
-[中文](https://github.com/litong01/minifabric/blob/master/README.zh.md)
+[中文](https://github.com/litong01/minifabric/blob/0.3.0/README.zh.md)
 
 If you like to learn Hyperledger Fabric or develop your smart contract, or
 just want to get a feel about Hyperledger Fabric, Minifabric is the tool to
@@ -33,12 +33,12 @@ If you like to learn more before jumping in, Watch the [series of 6 videos](http
 
 ##### If you are using Linux or OS X
 ```
-mkdir -p ~/mywork && cd ~/mywork && curl -o minifab -sL https://tinyurl.com/twrt8zv && chmod +x minifab
+mkdir -p ~/mywork && cd ~/mywork && curl -o minifab -sL https://tinyurl.com/y5kzspoo && chmod +x minifab
 ```
 
 ##### If you are using windows 10
 ```
-mkdir %userprofile%\mywork & cd %userprofile%\mywork & curl -o minifab.cmd -sL https://tinyurl.com/yb3ouwm3
+mkdir %userprofile%\mywork & cd %userprofile%\mywork & curl -o minifab.cmd -sL https://tinyurl.com/yxce8e2u
 ```
 
 ##### Make minifab available system wide
