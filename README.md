@@ -1,6 +1,6 @@
 # Minifabric 
 
-[![Build Status](https://dev.azure.com/Hyperledger/Cello/_apis/build/status/litong01.minifabric?branchName=master)](https://dev.azure.com/Hyperledger/Cello/_build/latest?definitionId=107&branchName=master)
+[![Build Status](https://dev.azure.com/Hyperledger/Cello/_apis/build/status/litong01.minifabric?branchName=master)](https://dev.azure.com/Hyperledger/Cello/_build/latest?definitionId=107&branchName=0.3.0)
 
 [中文](https://github.com/litong01/minifabric/blob/0.3.0/README.zh.md)
 
