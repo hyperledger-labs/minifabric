@@ -1,0 +1,12 @@
+#!/bin/bash
+# scripts to start the go application against the network
+cd /go/src/github.com/{{CC_NAME}}
+if [ -f 'go.mod' ] && [ ! -d 'vendor' ]; then
+  export GO111MODULE=on
+  go mod vendor
+  export GO111MODULE=off
+fi
+
+export ROOTPATH=/vars/keyfiles
+cp /vars/profiles/{{ CHANNEL_NAME}}_connection_for_gosdk.* .
+go run main.go
