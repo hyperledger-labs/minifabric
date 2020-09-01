@@ -34,6 +34,7 @@ The table of the content
 18. [Minifabric videos](#minifabric-videos)
 19. [Build minifabric locally](#build-minifabric-locally)
 20. [Hook up Explorer to your fabric network](#hook-up-explorer-to-your-fabric-network)
+21. [Run your application quickly](#run-your-application-quickly)
 
 ### Prerequsites
 This tool requires **docker CE 18.03** or newer, Minifabric supports Linux, OS X and Windows 10
@@ -360,3 +361,25 @@ minifab explorerdown
 ```
 
 Minifabric `cleanup` will also shutdown Hyperledger Explorer.
+
+### Run your application quickly
+If you have your application also developed, you can utilize Minifabric runapp command to quickly run
+your application. Create a directory named app under your chaincode directory, then place your program
+in the directory, then run `minifab runapp` command, Minifabric will place the necessary connection
+profiles in the root directory, then pull down dependencies and run your command. This feature is
+experimental, only support application written in go. This is an example for samplecc which is packaged with Minifabric. Notice, files under go directory is the chaincode itself, files under app directory is the programs written in go to invoke the chaincode. That program must be named main.go, otherwise, Minifabric will not be able to find where to start your application. The program can be created to do
+any Fabric operations. The example comes with Minifabric only developed to demostrate the capabilities
+and only invokes the chaincode. If you have already installed a chaincode, you can simply copy your programs into this app directory, then runapp will also be able to start your program.
+
+```
+samplecc
+├── app
+│   ├── go.mod
+│   ├── go.sum
+│   └── main.go
+└── go
+    ├── go.mod
+    ├── go.sum
+    └── main.go
+```
+

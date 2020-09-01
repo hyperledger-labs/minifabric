@@ -12,7 +12,7 @@ LINE0='imageget,certgen,netup,netstats,channelcreate,channeljoin,anchorupdate,'
 LINE1='profilegen,ccinstall,ccapprove,cccommit,ccinstantiate,discover'
 OPNAMES=([up]="$LINE0$LINE1" [netup]='imageget,certgen,netup,netstats' \
   [restart]='netdown,netup' [generate]='certrem,certgen' \
-  [cleanup]='netdown,filerem' [stats]='netstats' \
+  [cleanup]='netdown,filerem' [stats]='netstats' [runapp]='runapp' \
   [down]='netdown' [install]='ccinstall' [approve]='ccapprove' \
   [instantiate]='ccinstantiate' [initialize]='ccinstantiate' \
   [commit]='cccommit' [invoke]='ccinvoke' [create]='channelcreate' \
@@ -54,6 +54,7 @@ function printHelp() {
   echo "      - 'stats'  - list all nodes and status"
   echo "      - 'explorerup'  - start up Hyperledger explorer"
   echo "      - 'explorerdown'  - shutdown Hyperledger explorer"
+  echo "      - 'runapp'  - (experimental)run chaincode app if there is any"
   echo ""
   echo "    options:"
   echo "    -c|--channel-name         - channel name to use (defaults to \"mychannel\")"
