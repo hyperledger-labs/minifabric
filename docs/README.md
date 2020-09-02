@@ -14,7 +14,7 @@ It currently provides the following functions:
 
 The table of the content
 ========================
-1. [Prerequsites](#prerequsites)
+1. [Prerequisites](#prerequisites)
 2. [Working directory](#working-directory)
 3. [Stand up a Fabric network](#stand-up-a-fabric-network)
 4. [Tear down the fabric network](#tear-down-the-fabric-network)
@@ -36,7 +36,7 @@ The table of the content
 20. [Hook up Explorer to your fabric network](#hook-up-explorer-to-your-fabric-network)
 21. [Run your application quickly](#run-your-application-quickly)
 
-### Prerequsites
+### Prerequisites
 This tool requires **docker CE 18.03** or newer, Minifabric supports Linux, OS X and Windows 10
 
 ### Get the script and make it available system wide
@@ -56,7 +56,7 @@ A working directory is a directory where all Minifabric commands should run from
 
 ### Stand up a Fabric network:
 
-To stand up a Fabric network, simply run `minifab up` command in your working directory. When the command finishes, you should have a Fabric network running normally using the latest Fabric release (currently 2.2.0) on your machine. You will also have an application channel named `mychannel` created, all peers defined in the network spec file joined into that channel, and a chaincode named `simple` installed and instantiated. This command is the command to use if you simply want to stand up a fabric network with channel and chaincode all ready for business. Since it executes majority of a Fabric network operations, the process will take around 4 minutes to complete id you have a reasonablely good internet connection since the process will also download hyperledger Fabric offical images from docker hub.
+To stand up a Fabric network, simply run `minifab up` command in your working directory. When the command finishes, you should have a Fabric network running normally using the latest Fabric release (currently 2.2.0) on your machine. You will also have an application channel named `mychannel` created, all peers defined in the network spec file joined into that channel, and a chaincode named `simple` installed and instantiated. This command is the command to use if you simply want to stand up a fabric network with channel and chaincode all ready for business. Since it executes majority of a Fabric network operations, the process will take around 4 minutes to complete id you have a reasonably good internet connection since the process will also download hyperledger Fabric official images from docker hub.
 
 If you like to use different version of fabric, simply specify the version using -i
 flag like below
@@ -80,7 +80,7 @@ You can use one of the two commands below to shut down Fabric network.
 minifab down
 minifab cleanup
 ```
-The first command simply removes all the docker containers which make up the fabric network, it will NOT remove any certificates or ledger data, you can run `minifab netup` later to restart the whole thing including chaincode containers if there are any. The seoncd command remove all the containers and cleanup the working directory.
+The first command simply removes all the docker containers which make up the fabric network, it will NOT remove any certificates or ledger data, you can run `minifab netup` later to restart the whole thing including chaincode containers if there are any. The second command remove all the containers and cleanup the working directory.
 
 ### The normal process of working with Hyperledger Fabric
 Working with Hyperledger Fabric can be intimidating at first, the below list is to show you the normal process of working with Fabric.
@@ -153,7 +153,7 @@ $(pwd)/vars/chaincode/<chaincodename>/node
 $(pwd)/vars/chaincode/<chaincodename>/java
 ```
 
-When you develop your own chaincode for 1.4.x, it is important to place all your code in one package since Fabric 1.4.x uses go 1.12.12 whose support to mod module is not complete, code in the subdirectory can not be picked up. For fabric 2.0 or greater, it is supported, you can have some local modules with your own chaincode. If you are in a location which is hard to access golang related public repositories (like google hosted sites), you can package your chaincode with the vendor directory which already includes all necessary dependencies, during the install, minifabric wont try to get the dependencies again.
+When you develop your own chaincode for 1.4.x, it is important to place all your code in one package since Fabric 1.4.x uses go 1.12.12 whose support to mod module is not complete, code in the subdirectory cannot be picked up. For fabric 2.0 or greater, it is supported, you can have some local modules with your own chaincode. If you are in a location which is hard to access golang related public repositories (like google hosted sites), you can package your chaincode with the vendor directory which already includes all necessary dependencies, during the install, minifabric will not try to get the dependencies again.
 
 If you do not have any chaincode, you can still run `minifab install -n simple` command, Minifabric will install that sample chaincode, command `minifab up` installs that chaincode if you do not specify another chaincode.
 
@@ -162,13 +162,13 @@ will most likely need to use goproxy to bypass these restrictions. To do that, s
 file has an example commented out, you can uncomment that and use your own go proxy to install go lang written chaincode.
 
 ### To upgrade your chaincode
-If you have changed your chaincode and like to upgrade the chaincode, you can simply install the chaincode with a higher version number, for example:
+If you have changed your chaincode and would like to upgrade the chaincode installed to your minifabric network, you can simply install the chaincode with a higher version number, for example:
 ```
 minifab install -n simple -v 2.0
 ```
-Once it is finished successfully, then you just need to call the instantiate command again like below for Fabric release 1.4.x or do approve, commit like you normally do for Fabric release 2.x.x
+Once it is installed successfully, for Fabric release 1.4.x you can skip to the next section to instantiate your upgraded chaincode. For Fabric release 2.x.x, you need to prepare the channel to start using the new version of the chaincode with the following:
 ```
-minifab instantiate
+minifab approve,commit,initialize,discover
 ```
 
 Since you specified the chaincode name and version during the install, you do not have to specify again, Minifabric remembers what action was take last time. Minifabric accomplishes this by using it Execution Context which will be explained later in this document.
@@ -207,7 +207,7 @@ minifab invoke -n simple -p '"invoke","a","b","3"'
 minifab invoke -p '"invoke","a","b","24"'
 ```
 
-The each command will need to provide a different value for `-p` parameter. Notice that the double quotes and single quote in the value, they are very important, not following this convention will most likely produce an error during the invocation. If you are doing this in a window environment, command line parameters which contain double quotes will have to be replaced with `\"`, the above two commands on windows will have to executed like the below, notice that all the single quote was removed:
+Each invoke command will need to provide a different value for `-p` parameter. Notice that the double quotes and single quote in the value, they are very important, not following this convention will most likely produce an error during the invocation. If you are doing this in a window environment, command line parameters which contain double quotes will have to be replaced with `\"`, the above two commands on windows will have to executed like the below, notice that all the single quote was removed:
 
 ```
 minifab invoke -n simple -p \"invoke\",\"a\",\"b\",\"4\"
@@ -233,7 +233,7 @@ To update channel configuration, follow these steps:
 ```
 
 The above command will produce a channel configuration json file in vars directory, the name of the file will be
-`<channel_name>_config.json`, once you see that file, you can go ahead make changes to the file. If you are satsified with
+`<channel_name>_config.json`, once you see that file, you can go ahead make changes to the file. If you are satisfied with
 the changes, execute the following command
 
 ```
@@ -251,16 +251,16 @@ To add a new organization to your network takes few steps, please follow the bel
 3. Edit the `<channel_name>_config.json` file and add the all content of the JoinRequest file to the channel configuration file, make sure that the new content is placed in parallel to the existing organizations.
 4. Run 'minifab channelsign,channelupdate' command.
 
-Once all the steps are done correctly, the new organization is now part of your channel. The admin of the new orgnization can now join their peers to that channel. The entire process was demostrated in this [video](https://www.youtube.com/watch?v=c1Ab57IrgZg&list=PL0MZ85B_96CExhq0YdHLPS5cmSBvSmwyO&index=5&t=3s), please watch the video for a demostration. 
+Once all the steps are done correctly, the new organization is now part of your channel. The admin of the new organization can now join their peers to that channel. You may find [this video](https://www.youtube.com/watch?v=c1Ab57IrgZg&list=PL0MZ85B_96CExhq0YdHLPS5cmSBvSmwyO&index=5&t=3s) helpful, where the process of adding a new organization to a network is demonstrated in full. 
 
 ### Check node health and metrics
 When you use minifabric sets up your fabric network, Minifabric will enable peer and orderer node health and
 metric capabilities. The port to serve health check and metrics is normally called operation port, this port
 is a different port than the Fabric node service GRPC port. Minifabric always sets the operation port to 7061
-for peer and 7060 for orderer. Notice that the defalt service GRPC port for peer node is 7051, the default
+for peer and 7060 for orderer. Notice that the default service GRPC port for peer node is 7051, the default
 port for orderer node is 7050, Minifabric adds 10 to the GRPC port for the operation port. When you choose to
 expose node endpoints outside of your host (-e option of minifab command), the operation port will also be mapped to a host port so that the operation port is accessible to tools running outside of the host. If you choose not to expose endpoints, then health and metrics will also be hidden from outside of the host and can only be accessed internally. To make things a
-bit easier, the opreation port for a node will be always 1000 higher than the node GRPC port. For example, if
+bit easier, the operation port for a node will be always 1000 higher than the node GRPC port. For example, if
 a peer node is running on docker host which has IP address of 9.8.7.6 and its GRPC 7051 port is mapped to
 7001, then the operation port will be 8001. As mentioned in other part of this document, you will have to make
 sure that the block of these ports on your host are available. Using the above example, you can access health
@@ -273,7 +273,7 @@ metrics:   9.8.7.6:9001/metrics
 ```
 
 ### Execution context
-Minifab uses many settings throughout all the operations. These settings can be changed any time you run a minifab command and these settings will be saved in the vars/envsetting file. Each time a command is executed, that file will be loaded and settings specified in the command line will be written into that file. All the settings saved and specified in the command  make the current execution context. They include chaincode name, chaincode invocation parameter, chaincode version, chaincode language, channel name, fabric release, endpoint exposure and block query number. 
+Minifab uses many settings throughout all the operations. These settings can be changed any time you run a minifab command and these settings will be saved in the vars/envsetting file. Each time a command is executed, that file will be loaded and settings specified in the command line will be written into that file. All the settings saved and specified in the command make the current execution context. They include chaincode name, chaincode invocation parameter, chaincode version, chaincode language, channel name, fabric release, endpoint exposure and block query number. 
 
 All the default values are set by [envsettings](https://github.com/litong01/minifabric/blob/master/envsettings). Each of the values gets updated if specified in a command and saved back to `./vars/envsettings`. Users are strongly discouraged to manually change that file since it is basically a script, changes to that file should have been made by minifab command.
 
@@ -303,7 +303,7 @@ minifab
 ```
 
 ### For the people who has trouble to download images from docker hub
-Minifabric uses hyperledger offical docker images from docker hub. It will automatically pull these images when it needs them. For people who lives outside of the US, pulling images may be extremely slow or nearly impossible. To avoid breakages due to the image pulling issues, you may pull the following images from other docker repository or use different means to pull these images for example, writing your own script to pull images over night. As long as these images exist on your machine, minifab wont pull them again. To help you to do this, here is a list of images in case you like to pull them use other means.
+Minifabric uses hyperledger official docker images from docker hub. It will automatically pull these images when it needs them. For people who lives outside of the US, pulling images may be extremely slow or nearly impossible. To avoid breakages due to the image pulling issues, you may pull the following images from other docker repository or use different means to pull these images for example, writing your own script to pull images overnight. As long as these images exist on your machine, minifab will not pull them again. To help you to do this, here is a list of images in case you like to pull them use other means.
 
 ##### Fabric 2.0
 ```
@@ -337,7 +337,7 @@ For other Fabric releases which is equal to or greater than 1.4.1, replace the t
 If you like to learn more, please watch the [series of 6 videos](https://www.youtube.com/playlist?list=PL0MZ85B_96CExhq0YdHLPS5cmSBvSmwyO) on how to develop Hyperledger Fabric using Minifabric
 
 ### Build minifabric locally
-Minifabric when installed onto your system is really just a short script. After you run at least one minifab command, a docker image named hfrd/minifab:latest will be automatically pulled down from docker hub. Through out the life cycle of minifabric, your system should only have this script and the docker image, to remove the minifabric, you only need to remove the script and the docker image. If you like to build the docker image yourself, please follow the steps below, the process applies to Linux, OS X and Windows:
+Minifabric when installed onto your system is really just a short script. After you run at least one minifab command, a docker image named hfrd/minifab:latest will be automatically pulled down from docker hub. Throughout the life cycle of minifabric, your system should only have this script and the docker image, to remove the minifabric, you only need to remove the script and the docker image. If you like to build the docker image yourself, please follow the steps below, the process applies to Linux, OS X and Windows:
 
 ```
 git clone https://github.com/litong01/minifabric.git
