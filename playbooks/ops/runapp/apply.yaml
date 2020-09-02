@@ -10,5 +10,5 @@
     docker run --network {{ NETNAME }} --name runapp --hostname runapp --rm
     -v /var/run/docker.sock:/var/run/docker.sock
     -v {{ hostroot }}/vars:/vars
-    -v {{ hostroot }}/vars/chaincode/{{ CC_NAME }}/app:/go/src/github.com/{{CC_NAME}}
+    -v {{ hostroot }}/vars/app:/go/src/github.com/app
     {{ LANGUAGEENVS[CC_LANGUAGE] }} /vars/run/runapp.sh
