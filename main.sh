@@ -92,5 +92,8 @@ echo "    WORKING_DIRECTORY: $hostroot"
 if [ ! -d "$(pwd)/vars/chaincode" ]; then
   cp -r $(pwd)/chaincode $(pwd)/vars/
 fi
+if [ ! -d "$(pwd)/vars/app" ]; then
+  cp -r $(pwd)/app $(pwd)/vars/
+fi
 
 startMinifab

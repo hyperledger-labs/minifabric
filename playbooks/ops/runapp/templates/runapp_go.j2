@@ -1,6 +1,6 @@
 #!/bin/bash
 # scripts to start the go application against the network
-cd /go/src/github.com/{{CC_NAME}}
+cd /go/src/github.com/app
 if [ -f 'go.mod' ] && [ ! -d 'vendor' ]; then
   export GO111MODULE=on
   go mod vendor
