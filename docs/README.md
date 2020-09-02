@@ -56,7 +56,7 @@ A working directory is a directory where all Minifabric commands should run from
 
 ### Stand up a Fabric network:
 
-To stand up a Fabric network, simply run `minifab up` command in your working directory. When the command finishes, you should have a Fabric network running normally using the latest Fabric release (currently 2.2.0) on your machine. You will also have an application channel named `mychannel` created, all peers defined in the network spec file joined into that channel, and a chaincode named `simple` installed and instantiated. This command is the command to use if you simply want to stand up a fabric network with channel and chaincode all ready for business. Since it executes majority of a Fabric network operations, the process will take around 4 minutes to complete id you have a reasonably good internet connection since the process will also download hyperledger Fabric official images from docker hub.
+To stand up a Fabric network, simply run `minifab up` command in your working directory. When the command finishes, you should have a Fabric network running normally using the latest Fabric release (currently 2.2.0) on your machine. You will also have an application channel named `mychannel` created, all peers defined in the network spec file joined into that channel, and a chaincode named `simple` installed and instantiated. This command is the command to use if you simply want to stand up a fabric network with channel and chaincode all ready for business. Since it executes majority of a Fabric network operations, the process will take around 4 minutes to complete if you have a reasonably good internet connection since the process will also download hyperledger Fabric official images from docker hub.
 
 If you like to use different version of fabric, simply specify the version using -i
 flag like below
@@ -134,7 +134,7 @@ Example `peer` section
 > peer1.org1.com --> mspid = org1-com, organization name = org1.com hostPort=7779  
 > peer0.org2.com --> mspid = org2-com, organization name = org2.com hostPort=7780  
 
-Currently **docket network** name is not configurable, it was automatically generated based on the working directory, this ensures that two different working directories will result two different docker networks. It allows you to setup two sites on same machine to mimic multiple organizations.
+Currently **docket network** name is not configurable, it was automatically generated based on the working directory, this ensures that two different working directories will result two different docker networks. It allows you to setup multiple sites on same machine to mimic multiple organizations cross multiple machines.
 
 ### To install your own chaincode
 To install your own chaincode, create the following subdirectory in your working directory:
