@@ -1,0 +1,106 @@
+{
+  "name": "{{ NETNAME }}",
+  "x-type": "hlfv1",
+  "version": "1.0.0",
+  "client": {
+    "tlsEnable": true,
+    "adminCredential": {
+      "id": "exploreradmin",
+      "password": "exploreradminpw"
+    },
+    "enableAuthentication": true,
+    "organization": "{{ CURRENT_ORG }}"
+  },
+  "channels": {
+    "{{ CHANNEL_NAME }}": {
+      "orderers": [
+{% for orderer in allorderers %}
+        "{{ orderer.fullname }}"{{ '' if loop.last else ',' }}
+{% endfor %}
+      ],
+      "peers": [
+{% for peer in allpeers %}
+        "{{ peer.fullname }}"{{ '' if loop.last else ',' }}
+{% endfor %}
+      ]
+    }
+  },
+  "organizations": {
+{% for org in allorgs %}
+{%  set orgcas = allcas|selectattr('org', 'equalto', org)|list %}
+{%  set orgelements = allkeys.values() | selectattr("org", "equalto", org) | list %}
+    "{{ org }}": {
+      "mspid": "{{ org.split('.')|join('-') }}",
+      "adminPrivateKey": {
+        "path": "/{{ allkeys['Admin@'+org].pkey }}"
+      },
+      "signedCert": {
+        "path": "/keyfiles/{{ orgattrs[org].certpath }}/{{ org }}/users/Admin@{{ org }}/msp/signcerts/Admin@{{ org }}-cert.pem"
+      },
+      "peers": [
+{% for peer in allpeers|selectattr('org', 'equalto', org)|list %}
+        "{{ peer.fullname }}"{{ '' if loop.last else ',' }}
+{% endfor %}
+      ],
+      "orderers": [
+{% for orderer in allorderers|selectattr('org', 'equalto', org)|list %}
+        "{{ orderer.fullname }}"{{ '' if loop.last else ',' }}
+{% endfor %}
+      ]{{ ',' if (orgcas|length) > 0 else ''}}
+{%    if orgcas|length > 0 %}
+      "certificateAuthorities": [
+{%      for ca in orgcas %}
+        "{{ ca.fullname }}"{{ '' if loop.last else ',' }}
+{%      endfor %}
+      ]
+{%    endif %}
+    }{{ '' if loop.last else ',' }}
+{% endfor %}
+  },
+  "orderers": {
+{% for orderer in allorderers %}
+    "{{ orderer.fullname }}": {
+      "url": "grpcs://{{ orderer.url }}:{{ orderer.port }}",
+      "grpcOptions": {
+        "ssl-target-name-override": "{{ orderer.fullname }}"
+      },
+      "tlsCACerts": {
+        "pem": "{{ lookup('file', pjroot+'/vars/keyfiles/ordererOrganizations/'+orderer.org+'/orderers/'+orderer.fullname+'/tls/ca.crt')|regex_replace('(\n)', '\\\\n') }}"
+      }
+    }{{ '' if loop.last else ',' }}
+{% endfor %}
+  },
+  "peers": {
+{% for peer in allpeers %}
+    "{{ peer.fullname }}": {
+      "url": "grpcs://{{ peer.url }}:{{ peer.port }}",
+      "grpcOptions": {
+        "ssl-target-name-override": "{{ peer.fullname }}"
+      },
+      "tlsCACerts": {
+        "pem": "{{ lookup('file', pjroot+'/vars/keyfiles/peerOrganizations/'+peer.org+'/peers/'+peer.fullname+'/tls/ca.crt')|regex_replace('(\n)', '\\\\n') }}"
+      }
+    }{{ '' if loop.last else ',' }}
+{% endfor %}
+  },
+  "entityMatchers": {
+    "orderer": [
+{% for orderer in allorderers %}
+      { "mappedHost": "{{ orderer.fullname }}",
+        "pattern": "(\\w*){{ orderer.fullname }}(\\w*)",
+        "sslTargetOverrideUrlSubstitutionExp": "{{ orderer.fullname }}",
+        "urlSubstitutionExp": "{{ orderer.url }}:{{ orderer.port }}"
+      }{{ '' if loop.last else ',' }}
+{% endfor %}
+    ],
+    "peer": [
+{% for peer in allpeers %}
+      { "mappedHost": "{{ peer.fullname }}",
+        "pattern": "(\\w*){{ peer.fullname }}(\\w*)",
+        "sslTargetOverrideUrlSubstitutionExp": "{{ peer.fullname }}",
+        "urlSubstitutionExp": "{{ peer.url }}:{{ peer.port }}"
+      }{{ '' if loop.last else ',' }}
+{% endfor %}
+    ]
+  }
+}

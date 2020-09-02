@@ -16,6 +16,7 @@
 export PATH=${PWD}/../bin:${PWD}:$PATH
 export FABRIC_CFG_PATH=${PWD}
 export VERBOSE=false
+export DOCKER_API_VERSION=1.39
 
 . scripts/mainfuncs.sh
 
@@ -56,6 +57,8 @@ case $optkey in
     CC_POLICY="$2";shift;shift;;
   -d|--init-required)
     CC_INIT_REQUIRED="$2";shift;shift;;
+  -f|--run-output)
+    RUN_OUTPUT="$2";shift;shift;;
   *) # unknown option
     echo "$1 is a not supported option"; exit 1;;
 esac
@@ -84,7 +87,7 @@ echo "    EXPOSE_ENDPOINTS=$EXPOSE_ENDPOINTS"
 echo "    CURRENT_ORG=$CURRENT_ORG"
 echo "    HOST_ADDRESSES=$ADDRS"
 
-if [ -z "$hostroot" ]; then hostroot=$(pwd); fi
+getRealRootDir
 echo "    WORKING_DIRECTORY: $hostroot"
 if [ ! -d "$(pwd)/vars/chaincode" ]; then
   cp -r $(pwd)/chaincode $(pwd)/vars/

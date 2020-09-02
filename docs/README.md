@@ -32,6 +32,10 @@ The table of the content
 16. [Update minifabric](#update-minifabric)
 17. [See more available Minifabric commands](#see-more-available-minifabric-commands)
 18. [Minifabric videos](#minifabric-videos)
+19. [Build minifabric locally](#build-minifabric-locally)
+20. [Hook up Explorer to your fabric network](#hook-up-explorer-to-your-fabric-network)
+21. [Run your application quickly](#run-your-application-quickly)
+
 ### Prerequsites
 This tool requires **docker CE 18.03** or newer, Minifabric supports Linux, OS X and Windows 10
 
@@ -52,7 +56,7 @@ A working directory is a directory where all Minifabric commands should run from
 
 ### Stand up a Fabric network:
 
-To stand up a Fabric network, simply run `minifab up` command in your working directory. When the command finishes, you should have a Fabric network running normally using the latest Fabric release (currently 2.1.0) on your machine. You will also have an application channel named `mychannel` created, all peers defined in the network spec file joined into that channel, and a chaincode named `simple` installed and instantiated. This command is the command to use if you simply want to stand up a fabric network with channel and chaincode all ready for business. Since it executes majority of a Fabric network operations, the process will take a bit of time. It should normally completes in about 4 minutes giving that you have a good internet connection.
+To stand up a Fabric network, simply run `minifab up` command in your working directory. When the command finishes, you should have a Fabric network running normally using the latest Fabric release (currently 2.2.0) on your machine. You will also have an application channel named `mychannel` created, all peers defined in the network spec file joined into that channel, and a chaincode named `simple` installed and instantiated. This command is the command to use if you simply want to stand up a fabric network with channel and chaincode all ready for business. Since it executes majority of a Fabric network operations, the process will take around 4 minutes to complete id you have a reasonablely good internet connection since the process will also download hyperledger Fabric offical images from docker hub.
 
 If you like to use different version of fabric, simply specify the version using -i
 flag like below
@@ -76,7 +80,7 @@ You can use one of the two commands below to shut down Fabric network.
 minifab down
 minifab cleanup
 ```
-The first command simply removes all the docker containers which make up the fabric network, it will NOT remove any certificates or ledger data, you can run `minifab netup` later to restart the whole thing including chaincode containers if there are any. The seoncd command remove all the containers and cleanup the working directory
+The first command simply removes all the docker containers which make up the fabric network, it will NOT remove any certificates or ledger data, you can run `minifab netup` later to restart the whole thing including chaincode containers if there are any. The seoncd command remove all the containers and cleanup the working directory.
 
 ### The normal process of working with Hyperledger Fabric
 Working with Hyperledger Fabric can be intimidating at first, the below list is to show you the normal process of working with Fabric.
@@ -130,7 +134,7 @@ Example `peer` section
 > peer1.org1.com --> mspid = org1-com, organization name = org1.com hostPort=7779  
 > peer0.org2.com --> mspid = org2-com, organization name = org2.com hostPort=7780  
 
-Currently **docket network** name is not configurable but hard coded as `minifab`
+Currently **docket network** name is not configurable, it was automatically generated based on the working directory, this ensures that two different working directories will result two different docker networks. It allows you to setup two sites on same machine to mimic multiple organizations.
 
 ### To install your own chaincode
 To install your own chaincode, create the following subdirectory in your working directory:
@@ -331,3 +335,51 @@ For other Fabric releases which is equal to or greater than 1.4.1, replace the t
 
 ### Minifabric videos
 If you like to learn more, please watch the [series of 6 videos](https://www.youtube.com/playlist?list=PL0MZ85B_96CExhq0YdHLPS5cmSBvSmwyO) on how to develop Hyperledger Fabric using Minifabric
+
+### Build minifabric locally
+Minifabric when installed onto your system is really just a short script. After you run at least one minifab command, a docker image named hfrd/minifab:latest will be automatically pulled down from docker hub. Through out the life cycle of minifabric, your system should only have this script and the docker image, to remove the minifabric, you only need to remove the script and the docker image. If you like to build the docker image yourself, please follow the steps below, the process applies to Linux, OS X and Windows:
+
+```
+git clone https://github.com/litong01/minifabric.git
+cd minifabric
+docker build -t hfrd/minifab:latest .
+```
+
+### Hook up Explorer to your fabric network
+If you like to use a user interface to see your fabric network and its transactions, blocks, you can easily boot up Hyperledger Explorer by running the following
+command:
+
+```
+minifab explorerup
+```
+The login userid and password to Explorer are `exploreradmin` and `exploreradminpw`
+
+To shutdown the Explorer, simply run the following command:
+
+```
+minifab explorerdown
+```
+
+Minifabric `cleanup` will also shutdown Hyperledger Explorer.
+
+### Run your application quickly
+If you have your application also developed, you can utilize Minifabric runapp command to quickly run
+your application. Create a directory named app under your chaincode directory, then place your program
+in the directory, then run `minifab runapp` command, Minifabric will place the necessary connection
+profiles in the root directory, then pull down dependencies and run your command. This feature is
+experimental, only support application written in go. This is an example for samplecc which is packaged with Minifabric. Notice, files under go directory is the chaincode itself, files under app directory is the programs written in go to invoke the chaincode. That program must be named main.go, otherwise, Minifabric will not be able to find where to start your application. The program can be created to do
+any Fabric operations. The example comes with Minifabric only developed to demostrate the capabilities
+and only invokes the chaincode. If you have already installed a chaincode, you can simply copy your programs into this app directory, then runapp will also be able to start your program.
+
+```
+samplecc
+├── app
+│   ├── go.mod
+│   ├── go.sum
+│   └── main.go
+└── go
+    ├── go.mod
+    ├── go.sum
+    └── main.go
+```
+

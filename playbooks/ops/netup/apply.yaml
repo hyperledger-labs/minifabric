@@ -122,3 +122,20 @@
     -v {{ hostroot }}/vars:/vars
     -v {{ hostroot }}/vars/chaincode:{{ gopath }}/src/github.com/chaincode
     hyperledger/fabric-tools:{{ fabric.release }}
+
+- name: Check if orderer raft leader node has been elected
+  when: allorderers | length > 0
+  block:
+    - name: wait for 3 seconds and orderer nodes to select leader
+      wait_for:
+        timeout: 3
+
+    - name: generate the script to check status
+      template:
+        src: "{{ pjroot }}/playbooks/ops/netup/templates/statuscheck.j2"
+        dest: "{{ pjroot }}/vars/run/statuscheck.sh"
+        mode: +x
+
+    - name: Run the orderer raft leader election script on cli container
+      command: >-
+        docker exec {{ CLINAME }} /vars/run/statuscheck.sh
