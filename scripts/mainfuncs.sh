@@ -17,7 +17,7 @@ OPNAMES=([up]="$LINE0$LINE1" [netup]='imageget,certgen,netup,netstats' \
   [instantiate]='ccinstantiate' [initialize]='ccinstantiate' \
   [commit]='cccommit' [invoke]='ccinvoke' [create]='channelcreate' \
   [query]='ccquery' [join]='channeljoin' [blockquery]='blockquery' \
-  [channelquery]='channelquery' [profilegen]='profilegen' \
+  [channelquery]='channelquery' [profilegen]='profilegen' [caliperrun]='caliperrun' \
   [channelsign]='channelsign' [channelupdate]='channelupdate' \
   [anchorupdate]='anchorupdate' [explorerup]='explorerup' [explorerdown]='explorerdown' \
   [nodeimport]='nodeimport' [discover]='discover' [imageget]='imageget')
@@ -55,6 +55,7 @@ function printHelp() {
   echo "      - 'explorerup'  - start up Hyperledger explorer"
   echo "      - 'explorerdown'  - shutdown Hyperledger explorer"
   echo "      - 'runapp'  - (experimental)run chaincode app if there is any"
+  echo "      - 'caliperrun'  - (experimental)run caliper test"
   echo ""
   echo "    options:"
   echo "    -c|--channel-name         - channel name to use (defaults to \"mychannel\")"

@@ -1,0 +1,26 @@
+test:
+    name: {{ CC_NAME }}-benchmark
+    description: test benchmark
+    workers:
+      type: local
+      number: 2
+    rounds:
+      - label: {{ CC_NAME }} test
+        description: {{ CC_NAME }} benchmark
+        chaincodeId: {{ CC_NAME }}
+        txDuration: 30
+        rateControl: 
+          type: fixed-backlog
+          opts:
+            unfinished_per_client: 2
+        callback: benchmarks/callbacks/queryAssetBenchmarks.js
+        arguments:
+          assets: 10
+  
+monitor:
+  type:
+  - none
+  
+observer:
+  type: local
+  interval: 5
