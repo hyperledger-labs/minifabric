@@ -1,0 +1,85 @@
+{%  set orgcas = allcas|selectattr('org', 'equalto', CURRENT_ORG)|list %}
+{%  set org = CURRENT_ORG %}
+{
+  "caliper": {
+    "blockchain": "{{ NETNAME }}"
+  },
+  "clients": {
+    "Admin@{{ org }}": {
+      "client": {
+        "credentialStore": {
+          "path": "tmp/hfc-kvs/org1",
+          "cryptoStore": {"path": "tmp/hfc-kvs/org1"}
+        },
+        "organization": "{{ org }}",
+        "clientPrivateKey": {
+          "path": "${ROOTPATH}/peerOrganizations/{{ org }}/users/Admin@{{ org }}/msp/keystore/priv_sk"
+        },
+        "clientSignedCert": {
+          "path": "${ROOTPATH}/peerOrganizations/{{ org }}/users/Admin@{{ org }}/msp/signcerts/Admin@{{ org }}-cert.pem"
+        },
+        "connection": {
+          "timeout": { "peer": { "endorser": "300" } }
+        }
+      }
+    }
+  },
+  "channels": {
+      "{{ CHANNEL_NAME }}": {
+          "created" : true,
+          "chaincodes": [
+              { "id": "{{ CC_NAME }}", "version": "{{ CC_VERSION }}" }
+          ]
+      }
+  },
+  "name": "test-{{ NETNAME}}",
+  "organizations":{
+    "{{ org }}": {
+      "mspid": "{{ org.split('.')|join('-') }}",
+      "peers": [
+{% for peer in allpeers|selectattr('org', 'equalto', org)|list %}
+        "{{ peer.fullname }}"{{ '' if loop.last else ',' }}
+{% endfor %}
+      ],
+{% if orgcas|length > 0 %}
+      "certificateAuthorities": [
+         "{{ orgcas[0].fullname }}"
+      ],
+{% endif %}
+      "adminPrivateKey": {
+        "path": "${ROOTPATH}/peerOrganizations/{{ org }}/users/Admin@{{ org }}/msp/keystore/priv_sk"
+      },
+      "signedCert": {
+        "path": "${ROOTPATH}/peerOrganizations/{{ org }}/users/Admin@{{ org }}/msp/signcerts/Admin@{{ org }}-cert.pem"
+      }
+    }
+  },
+  "peers": {
+{% for peer in allpeers|selectattr('org', 'equalto', org)|list %}
+    "{{ peer.fullname }}": {
+      "url": "grpcs://{{ peer.url }}:{{ peer.port }}",
+      "grpcOptions": {
+        "ssl-target-name-override": "{{ peer.fullname }}",
+        "hostnameOverride": "{{ peer.fullname }}"
+      },
+      "tlsCACerts": {
+        "pem": "{{ lookup('file', pjroot+'/vars/keyfiles/peerOrganizations/'+peer.org+'/peers/'+peer.fullname+'/tls/ca.crt')|regex_replace('(\n)', '\\\\n') }}"
+      }
+    }{{ '' if loop.last else ',' }}
+{% endfor %}
+  },
+  "certificateAuthorities": {
+{% for ca in allcas|selectattr('org', 'equalto',org)|list %}
+    "{{ ca.fullname }}": {
+      "url": "https://{{ ca.url }}:{{ ca.port }}",
+      "tlsCACerts": {
+        "pem": "{{ lookup('file', pjroot+'/vars/keyfiles/'+ orgattrs[ca.org].certpath+'/'+ca.org+'/ca/'+ca.fullname+'-cert.pem')|regex_replace('(\n)', '\\\\n') }}"
+      },
+      "httpOptions": { "verify": "false" },
+      "caName": "{{ ca.name }}",
+      "registrar": { "enrollId": "admin", "enrollSecret": "adminpw"}
+    }{{ '' if loop.last else ',' }}
+{% endfor %}
+  },
+  "version": "1.0"
+}

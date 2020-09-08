@@ -1,0 +1,8 @@
+---
+- name: Create runapp script
+  template:
+    src: "{{ pjroot }}/playbooks/ops/caliperrun/templates/{{ item.name }}"
+    dest: "{{ pjroot }}/vars/run/{{ item.target }}"
+  with_items:
+  - {name: 'networkconfig.j2', target: 'networkconfig.json'}
+  - {name: 'benchmarkconfig.j2', target: 'benchmarkconfig.yaml'}

@@ -28,6 +28,7 @@ OPNAMES:
   explorerup: "start explorer"
   explorerdown: "shutdown explorer"
   runapp: "run chaincode application"
+  caliperrun: "run caliper test"
 PRECONDITIONS:
   ccinstall: ['PEER']
   ccapprove: ['PEER', 'ORDERER']
@@ -57,7 +58,8 @@ PRECONDITIONS:
   optionverify: []
   explorerup: []
   explorerdown: []
-  runapp: []
+  runapp: ['PEER', 'ORDERER']
+  caliperrun: ['PEER', 'ORDERER']
 LANGUAGEENVS:
   java: 'java:latest'
   go: 'golang:latest'
