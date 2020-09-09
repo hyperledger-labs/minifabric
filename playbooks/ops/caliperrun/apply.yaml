@@ -9,7 +9,7 @@
 
 - name: Launch caliper test
   command: >-
-    docker run --network {{ NETNAME }} --name calipertester --hostname calipertester -rm
+    docker run --network {{ NETNAME }} --name calipertester --hostname calipertester --rm
     -e "ROOTPATH=/vars/keyfiles"
     -v /var/run/docker.sock:/var/run/docker.sock
     -v {{ hostroot }}/vars:/vars
