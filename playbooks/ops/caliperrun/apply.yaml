@@ -4,5 +4,16 @@
     src: "{{ pjroot }}/playbooks/ops/caliperrun/templates/{{ item.name }}"
     dest: "{{ pjroot }}/vars/run/{{ item.target }}"
   with_items:
-  - {name: 'networkconfig.j2', target: 'networkconfig.json'}
-  - {name: 'benchmarkconfig.j2', target: 'benchmarkconfig.yaml'}
+  - {name: 'networkconfig.j2', target: 'calipernetworkconfig.json'}
+  - {name: 'benchmarkconfig.j2', target: 'caliperbenchmarkconfig.yaml'}
+
+- name: Launch caliper test
+  command: >-
+    docker run --network {{ NETNAME }} --name calipertester --hostname calipertester
+    -e "ROOTPATH=/vars/keyfiles"
+    -v /var/run/docker.sock:/var/run/docker.sock
+    -v {{ hostroot }}/vars:/vars
+    hyperledger/caliper:0.3.2
+    "launch master --caliper-benchconfig /vars/run/caliperbenchmarkconfig.yaml
+    --caliper-networkconfig /vars/run/calipernetworkconfig.json
+    --caliper-flow-only-test --caliper-fabric-gateway-usegateway --caliper-fabric-gateway-discovery"
