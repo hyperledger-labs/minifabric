@@ -1,0 +1,4 @@
+keyUsage = critical,digitalSignature
+basicConstraints = critical,CA:FALSE
+subjectAltName=IP.1:{{ ADDRS.split(',')[0] }},DNS.1:{{partycn}}
+authorityKeyIdentifier = keyid,issuer

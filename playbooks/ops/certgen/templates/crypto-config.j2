@@ -12,6 +12,8 @@ OrdererOrgs:
       Country: US
       Province: North Carolina
       Locality: Raleigh
+      SANS:
+        - {{ ADDRS.split(',')[0] }}
 {% endif %}
     Specs:
 {%    for item in allorderers %}
