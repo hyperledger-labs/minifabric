@@ -45,6 +45,12 @@
     src: "{{ pjroot }}/playbooks/ops/certgen/templates/configtx.j2"
     dest: "{{ pjroot }}/vars/configtx.yaml"
 
+- name: Create certs using openssl
+  include_tasks: "orgkeygen.yaml"
+  loop: "{{ allorgs }}"
+  loop_control:
+    loop_var: org
+
 - name: Create certs and channel artifacts script
   template:
     src: "{{ pjroot }}/playbooks/ops/certgen/templates/certtxgen.j2"

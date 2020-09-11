@@ -1,0 +1,95 @@
+---
+- name: "Initialize parameters"
+  set_fact:
+    orgtype: "{{ ((allpeers|selectattr('org','equalto',org)|list|length)>0)|ternary('peer', 'orderer') }}"
+    canodes: "{{ allcas|selectattr('org','equalto', org)|list }}"
+    keyname: "priv_sk"
+
+- name: "Get ca node name"
+  set_fact:
+    caname: "{{ ((canodes|length)>0)|ternary(canodes[0].name, 'ca') }}"
+    orgrootpath: "{{ pjroot }}/vars/keyfiles/{{ orgtype }}Organizations/{{ org }}"
+
+- name: "Ensure certificate directory is clean"
+  file:
+    path: "{{ orgrootpath }}/{{ item }}"
+    state: "directory"
+  with_items:
+    - "ca"
+    - "msp/cacerts"
+    - "msp/tlscacerts"
+    - "{{ orgtype }}s"
+    - "tlsca"
+
+- name: Create user and node config file
+  template:
+    src: "{{ pjroot }}/playbooks/ops/certgen/templates/config.j2"
+    dest: "{{ orgrootpath }}/msp/config.yaml"
+
+- name: "Create ca private key and tls key"
+  command: >-
+    openssl genpkey -algorithm EC -pkeyopt ec_paramgen_curve:P-256
+    -pkeyopt ec_param_enc:named_curve
+    -out {{orgrootpath }}/{{ item }}
+  with_items:
+  - "ca/priv_sk"
+  - "tlsca/priv_sk"
+
+- name: "Create ca self signed certificate"
+  command: >-
+    openssl req -new -days 3650 -nodes -x509 -extensions v3_req -extensions v3_ca
+    -subj "/C=US/ST=North Carolina/L=Raleigh/O={{ org }}/CN={{ item.cn }}.{{ org }}"
+    -addext "keyUsage=critical,digitalSignature,keyEncipherment,keyCertSign,cRLSign"
+    -addext "extendedKeyUsage=serverAuth,clientAuth"
+    -addext "subjectAltName=IP.1:{{ ADDRS.split(',')[0] }}"
+    -key {{ orgrootpath }}/{{ item.pkey }}
+    -out {{ orgrootpath }}/{{ item.cert}}{{ caname }}.{{ org }}-cert.pem
+  with_items:
+  - "{{ {'pkey': 'ca/priv_sk', 'cert': 'ca/', 'cn': caname } }}"
+  - "{{ {'pkey': 'tlsca/priv_sk','cert': 'tlsca/tls', 'cn': 'tls'+caname } }}"
+
+- name: Copy the certificate to the msp directory
+  command: >-
+    cp {{ item.source }} {{ item.target }}
+  with_items:
+  - "{{ {'source': orgrootpath+'/ca/'+caname+'.'+org+'-cert.pem',
+         'target': orgrootpath+'/msp/cacerts' } }}"
+  - "{{ {'source': orgrootpath+'/tlsca/tls'+caname+'.'+org+'-cert.pem',
+         'target': orgrootpath+'/msp/tlscacerts' } }}"
+
+- name: Set up parties
+  set_fact:
+    allparties: "{{ [{'root': '/users/Admin@'+org, 'role': 'admin', 'cn': 'Admin@'+org, 'type': 'client' }] }}"
+
+- name: Add peers and orderers of the org
+  set_fact:
+    allparties: >-
+      {{ allparties + [{'root': '/'+orgtype+'s/'+item.fullname, 'role': orgtype, 'cn': item.fullname, 'type':'server' }] }}
+  with_items: "{{ (allpeers|selectattr('org','equalto',org)|list) + (allorderers|selectattr('org','equalto',org)|list) }}"
+
+- name: Create cert for party such as user, peer, orderer
+  include_tasks: "partykeygen.yaml"
+  loop: "{{ allparties }}"
+  loop_control:
+    loop_var: party
+
+- name: Remove crl files
+  command: >-
+    rm -f {{ orgrootpath }}/{{ item }}{{ caname }}.{{ org }}-cert.srl
+  with_items:
+  - "ca/"
+  - "tlsca/tls"
+
+- name: Setup private key path for renaming
+  when: fabric.release is version('2.0', '<')
+  set_fact:
+    privatekeys: >-
+      {{ [ {'path': orgrootpath+'/ca/', 'keyfilename': 'priv_sk'},
+           {'path': orgrootpath+'/tlsca/', 'keyfilename': 'priv_sk'} ] }}
+
+- name: Renaming private key file name for older releases
+  when: fabric.release is version('2.0', '<')
+  include_tasks: "renamekeyfile.yaml"
+  loop: "{{ privatekeys }}"
+  loop_control:
+    loop_var: privatekey

@@ -1,0 +1,86 @@
+- name: Set variables for a party
+  set_fact:
+    partyroot: "{{ party.root }}"
+    partyrole: "{{ party.role }}"
+    partycn: "{{ party.cn }}"
+    partytype: "{{ party.type }}"
+
+- name: "Ensure certificate directory is clean"
+  file:
+    path: "{{ orgrootpath }}{{ partyroot }}/{{ item }}"
+    state: "directory"
+  with_items:
+  - "msp/cacerts"
+  - "msp/keystore"
+  - "msp/signcerts"
+  - "msp/tlscacerts"
+  - "tls"
+
+- name: Create private key and tls key
+  command: >-
+    openssl genpkey -algorithm EC -pkeyopt ec_paramgen_curve:P-256
+    -pkeyopt ec_param_enc:named_curve
+    -out {{ orgrootpath }}{{ partyroot }}{{ item }}
+  with_items:
+  - "/msp/keystore/priv_sk"
+  - "/tls/{{partytype}}.key"
+
+- name: Create CSR for admin
+  command: >-
+    openssl req -new -key {{ orgrootpath }}{{ partyroot}}{{ item.pkey }} -extensions v3_req
+    -subj "/C=US/ST=North Carolina/L=Raleigh{{ item.ou }}{{ item.cn }}"
+    -out {{ orgrootpath }}{{ partyroot}}{{ item.pkey }}.csr
+  with_items:
+  - "{{ {'pkey': '/msp/keystore/priv_sk', 'ou': '/OU='+partyrole, 'cn': '/CN='+partycn } }}"
+  - "{{ {'pkey': '/tls/'+partytype+'.key', 'ou': '', 'cn': '/CN='+partycn } }}"
+
+- name: Create cert extension file
+  template:
+    src: "{{ pjroot }}/playbooks/ops/certgen/templates/v3.j2"
+    dest: "{{ pjroot }}/playbooks/ops/certgen/v3.ext"
+
+- name: Sign the certificate using root ca private key and certificate
+  command: >-
+    openssl x509 -req -days 3560 -extfile {{ pjroot }}/playbooks/ops/certgen/v3.ext
+    -in {{ orgrootpath }}{{ partyroot}}{{ item.csrpath }}.csr
+    -CA {{ orgrootpath }}/{{ item.ca }}
+    -CAkey {{ orgrootpath }}/{{ item.cakey }} -CAcreateserial -sha256
+    -out {{ orgrootpath }}{{ item.target }}
+  with_items:
+  - "{{ {'csrpath': '/msp/keystore/priv_sk', 'ca': 'ca/'+caname+'.'+org+'-cert.pem',
+         'cakey': 'ca/priv_sk', 'target': partyroot+'/msp/signcerts/'+partycn+'-cert.pem' } }}"
+  - "{{ {'csrpath': '/tls/'+partytype+'.key', 'ca': 'tlsca/tls'+caname+'.'+org+'-cert.pem',
+         'cakey': 'tlsca/priv_sk', 'target': partyroot+'/tls/'+partytype+'.crt' } }}"
+
+- name: Remove csr files
+  command: >-
+    rm -f {{ orgrootpath }}{{ partyroot }}{{ item }}.csr
+  with_items:
+  - "/msp/keystore/priv_sk"
+  - "/tls/{{partytype}}.key"
+
+- name: Duplicate files
+  command: >-
+    cp {{ item.source }} {{ item.target }}
+  with_items:
+  - "{{ {'source': orgrootpath+'/ca/'+caname+'.'+org+'-cert.pem',
+         'target': orgrootpath+partyroot+'/msp/cacerts' } }}"
+  - "{{ {'source': orgrootpath+'/tlsca/tls'+caname+'.'+org+'-cert.pem',
+         'target': orgrootpath+partyroot+'/msp/tlscacerts' } }}"
+  - "{{ {'source': orgrootpath+'/tlsca/tls'+caname+'.'+org+'-cert.pem',
+         'target': orgrootpath+partyroot+'/tls/ca.crt' } }}"
+  - "{{ {'source': orgrootpath+'/msp/config.yaml',
+         'target': orgrootpath+partyroot+'/msp/config.yaml' } }}"
+
+- name: Setup private key path for renaming
+  when: fabric.release is version('2.0', '<')
+  set_fact:
+    privatekeys: >-
+      {{ [ {'path': orgrootpath+partyroot+'/msp/keystore/', 'keyfilename': 'priv_sk'} ] }}
+
+- name: "Rename key file name for older releases"
+  when: fabric.release is version('2.0', '<')
+  include_tasks: "renamekeyfile.yaml"
+  loop: "{{ privatekeys }}"
+  loop_control:
+    loop_var: privatekey

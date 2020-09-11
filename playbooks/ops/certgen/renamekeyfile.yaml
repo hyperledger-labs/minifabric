@@ -1,0 +1,22 @@
+- name: get the cert pubkey from private key
+  command: >-
+    openssl ec -in {{ privatekey.path }}{{ privatekey.keyfilename }}
+    -text -noout -conv_form uncompressed
+  register: keycontent
+
+- set_fact:
+    rawkey: "{{ keycontent.stdout.split('pub:')[1].split('ASN1 OID:')[0] }}"
+
+- name: get the sha256 hash for private key file name
+  shell: >-
+    echo "{{ rawkey }}" | xxd -r -p | sha256sum
+  register: keyname
+
+- name: trim the trailing space and dash
+  set_fact:
+    keyname: "{{ keyname.stdout.split(' ')[0] }}_sk"
+
+- name: rename the private key
+  command: >-
+    mv {{ privatekey.path }}{{ privatekey.keyfilename }}
+    {{ privatekey.path}}{{ keyname }}
