@@ -70,10 +70,16 @@
          'target': orgrootpath+partyroot+'/msp/tlscacerts' } }}"
   - "{{ {'source': orgrootpath+'/tlsca/tls'+caname+'.'+org+'-cert.pem',
          'target': orgrootpath+partyroot+'/tls/ca.crt' } }}"
-  - "{{ {'source': orgrootpath+'/msp/config.yaml',
-         'target': orgrootpath+partyroot+'/msp/config.yaml' } }}"
   - "{{ {'source': orgrootpath+'/users/Admin@'+org+'/msp/signcerts/Admin@'+org+'-cert.pem',
          'target': orgrootpath+partyroot+'/msp/admincerts' } }}"
+
+- name: Duplicate files
+  command: >-
+    cp {{ item.source }} {{ item.target }}
+  with_items:
+  - "{{ {'source': orgrootpath+'/msp/config.yaml',
+         'target': orgrootpath+partyroot+'/msp/config.yaml' } }}"
+  when: fabric.release is version('1.4.4', '>=')
 
 - name: Setup private key path for renaming
   when: fabric.release is version('2.0', '<')

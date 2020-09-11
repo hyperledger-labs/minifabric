@@ -23,6 +23,7 @@
     - "tlsca"
 
 - name: Create user and node config file
+  when: fabric.release is version('1.4.4', '>=')
   template:
     src: "{{ pjroot }}/playbooks/ops/certgen/templates/config.j2"
     dest: "{{ orgrootpath }}/msp/config.yaml"
