@@ -16,6 +16,7 @@
     state: "directory"
   with_items:
     - "ca"
+    - "msp/admincerts"
     - "msp/cacerts"
     - "msp/tlscacerts"
     - "{{ orgtype }}s"
@@ -93,3 +94,10 @@
   loop: "{{ privatekeys }}"
   loop_control:
     loop_var: privatekey
+
+- name: Duplicate admincert file
+  command: >-
+    cp {{ item.source }} {{ item.target }}
+  with_items:
+  - "{{ {'source': orgrootpath+'/users/Admin@'+org+'/msp/signcerts/Admin@'+org+'-cert.pem',
+         'target': orgrootpath+'/msp/admincerts' } }}"

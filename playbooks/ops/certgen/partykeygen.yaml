@@ -10,6 +10,7 @@
     path: "{{ orgrootpath }}{{ partyroot }}/{{ item }}"
     state: "directory"
   with_items:
+  - "msp/admincerts"
   - "msp/cacerts"
   - "msp/keystore"
   - "msp/signcerts"
@@ -71,6 +72,8 @@
          'target': orgrootpath+partyroot+'/tls/ca.crt' } }}"
   - "{{ {'source': orgrootpath+'/msp/config.yaml',
          'target': orgrootpath+partyroot+'/msp/config.yaml' } }}"
+  - "{{ {'source': orgrootpath+'/users/Admin@'+org+'/msp/signcerts/Admin@'+org+'-cert.pem',
+         'target': orgrootpath+partyroot+'/msp/admincerts' } }}"
 
 - name: Setup private key path for renaming
   when: fabric.release is version('2.0', '<')
