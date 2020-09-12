@@ -7,13 +7,26 @@
   - {name: 'networkconfig.j2', target: 'calipernetworkconfig.json'}
   - {name: 'benchmarkconfig.j2', target: 'caliperbenchmarkconfig.yaml'}
 
+- name: Create caliper run script
+  template:
+    src: "{{ pjroot }}/playbooks/ops/caliperrun/templates/caliperrun.j2"
+    dest: "{{ pjroot }}/vars/run/caliperrun.sh"
+    mode: +x
+
+- name: Change var file permission
+  command: >-
+    chown -R 1000:1000 {{ pjroot }}/vars
+
 - name: Launch caliper test
   command: >-
     docker run --network {{ NETNAME }} --name calipertester --hostname calipertester --rm
-    -e "ROOTPATH=/vars/keyfiles"
+    --entrypoint /hyperledger/caliper/workspace/run/caliperrun.sh
+    -e "ROOTPATH=/hyperledger/caliper/workspace/keyfiles"
+    -e "CALIPER-BENCHCONFIG=run/caliperbenchmarkconfig.yaml"
+    -e "CALIPER-NETWORKCONFIG=run/calipernetworkconfig.json"
+    -e "CALIPER-FLOW-ONLY-TEST"
+    -e "CALIPER-FABRIC-GATEWAY-USEGATEWAY"
+    -e "CALIPER-FABRIC-GATEWAY-DISCOVERY"
     -v /var/run/docker.sock:/var/run/docker.sock
-    -v {{ hostroot }}/vars:/vars
+    -v {{ hostroot }}/vars:/hyperledger/caliper/workspace
     hyperledger/caliper:0.3.2
-    "launch master --caliper-benchconfig /vars/run/caliperbenchmarkconfig.yaml
-    --caliper-networkconfig /vars/run/calipernetworkconfig.json
-    --caliper-flow-only-test --caliper-fabric-gateway-usegateway --caliper-fabric-gateway-discovery"
