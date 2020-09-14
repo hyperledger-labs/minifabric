@@ -35,6 +35,7 @@ The table of the content
 19. [Build minifabric locally](#build-minifabric-locally)
 20. [Hook up Explorer to your fabric network](#hook-up-explorer-to-your-fabric-network)
 21. [Run your application quickly](#run-your-application-quickly)
+22. [Run caliper test](#run-caliper-test)
 
 ### Prerequisites
 This tool requires **docker CE 18.03** or newer, Minifabric supports Linux, OS X and Windows 10
@@ -375,3 +376,15 @@ app
 └── main.go
 ```
 
+### Run caliper test
+Minifabric comes with a chaincode named samplecc written in go and sample application which invokes samplcc methods. You can
+use the following two commands to get caliper running after you bring up your fabric network
+
+```
+minifab install,approve,commit,initialize -n samplecc -p ''
+minifab caliperrun
+```
+
+After the commands finish, you can review the result in the `vars/report.html` file under the current working directory. It is
+best that open this file with a browser. If you like to test your own chaincode, the easist way is to install,approve,commit and initialize your own chaincode just like any other chaincode, then use your own test code to replace the code in the vars/app/app.js file, then run exactly same command like above. Doing that you will be testing your own chaincode using Caliper. The caliperrun
+command will run the test for 60 seconds.
