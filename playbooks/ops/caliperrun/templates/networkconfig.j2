@@ -2,7 +2,7 @@
 {%  set org = CURRENT_ORG %}
 {
   "caliper": {
-    "blockchain": "fabric:2.1.0"
+    "blockchain": "fabric"
   },
   "clients": {
     "Admin@{{ org }}": {
@@ -13,10 +13,10 @@
         },
         "organization": "{{ org }}",
         "clientPrivateKey": {
-          "path": "${ROOTPATH}/peerOrganizations/{{ org }}/users/Admin@{{ org }}/msp/keystore/priv_sk"
+          "path": "/hyperledger/caliper/workspace/keyfiles/peerOrganizations/{{ org }}/users/Admin@{{ org }}/msp/keystore/priv_sk"
         },
         "clientSignedCert": {
-          "path": "${ROOTPATH}/peerOrganizations/{{ org }}/users/Admin@{{ org }}/msp/signcerts/Admin@{{ org }}-cert.pem"
+          "path": "/hyperledger/caliper/workspace/keyfiles/peerOrganizations/{{ org }}/users/Admin@{{ org }}/msp/signcerts/Admin@{{ org }}-cert.pem"
         },
         "connection": {
           "timeout": { "peer": { "endorser": "300" } }
@@ -47,10 +47,10 @@
       ],
 {% endif %}
       "adminPrivateKey": {
-        "path": "${ROOTPATH}/peerOrganizations/{{ org }}/users/Admin@{{ org }}/msp/keystore/priv_sk"
+        "path": "/hyperledger/caliper/workspace/keyfiles/peerOrganizations/{{ org }}/users/Admin@{{ org }}/msp/keystore/priv_sk"
       },
       "signedCert": {
-        "path": "${ROOTPATH}/peerOrganizations/{{ org }}/users/Admin@{{ org }}/msp/signcerts/Admin@{{ org }}-cert.pem"
+        "path": "/hyperledger/caliper/workspace/keyfiles/peerOrganizations/{{ org }}/users/Admin@{{ org }}/msp/signcerts/Admin@{{ org }}-cert.pem"
       }
     }
   },
@@ -76,8 +76,7 @@
         "pem": "{{ lookup('file', pjroot+'/vars/keyfiles/'+ orgattrs[ca.org].certpath+'/'+ca.org+'/ca/'+ca.fullname+'-cert.pem')|regex_replace('(\n)', '\\\\n') }}"
       },
       "httpOptions": { "verify": "false" },
-      "caName": "{{ ca.name }}",
-      "registrar": { "enrollId": "admin", "enrollSecret": "adminpw"}
+      "caName": "{{ ca.name }}"
     }{{ '' if loop.last else ',' }}
 {% endfor %}
   },

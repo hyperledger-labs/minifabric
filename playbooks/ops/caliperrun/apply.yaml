@@ -24,9 +24,19 @@
     -e "ROOTPATH=/hyperledger/caliper/workspace/keyfiles"
     -e "CALIPER-BENCHCONFIG=run/caliperbenchmarkconfig.yaml"
     -e "CALIPER-NETWORKCONFIG=run/calipernetworkconfig.json"
-    -e "CALIPER-FLOW-ONLY-TEST"
-    -e "CALIPER-FABRIC-GATEWAY-USEGATEWAY"
-    -e "CALIPER-FABRIC-GATEWAY-DISCOVERY"
     -v /var/run/docker.sock:/var/run/docker.sock
     -v {{ hostroot }}/vars:/hyperledger/caliper/workspace
     hyperledger/caliper:0.3.2
+  register: runresults
+
+- name: Caliper test run
+  when: runresults.rc != 0
+  debug:
+    msg: "{{ runresults.stderr_lines }}"
+  tags: [print_action]
+
+- name: Caliper test run
+  when: runresults.rc == 0
+  debug:
+    msg: "View results in vars/report.html"
+  tags: [print_action]

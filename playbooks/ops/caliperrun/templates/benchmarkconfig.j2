@@ -8,12 +8,12 @@ test:
       - label: {{ CC_NAME }} test
         description: {{ CC_NAME }} benchmark
         chaincodeId: {{ CC_NAME }}
-        txDuration: 30
+        txDuration: 60
         rateControl: 
           type: fixed-backlog
           opts:
             unfinished_per_client: 2
-        callback: /vars/app/app.js
+        callback: /hyperledger/caliper/workspace/app/app.js
         arguments:
           assets: 10
   
