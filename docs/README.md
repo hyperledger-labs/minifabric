@@ -364,10 +364,8 @@ minifab explorerdown
 Minifabric `cleanup` will also shutdown Hyperledger Explorer.
 
 ### Run your application quickly
-If you have your application also developed, you can utilize Minifabric runapp command to quickly run
-your application. Place all your code in vars/app directory, then run command `minifab runapp`, Minifabric will look for the main.go to start your application. Minifabric comes with a simple
-application which invokes samplecc chaincode. If you do not have an application, then you can simply
-run that application to see how it works. Once you start runapp command, Minifabric will place the necessary connection files in the app directory, then pull down dependencies and run your command. This feature is experimental, only support application written in go currently. You may place any of your application in this directory to start run them. All you need to do is to provide go.mod file, Minifabric will do the rest to start your application.
+If you have your application also developed, you can utilize Minifabric apprun command to quickly run
+your application. Place all your code in vars/app directory, then run command `minifab apprun`, Minifabric will look for the main.go to start your application. Minifabric comes with a simple application which invokes samplecc chaincode. If you do not have an application, then you can simply run that application to see how it works. Once you start apprun command, Minifabric will place the necessary connection files in the app directory, then pull down dependencies and run your program. This feature is experimental, only support application written in go currently. You may place any of your application in this directory to start run them. All you need to do is to provide go.mod file, Minifabric will do the rest to start your application.
 
 ```
 app
