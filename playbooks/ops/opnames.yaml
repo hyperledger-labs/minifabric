@@ -27,7 +27,7 @@ OPNAMES:
   optionverify: "verify options"
   explorerup: "start explorer"
   explorerdown: "shutdown explorer"
-  runapp: "run chaincode application"
+  apprun: "run chaincode application"
   caliperrun: "run caliper test"
 PRECONDITIONS:
   ccinstall: ['PEER']
@@ -58,7 +58,7 @@ PRECONDITIONS:
   optionverify: []
   explorerup: []
   explorerdown: []
-  runapp: ['PEER', 'ORDERER']
+  apprun: ['PEER', 'ORDERER']
   caliperrun: ['PEER', 'ORDERER']
 LANGUAGEENVS:
   java: 'java:latest'

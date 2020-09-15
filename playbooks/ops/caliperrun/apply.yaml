@@ -1,5 +1,5 @@
 ---
-- name: Create runapp script
+- name: Create apprun script
   template:
     src: "{{ pjroot }}/playbooks/ops/caliperrun/templates/{{ item.name }}"
     dest: "{{ pjroot }}/vars/run/{{ item.target }}"
