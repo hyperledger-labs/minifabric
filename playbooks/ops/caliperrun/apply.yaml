@@ -1,11 +1,19 @@
 ---
 - name: Create apprun script
   template:
-    src: "{{ pjroot }}/playbooks/ops/caliperrun/templates/{{ item.name }}"
-    dest: "{{ pjroot }}/vars/run/{{ item.target }}"
-  with_items:
-  - {name: 'networkconfig.j2', target: 'calipernetworkconfig.json'}
-  - {name: 'benchmarkconfig.j2', target: 'caliperbenchmarkconfig.yaml'}
+    src: "{{ pjroot }}/playbooks/ops/caliperrun/templates/networkconfig.j2"
+    dest: "{{ pjroot }}/vars/run/calipernetworkconfig.json"
+
+- name: "Check if benchmark config file exists"
+  stat:
+    path: "{{ pjroot }}/vars/run/caliperbenchmarkconfig.yaml"
+  register: bcfg
+
+- name: Generate bench mark configuration file only if there is none
+  when: bcfg.stat.exists == false
+  template:
+    src: "{{ pjroot }}/playbooks/ops/caliperrun/templates/benchmarkconfig.j2"
+    dest: "{{ pjroot }}/vars/run/caliperbenchmarkconfig.yaml"
 
 - name: Create caliper run script
   template:
