@@ -384,5 +384,8 @@ minifab caliperrun
 ```
 
 After the commands finish, you can review the result in the `vars/report.html` file under the current working directory. It is
-best that open this file with a browser. If you like to test your own chaincode, the easist way is to install,approve,commit and initialize your own chaincode just like any other chaincode, then use your own test code to replace the code in the vars/app/app.js file, then run exactly same command like above. Doing that you will be testing your own chaincode using Caliper. The caliperrun
-command will run the test for 60 seconds.
+best that open this file with a browser. If you like to test your own chaincode, the easist way is to install,approve,commit and initialize your own chaincode just like any other chaincode, then use your own test code to replace the code in the vars/app/app.js file, then run exactly same command like above. Doing that you will be testing your own chaincode using Caliper. The caliperrun command will run the test for 60 seconds by default. If you do not really like the default
+setting that Minifabric created to run the test, you can change vars/run/caliperbenchmarkconfig.yaml file after first run.
+Since this file gets created by Minifabric only when there is no such file. You can customize this file any way you prefer
+and make changes to any settings available in this file, then you can run the command again, all the changes you made to
+this file will take affect the next time you run the command.
