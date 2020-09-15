@@ -68,5 +68,8 @@
 
 - name: "Explorer endpoint for {{ NETNAME }} "
   debug:
-    msg: "http://{{ ADDRS.split(',')[0] }}:{{ explorer_port }}"
+    msg: |
+      "Default username: exploreradmin"
+      "Default password: exploreradminpw"
+      "Website address:  http://{{ ADDRS.split(',')[0] }}:{{ explorer_port }}"
   tags: [print_action]
