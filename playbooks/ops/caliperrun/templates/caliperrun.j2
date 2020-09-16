@@ -3,6 +3,6 @@
 rm -rf /hyperledger/caliper/workspace/caliper.log
 
 # caliper bind --caliper-bind-sut fabric:2.1.0
-caliper launch master --caliper-bind-sut fabric:1.4.8 \
+caliper launch master \
   --caliper-flow-only-test --caliper-fabric-gateway-usegateway --caliper-fabric-gateway-discovery \
   --caliper-fabric-gateway-gatewaylocalhost false

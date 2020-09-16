@@ -25,6 +25,27 @@
   command: >-
     chown -R 1000:1000 {{ pjroot }}/vars
 
+- name: Check bond caliper image
+  command: >-
+    docker image ls -q hyperledger/caliper_fabric:1.4.8
+  register: imagestatus
+
+- name: Produce image if caliper bond image does not exist
+  when: imagestatus.stdout_lines|length == 0
+  block:
+  - name: Run a container to bind fabric sdk
+    command: >-
+      docker run --network {{ NETNAME }} --name calipertester --hostname calipertester
+      hyperledger/caliper:0.3.2 bind --caliper-bind-sut fabric:1.4.8
+
+  - name: Save the container as an image
+    command: >-
+      docker commit calipertester hyperledger/caliper_fabric:1.4.8
+
+  - name: Remove the docker container
+    command: >-
+      docker rm -f calipertester
+
 - name: Launch caliper test
   command: >-
     docker run --network {{ NETNAME }} --name calipertester --hostname calipertester --rm
@@ -34,7 +55,7 @@
     -e "CALIPER-NETWORKCONFIG=run/calipernetworkconfig.json"
     -v /var/run/docker.sock:/var/run/docker.sock
     -v {{ hostroot }}/vars:/hyperledger/caliper/workspace
-    hyperledger/caliper:0.3.2
+    hyperledger/caliper_fabric:1.4.8
   register: runresults
 
 - name: Caliper test run
