@@ -1,0 +1,43 @@
+- name: Initialize the endorsing peers
+  set_fact:
+    endorsingpeers: "{{ [] }}"
+
+- name: Check if chaincode endorser file exists
+  stat:
+    path: "{{ pjroot }}/vars/discover/{{ CHANNEL_NAME }}/{{ CC_NAME}}_endorsers.json"
+  register: channelendorsers
+
+- name: Load the endorser file and make up a peer group
+  when: channelendorsers.stat.exists == true
+  block:
+  - name: Load external node vars
+    include_vars:
+      file: "{{ pjroot }}/vars/discover/{{ CHANNEL_NAME }}/{{ CC_NAME}}_endorsers.json"
+      name: endorsers
+
+  - name: Select a random endorser group
+    set_fact:
+      endorsergroup: "{{ endorsers.Layouts | random }}"
+
+  - name: Add endorsing peer to the list
+    set_fact:
+      endorsingpeers: >-
+        {{ endorsingpeers + [ { 'endpoint': endorsers.EndorsersByGroups[item.key][0].Endpoint,
+        'tlsca': '/vars/discover/'+CHANNEL_NAME+'/'+endorsers.EndorsersByGroups[item.key][0].MSPID+'/tlscert' } ] }}
+    with_items: "{{ endorsergroup.quantities_by_group | dict2items }}"
+
+- name: Load the endorser file and make up a peer group
+  when: channelendorsers.stat.exists == false
+  block:
+  - name: Select random peer from each org
+    set_fact:
+      temppeerlist: >-
+        {{ temppeerlist|default([]) + [ allpeers|selectattr('org', 'equalto', item)|list|random ] }}
+    with_items: "{{ peerorgs }}"
+
+  - name: Add endorsing peer to the list
+    set_fact:
+      endorsingpeers: >-
+        {{ endorsingpeers + [ { 'endpoint': item.url+':'+item.port,
+        'tlsca': '/vars/keyfiles/peerOrganizations/'+item.org+'/peers/'+item.fullname+'/tls/ca.crt' } ] }}
+    with_items: "{{ temppeerlist }}"

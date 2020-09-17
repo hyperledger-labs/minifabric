@@ -10,26 +10,9 @@
   set_fact:
     actingpeer: "{{ allpeers|selectattr('org','equalto',CURRENT_ORG)|list|random }}"
     isuffix: "{{ (fabric.release is version('2.0', '>='))|ternary('2', '')}}"
-    endorsers: "{{ [] }}"
 
-- name: Check if endorser file exists
-  stat:
-    path: "{{ pjroot }}/vars/discover/{{ CHANNEL_NAME }}/{{ CC_NAME }}_endorsers.json"
-  register: endorserflag
-
-- name: Creating endorser list
-  when: endorserflag.stat.exists == true and endorserflag.stat.size > 2
-  block:
-  - name: load the endorser configuration file
-    include_vars: "{{ pjroot }}/vars/discover/{{ CHANNEL_NAME }}/{{ CC_NAME }}_endorsers.json"
-  - name: Select a random layout to use as endorsers
-    set_fact:
-      layout: "{{ Layouts|random }}"
-  - name: Select the list of the endorsers
-    set_fact:
-      endorsers: >-
-        {{ endorsers + EndorsersByGroups[item.key][0:(item.value|int)] }}  
-    with_items: "{{ layout.quantities_by_group|default({})|dict2items }}"
+- name: "Select peer nodes for sending transactions to"
+  include_tasks: "{{ pjroot }}/playbooks/common/peerselection.yaml"
 
 - name: Create chaincode invocation script
   template:
