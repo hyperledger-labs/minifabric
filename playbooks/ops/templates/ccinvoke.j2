@@ -3,16 +3,10 @@
 {% include "envsetting.j2" %}
 peer chaincode invoke -o $ORDERER_ADDRESS --cafile $ORDERER_TLS_CA \
   --tls -C {{CHANNEL_NAME}} -n {{ CC_NAME }}  \
-{% if endorsers|length > 0 %}
-{% for endorser in endorsers %}
-  --peerAddresses {{ endorser.Endpoint }} \
-  --tlsRootCertFiles /vars/discover/{{ CHANNEL_NAME}}/{{endorser.MSPID}}/tlscert \
-{% endfor %}
-{% else %}
-{% for anorg in peerorgs %}
-{%   set onepeer = allpeers|selectattr('org', 'equalto', anorg)|list|random %}
-  --peerAddresses {{ onepeer.url }}:{{ onepeer.port }} \
-  --tlsRootCertFiles /vars/keyfiles/peerOrganizations/{{ anorg }}/peers/{{ onepeer.fullname }}/tls/ca.crt \
+{% if endorsingpeers|length > 0 %}
+{% for endorser in endorsingpeers %}
+  --peerAddresses {{ endorser.endpoint }} \
+  --tlsRootCertFiles {{ endorser.tlsca }} \
 {% endfor %}
 {% endif %}
 {% if TRANSIENT_DATA != 'Cg==' %}

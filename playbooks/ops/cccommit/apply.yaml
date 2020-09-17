@@ -9,6 +9,9 @@
     set_fact:
       actingpeer: "{{ allpeers|selectattr('org','equalto',CURRENT_ORG)|list|random }}"
 
+  - name: "Select peer nodes for sending transactions to"
+    include_tasks: "{{ pjroot }}/playbooks/common/peerselection.yaml"
+
   - name: Create chaincode commit script
     template:
       src: "{{ pjroot }}/playbooks/ops/templates/cccommit2.j2"
