@@ -7,10 +7,17 @@
     path: "{{ pjroot }}/vars/discover/{{ CHANNEL_NAME }}/{{ CC_NAME}}_endorsers.json"
   register: channelendorsers
 
+- name: Initialize endorsers
+  set_fact:
+    endorsergroup: "{{ {'quantities_by_group': {} } }}"
+
+- debug:
+    var: channelendorsers
+
 - name: Load the endorser file and make up a peer group
   when: channelendorsers.stat.exists == true
   block:
-  - name: Load external node vars
+  - name: Load channel chaincode endorser file
     include_vars:
       file: "{{ pjroot }}/vars/discover/{{ CHANNEL_NAME }}/{{ CC_NAME}}_endorsers.json"
       name: endorsers
@@ -20,6 +27,7 @@
       endorsergroup: "{{ endorsers.Layouts | random }}"
 
   - name: Add endorsing peer to the list
+    when: endorsergroup is defined
     set_fact:
       endorsingpeers: >-
         {{ endorsingpeers + [ { 'endpoint': endorsers.EndorsersByGroups[item.key][0].Endpoint,
@@ -35,7 +43,8 @@
         {{ temppeerlist|default([]) + [ allpeers|selectattr('org', 'equalto', item)|list|random ] }}
     with_items: "{{ peerorgs }}"
 
-  - name: Add endorsing peer to the list
+  - name: Add endorsing peer to the list from all peer list
+    when: temppeerlist is defined
     set_fact:
       endorsingpeers: >-
         {{ endorsingpeers + [ { 'endpoint': item.url+':'+item.port,
