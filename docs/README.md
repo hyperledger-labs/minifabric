@@ -9,8 +9,10 @@ It currently provides the following functions:
 4. Chaincode operations such as install, approve, commit, upgrade, initialize, instantiate, invoke and query
 5. Query blocks and transactions
 6. Private data collection support
-7. Generate connection profiles and wallet files for fabric go/python SDKs and VS Code extensions
+7. Generate connection profiles and wallet files for fabric go/node/python SDKs and VS Code extensions
 8. Fabric node health and metrics enabled
+9. Integrated with Hyperledger Explorer and Caliper
+10.Run Fabric applications which work with Fabric network
 
 The table of the content
 ========================
