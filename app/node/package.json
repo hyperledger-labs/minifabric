@@ -1,0 +1,16 @@
+{
+    "name": "minifabric-node-js-app",
+    "version": "1.0.0",
+    "description": "Minifabric node js application",
+    "engines": {
+        "node": ">=12",
+        "npm": ">=5"
+    },
+    "engineStrict": true,
+    "author": "Minifabric",
+    "license": "Apache-2.0",
+    "dependencies": {
+        "fabric-ca-client": "^2.2.2",
+        "fabric-network": "^2.2.2"
+    }
+}

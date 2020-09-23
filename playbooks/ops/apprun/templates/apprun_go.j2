@@ -8,5 +8,5 @@ if [ -f 'go.mod' ] && [ ! -d 'vendor' ]; then
 fi
 
 export ROOTPATH=/vars/keyfiles
-cp /vars/profiles/{{ CHANNEL_NAME}}_connection_for_gosdk.* .
+cp /vars/profiles/{{ CHANNEL_NAME}}_connection_for_gosdk.json connection.json
 go run main.go
