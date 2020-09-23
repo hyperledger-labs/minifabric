@@ -49,7 +49,7 @@ function printHelp() {
   echo "      - 'channelupdate'  - do channel update with a given new channel configuration json file" 
   echo "      - 'anchorupdate'  - do channel update which makes all peer nodes anchors for the all orgs"
   echo "      - 'nodeimport' - import external node certs and endpoints"
-  echo "      - 'discover' - disocver channel endorsement policy"
+  echo "      - 'discover' - discover channel endorsement policy"
   echo "      - 'cleanup'  - remove all the nodes and cleanup runtime files"
   echo "      - 'stats'  - list all nodes and status"
   echo "      - 'explorerup'  - start up Hyperledger explorer"
