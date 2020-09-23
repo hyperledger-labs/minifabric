@@ -26,7 +26,7 @@ const (
 
 func doEnroll() {
 	//Load configuration from connection profile
-	cnfg := config.FromFile("./mychannel_connection_for_gosdk.json")
+	cnfg := config.FromFile("./connection.json")
 	sdk, err := fabsdk.New(cnfg)
 	if err != nil {
 		fmt.Printf("Failed to create new SDK: %s", err)
@@ -91,7 +91,7 @@ func doEnroll() {
 }
 
 func useClientExecute(index int) {
-	cnfg := config.FromFile("./mychannel_connection_for_gosdk.json")
+	cnfg := config.FromFile("./connection.json")
 	fmt.Println(reflect.TypeOf(cnfg))
 	sdk, err := fabsdk.New(cnfg)
 	if err != nil {
@@ -120,7 +120,7 @@ func useClientExecute(index int) {
 
 func useGateway() {
 	gw, err := gateway.Connect(
-		gateway.WithConfig(config.FromFile("./mychannel_connection_for_gosdk.json")),
+		gateway.WithConfig(config.FromFile("./connection.json")),
 		gateway.WithUser("Admin"),
 	)
 	if err != nil {

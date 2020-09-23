@@ -10,5 +10,19 @@
     docker run --network {{ NETNAME }} --name apprun --hostname apprun --rm
     -v /var/run/docker.sock:/var/run/docker.sock
     -v {{ hostroot }}/vars:/vars
-    -v {{ hostroot }}/vars/app:/go/src/github.com/app
-    {{ LANGUAGEENVS[CC_LANGUAGE] }} /vars/run/apprun.sh
+    -v {{ hostroot }}/vars/app/{{CC_LANGUAGE}}:/go/src/github.com/app
+    --entrypoint /vars/run/apprun.sh
+    {{ LANGUAGEENVS[CC_LANGUAGE] }}
+  register: runstates
+
+- name: App run
+  when: runstates.rc != 0
+  debug:
+    msg: "{{ runstates.stderr_lines }}"
+  tags: [print_action]
+
+- name: App run
+  when: runstates.rc == 0
+  debug:
+    msg: "Application in {{ CC_LANGUAGE }} completed successfully"
+  tags: [print_action]
