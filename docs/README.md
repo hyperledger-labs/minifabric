@@ -374,7 +374,7 @@ app
 ```
 
 ### Run Caliper test
-Minifabric comes with a chaincode named samplecc written in go and sample application which invokes samplecc methods. You can
+Minifabric comes with a chaincode named samplecc written in go and a sample application which invokes samplecc methods. You can
 use the following two commands to get Hyperledger Caliper running after you bring up your fabric network
 
 ```
@@ -383,6 +383,6 @@ minifab caliperrun
 ```
 
 After the commands finish, you can review the result in the `vars/report.html` file under the current working directory. It is
-best to open this file in a browser. If you would like to test your own chaincode, the easist way is to install, approve, commit and initialize your own chaincode just like any other chaincode. Then, use your own test code to replace the code in the vars/app/app.js file. Finally, run exactly same command as above. With that you will be testing your own chaincode using Caliper. The caliperrun command will run the test for 60 seconds by default. If you wish to change the default
-setting that Minifabric created to run the test, you can change vars/run/caliperbenchmarkconfig.yaml file after the first run.
-Since this file gets created by Minifabric only when there is no such file. You can customize this file any way you want, make changes to any settings available in this file, and run the command again. All the changes you make will take effect the next time you run the command.
+best to open this file in a browser.
+If you would like to test your own chaincode, the easist way is to install, approve, commit and initialize your own chaincode just like any other chaincode using Minifabric commands. Then, use your own test code to replace the code in the vars/app/callback/app.js file, your own node js code must follow Caliper callback structure, otherwise caliperrun command will certainly fail. Once your chaincode correctly installed and your callback is in place, run `minifab caliperrun` command again to test your chaincode.
+The caliperrun command will run the test for 60 seconds by default. If you wish to change the default settings that Minifabric sets to run the test, you can change vars/run/caliperbenchmarkconfig.yaml file after the first since this file gets created by Minifabric only when there is no such file. You can customize this file any way you want, make changes to any settings available in this file, and run the command again. All the changes you make will take effect the next time you run the command.
