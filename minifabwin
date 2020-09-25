@@ -19,9 +19,11 @@ for /f "usebackq tokens=2 delims=:" %%a in (`ipconfig ^| findstr /r "[0-9][0-9]*
   )
 )
 IF EXIST "%CD%/spec.yaml" (
+  echo Using spec file: %CD%\spec.yaml
   docker run --rm --name minifab -v /var/run/docker.sock:/var/run/docker.sock -v %CD%/vars:/home/vars ^
     -v %CD%/spec.yaml:/home/spec.yaml -e "ADDRS=!_alladdress!" hfrd/minifab:latest /home/main.sh %*
 ) ELSE (
+  echo Using default spec file
   docker run --rm --name minifab -v /var/run/docker.sock:/var/run/docker.sock -v %CD%/vars:/home/vars ^
     -e "ADDRS=!_alladdress!" hfrd/minifab:latest /home/main.sh %*
 )
