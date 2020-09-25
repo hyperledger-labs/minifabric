@@ -1,0 +1,29 @@
+---
+- name: Download scripts
+  get_url:
+    url: "https://raw.githubusercontent.com/litong01/minifabric/master/{{ item.src }}"
+    dest: "{{ pjroot }}/vars/{{ item.dest }}"
+  with_items:
+  - "{{ { 'src': 'minifab', 'dest': 'minifab' } }}"
+  - "{{ { 'src': 'minifabwin', 'dest': 'minifab.cmd' } }}"
+
+- name: Pull minifabric docker image
+  command: >-
+    docker pull hfrd/minifab:latest
+  register: theresult
+
+- name: "Minifabric update succeeded"
+  when: theresult.rc == 0
+  debug:
+    msg: |
+      "Minifabric is now at the latest version"
+      "Your latest Windows minifab.cmd is vars/minifab.cmd"
+      "Your latest Linux/OS X minifab is vars/minifab"
+      "Please move one of the commands to your PATH to use the latest"
+  tags: [print_action]
+
+- name: "Minifabric update failed"
+  when: theresult.rc != 0
+  debug:
+    msg: "{{ theresult.stdout_lines }}"
+  tags: [print_action]
