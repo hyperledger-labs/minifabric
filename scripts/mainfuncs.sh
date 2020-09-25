@@ -20,7 +20,7 @@ OPNAMES=([up]="$LINE0$LINE1" [netup]='imageget,certgen,netup,netstats' \
   [channelquery]='channelquery' [profilegen]='profilegen' [caliperrun]='caliperrun' \
   [channelsign]='channelsign' [channelupdate]='channelupdate' \
   [anchorupdate]='anchorupdate' [explorerup]='explorerup' [explorerdown]='explorerdown' \
-  [nodeimport]='nodeimport' [discover]='discover' [imageget]='imageget')
+  [nodeimport]='nodeimport' [discover]='discover' [imageget]='imageget' [update]='update')
 
 # Print the usage message
 function printHelp() {
@@ -54,8 +54,9 @@ function printHelp() {
   echo "      - 'stats'  - list all nodes and status"
   echo "      - 'explorerup'  - start up Hyperledger explorer"
   echo "      - 'explorerdown'  - shutdown Hyperledger explorer"
-  echo "      - 'apprun'  - (experimental)run chaincode app if there is any"
-  echo "      - 'caliperrun'  - (experimental)run caliper test"
+  echo "      - 'apprun'  - (experimental) run chaincode app if there is any"
+  echo "      - 'caliperrun'  - (experimental) run caliper test"
+  echo "      - 'update'  - (experimental) update minifabric to the latest version"
   echo ""
   echo "    options:"
   echo "    -c|--channel-name         - channel name to use (defaults to \"mychannel\")"

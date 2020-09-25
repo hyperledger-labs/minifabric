@@ -29,6 +29,7 @@ OPNAMES:
   explorerdown: "shutdown explorer"
   apprun: "run chaincode application"
   caliperrun: "run caliper test"
+  update: "update Minifabric"
 PRECONDITIONS:
   ccinstall: ['PEER']
   ccapprove: ['PEER', 'ORDERER']
@@ -60,6 +61,7 @@ PRECONDITIONS:
   explorerdown: []
   apprun: ['PEER', 'ORDERER']
   caliperrun: ['PEER', 'ORDERER']
+  update: []
 LANGUAGEENVS:
   java: 'java:latest'
   go: 'golang:latest'
