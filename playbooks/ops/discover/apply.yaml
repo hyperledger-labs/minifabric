@@ -56,8 +56,9 @@
       dest: "{{ pjroot }}/vars/discover/{{ CHANNEL_NAME}}/ordererendpoints.json"
       content: >-
         {{ channel_cfg.orderers | to_nice_json(indent=2) }}
+    register: orderers_copy
 
-  - name: Remove the temparary file
+  - name: Remove the temporary file
     command: "rm -rf {{ pjroot }}/vars/discover/{{ CHANNEL_NAME }}_config.json"
 
 - name: Check if channel chaincode endorser config exists
@@ -65,8 +66,20 @@
     path: "{{ pjroot }}/vars/discover/{{ CHANNEL_NAME }}_{{ CC_NAME }}_endorsers.json"
   register: exflag
 
-- name: Remove the temparary file
+- name: Remove the temporary file
   when: exflag.stat.exists == true
   command: >-
     mv {{ pjroot }}/vars/discover/{{ CHANNEL_NAME }}_{{ CC_NAME }}_endorsers.json
     {{ pjroot }}/vars/discover/{{ CHANNEL_NAME }}/{{ CC_NAME }}_endorsers.json
+
+- name: Discover endorsers results
+  when: exflag.stat.exists == true
+  debug:
+    msg: "Chaincode endorsers file: ./vars/discover/{{ CHANNEL_NAME }}/{{ CC_NAME }}_endorsers.json"
+  tags: [print_action]
+
+- name: Discover orderers results
+  when: orderers_copy.failed == false
+  debug:
+    msg: "Channel orderers file: ./vars/discover/{{ CHANNEL_NAME }}/ordererendpoints.json"
+  tags: [print_action]
