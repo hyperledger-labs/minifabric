@@ -16,10 +16,9 @@
   when: theresult.rc == 0
   debug:
     msg: |
-      "Minifabric is now at the latest version"
-      "Your latest Windows minifab.cmd is vars/minifab.cmd"
-      "Your latest Linux/OS X minifab is vars/minifab"
-      "Please move one of the commands to your PATH to use the latest"
+      "Latest Windows script is vars/minifab.cmd"
+      "Latest Linux and OS X script is vars/minifab"
+      "Replace your existing minifab script with the one for your system"
   tags: [print_action]
 
 - name: "Minifabric update failed"
