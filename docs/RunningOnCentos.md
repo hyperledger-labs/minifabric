@@ -4,6 +4,16 @@ Since Centos by default has firewall enabled, without open up the masquerade, do
 can not really function well, this doc outline necessary steps to help centos users to
 use minifabric.
 
+## Simply disable the firewall altogether
+This will be the easiest solution, but doing this, you basically disabled the firewall.
+
+Run the following commands
+```
+systemctl stop firewalld
+systemctl disable firewalld
+```
+
+## Open up specific ports for peer, orderer nodes
 Make sure that your system has docker 18.03 or newer installed, then run the following two commands to enable masquerade
 ```
     sudo firewall-cmd --add-masquerade --permanent
