@@ -11,7 +11,8 @@ declare -A OPNAMES
 LINE0='imageget,certgen,netup,netstats,channelcreate,channeljoin,anchorupdate,'
 LINE1='profilegen,ccinstall,ccapprove,cccommit,ccinstantiate,discover'
 OPNAMES=([up]="$LINE0$LINE1" [netup]='imageget,certgen,netup,netstats' \
-  [restart]='netdown,netup' [generate]='certrem,certgen' \
+  [restart]='netdown,netup' [generate]='certrem,certgen' [configmerge]='configmerge' \
+  [orgjoin]='channelquery,configmerge,channelsign,channelupdate' \
   [cleanup]='netdown,filerem' [stats]='netstats' [apprun]='apprun' \
   [down]='netdown' [install]='ccinstall' [approve]='ccapprove' \
   [instantiate]='ccinstantiate' [initialize]='ccinstantiate' \
@@ -56,6 +57,7 @@ function printHelp() {
   echo "      - 'explorerdown'  - shutdown Hyperledger explorer"
   echo "      - 'apprun'  - (experimental) run chaincode app if there is any"
   echo "      - 'caliperrun'  - (experimental) run caliper test"
+  echo "      - 'orgjoin'  - (experimental) join an org to the current channel"
   echo "      - 'update'  - (experimental) update minifabric to the latest version"
   echo ""
   echo "    options:"

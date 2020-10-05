@@ -63,25 +63,8 @@ join request file will have different file name, make changes accordingly when y
 
 ```
 cd ~/mysite0
-minifab channelquery
-sudo cp ~/mysite1/vars/JoinRequest_orgx-example-com.json ~/mysite0/vars
-```
-
-Now make changes to the channel configuration file by using jq tool, notice that the command needs to be on one line
-
-```
-jq -s '.[0] * {"channel_group":{"groups":{"Application":{"groups": {(.[1].values.MSP.value.config.name): .[1]}}}}}'
-  vars/mychannel_config.json vars/JoinRequest_orgx-example-com.json |
-  jq -s '.[0] * {"channel_group":{"groups":{"Application":{"version":
-  (.[0].channel_group.groups.Application.version|tonumber + 1)|tostring }}}}' | sudo tee vars/mychannel_config.json
-  > /dev/null
-```
-
-Inspect file `vars/mychannel_config.json` and make sure that everything is correct.
-
-```
-cd ~/mysite0
-minifab channelsign,channelupdate
+sudo cp ~/mysite1/vars/JoinRequest_orgx-example-com.json ~/mysite0/vars/NewOrgJoinRequest.json
+minifab orgjoin
 ```
 
 ## Import orderer nodes to orgx.example.com and join peers of orgx.example.com to the `mychannel`
@@ -108,7 +91,6 @@ Since new orgs joined, the chaincode will need to be approved again so that new 
 cd ~/mysite0
 minifab approve,commit
 ```
-
 
 ## Discover and verify the chaincode on orgx
 

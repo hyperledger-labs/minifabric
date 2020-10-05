@@ -30,6 +30,7 @@ OPNAMES:
   apprun: "run chaincode application"
   caliperrun: "run caliper test"
   update: "update Minifabric"
+  configmerge: "merge configuration"
 PRECONDITIONS:
   ccinstall: ['PEER']
   ccapprove: ['PEER', 'ORDERER']
@@ -62,6 +63,7 @@ PRECONDITIONS:
   apprun: ['PEER', 'ORDERER']
   caliperrun: ['PEER', 'ORDERER']
   update: []
+  configmerge: []
 LANGUAGEENVS:
   java: 'java:latest'
   go: 'golang:latest'
