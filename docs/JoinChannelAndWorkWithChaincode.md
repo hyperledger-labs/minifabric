@@ -2,21 +2,20 @@
 
 This document describe the fully process how to do the following:
 
-add a new organization into existing fabric network
-and also installOnce you have a new organization as part of the existing Fabric network by following the process
-described in [Add New Organization](AddNewOrganization.md), most likely you will need to join
-the peers of the new organization to some channels and make sure that the peers will be running
-the chaincode that already running on other org's peers so that the new peers can participate in
-transactions.
+Add a new organization into existing fabric network
+Join peers from the new organization to the existing channel
+Install chaincode running on the existing peers onto new peers
+Approve and commit the chaincode
+Verify endorsement and chaincode containers
 
-This doc will describe the steps you need to take to accomplish the above task. Assume that you have two
-working directories, `mysite0` and `mysite1`. Each working directory will represent a site which
-may include one or multiple orgs and peers, the two working directory can very well be on differnt servers,
-in that case, you will need to have other means such as `scp` to transfer necessary files between servers.
-Here are example of the two spec.yaml files
+This doc will describe the steps you need to take to accomplish the above tasks. Assume that you have two
+working directories, `mysite0` and `mysite1` under your root directory. Each working directory will represent
+a site which may include one or multiple orgs and peers, the two working directory can very well be on differnt
+servers, in that case, you will need to have other means such as `scp` to transfer necessary files between
+servers. Here are example of the two spec.yaml files
 
 ```
-cat mysite0/spec.yaml
+cat ~/mysite0/spec.yaml
 
 fabric:
   peers:
@@ -29,7 +28,7 @@ fabric:
   - "orderer2.example.com"
   - "orderer3.example.com"
 
-cat mysite1/spec.yaml
+cat ~/mysite1/spec.yaml
 
 fabric:
   peers:
@@ -51,11 +50,8 @@ minifab netup -e 7200 -o orgx.example.com
 ## Join orgx.example.com to the application channel with the following step
 Since the mysite1 has the organization orgx.example.com, then the file produced
 by Minifabric for joining an existing network will be called `JoinRequest_orgx-example-com.json`
-if you name your organization differently, then that join request file will have
-different file name, change the parameters in these commands accordingly. 
-
-This step basically is the duplicate of the [Add New Organization](docs/AddNewOrganization.md)
-process with changes to match the organizations used in this doc.
+under `~/mysite1/vars` directory. If you have different name for your organization, then the
+join request file will have different file name, make changes accordingly when you run the commands. 
 
 ```
 cd ~/mysite0
