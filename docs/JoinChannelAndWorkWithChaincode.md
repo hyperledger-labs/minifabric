@@ -1,6 +1,9 @@
 # Join new org to the channel and install chaincode already running on other existing organizations
 
-Once you have a new organization as part of the existing Fabric network by following the process
+This document describe the fully process how to do the following:
+
+add a new organization into existing fabric network
+and also installOnce you have a new organization as part of the existing Fabric network by following the process
 described in [Add New Organization](docs/AddNewOrganization.md), most likely you will need to join
 the peers of the new organization to some channels and make sure that the peers will be running
 the chaincode that already running on other org's peers so that the new peers can participate in
@@ -91,22 +94,38 @@ cd ~/mysite1
 minifab install,approve -n samplecc -p ''
 ```
 
-## Approve the chaincode once again on org0 and org1
+## Approve the chaincode on org0 and org1
 Since new orgs joined, the chaincode will need to be approved again so that new org can also commit
 
 ```
 cd ~/mysite0
-minifab approve
+minifab approve,commit
 ```
 
-## Commit the chaincode on orgx
+
+## Discover and verify the chaincode on orgx
 
 ```
 cd ~/mysite1
-minifab commit
+minifab discover
 ```
 
+Verify that the file `./vars/discover/mychannel/samplecc_endorsers.json` contains the orgx as
+endorsing group.
 
+```
+cd ~/mysite1
+minifab stats
+```
 
+The above command should show that mysite1 should have chaincode container like the following
+running
 
+```
+  dev-peer1.orgx.example.com-samplecc_1.0-9ea5e3809f : Up 4 minutes
+  dev-peer2.orgx.example.com-samplecc_1.0-9ea5e3809f : Up 4 minutes
+```
 
+## To use your own chaincode
+If you want to use your own chaincode, then you should have the chaincode in vars/chaincode directory
+and follow the structure to form chaincode. Then use your own chaincode in various commands.
