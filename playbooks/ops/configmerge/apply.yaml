@@ -1,0 +1,22 @@
+---
+- name: Channel configuration file does not exists
+  stat: 
+    path: "{{ pjroot }}/vars/{{ CHANNEL_NAME }}_config.json"
+  register: exflag
+  failed_when: exflag.stat.exists == false or exflag.stat.size < 50
+
+- name: New org join request file vars/NewOrgJoinRequest.json does not exists
+  stat: 
+    path: "{{ pjroot }}/vars/NewOrgJoinRequest.json"
+  register: exflag
+  failed_when: exflag.stat.exists == false or exflag.stat.size < 50
+
+- name: Create config merge script
+  template:
+    src: "{{ pjroot }}/playbooks/ops/configmerge/templates/configmerge.j2"
+    dest: "{{ pjroot }}/vars/run/configmerge.sh"
+    mode: +x
+
+- name: Merge config join request to channel configuration
+  command: >-
+    docker exec {{ CLINAME }} /vars/run/configmerge.sh
