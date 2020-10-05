@@ -1,18 +1,17 @@
-# Join new org to the channel and install chaincode already running on other existing organizations
+# Join new org to a channel and install,approve,commit chaincode for new organization
 
 This document describe the fully process how to do the following:
 
-Add a new organization into existing fabric network
-Join peers from the new organization to the existing channel
-Install chaincode running on the existing peers onto new peers
-Approve and commit the chaincode
-Verify endorsement and chaincode containers
+1. Add a new organization into existing fabric network
+2. Join peers from the new organization to the existing channel
+3. Install chaincode running on the existing peers onto new peers
+4. Approve and commit the chaincode
+5. Verify endorsement and chaincode containers
 
-This doc will describe the steps you need to take to accomplish the above tasks. Assume that you have two
-working directories, `mysite0` and `mysite1` under your root directory. Each working directory will represent
-a site which may include one or multiple orgs and peers, the two working directory can very well be on differnt
-servers, in that case, you will need to have other means such as `scp` to transfer necessary files between
-servers. Here are example of the two spec.yaml files
+Assume that you have two working directories, `mysite0` and `mysite1` under your root directory. Each working
+directory will represent a site which may include one or multiple orgs and peers, the two working directory
+can very well be on differnt servers, in that case, you will need to have other means such as `scp` to transfer
+necessary files between servers. Here are the two spec.yaml files
 
 ```
 cat ~/mysite0/spec.yaml
@@ -46,6 +45,14 @@ minifab up -e 7000 -n samplecc -p ''
 cd ~/mysite1
 minifab netup -e 7200 -o orgx.example.com
 ```
+
+The first command brings up a complete running fabric network with a channel named `mychannel`
+created and chaincode named `samplecc` installed, approved, committed and initialized. There are
+two peer orgs and one orderer org. Once the command finished successfully, it is a fully running
+Fabric network and consider this as an existing Fabric network.
+
+The second command brings up a new organization with only two peer nodes. No channel, no orderer
+nodes, just two peer nodes up running.
 
 ## Join orgx.example.com to the application channel with the following step
 Since the mysite1 has the organization orgx.example.com, then the file produced
