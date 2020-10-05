@@ -1,7 +1,8 @@
 # Join new org to a channel and install,approve,commit chaincode for new organization
 
-This document describe the fully process how to do the following:
+This document describes the process how to do the following:
 
+0. Set up two sites, one is considered an existing Fabric network, the other one is considered a new organization
 1. Add a new organization into existing fabric network
 2. Join peers from the new organization to the existing channel
 3. Install chaincode running on the existing peers onto new peers
