@@ -9,9 +9,11 @@ the peers of the new organization to some channels and make sure that the peers 
 the chaincode that already running on other org's peers so that the new peers can participate in
 transactions.
 
-This doc will describe the steps you need to take to make it happen. Assume that you have two
+This doc will describe the steps you need to take to accomplish the above task. Assume that you have two
 working directories, `mysite0` and `mysite1`. Each working directory will represent a site which
-may include one or multiple orgs and peers. Here are example of the two spec.yaml files
+may include one or multiple orgs and peers, the two working directory can very well be on differnt servers,
+in that case, you will need to have other means such as `scp` to transfer necessary files between servers.
+Here are example of the two spec.yaml files
 
 ```
 cat mysite0/spec.yaml
@@ -48,11 +50,12 @@ minifab netup -e 7200 -o orgx.example.com
 
 ## Join orgx.example.com to the application channel with the following step
 Since the mysite1 has the organization orgx.example.com, then the file produced
-by Minifabric for joining an existing network will be called JoinRequest_orgx-example-com.json
+by Minifabric for joining an existing network will be called `JoinRequest_orgx-example-com.json`
 if you name your organization differently, then that join request file will have
-different file name, change these commands accordingly. This step basically is the duplicate
-of the [Add New Organization](docs/AddNewOrganization.md) process with changes to match
-the organizations used in this doc.
+different file name, change the parameters in these commands accordingly. 
+
+This step basically is the duplicate of the [Add New Organization](docs/AddNewOrganization.md)
+process with changes to match the organizations used in this doc.
 
 ```
 cd ~/mysite0
