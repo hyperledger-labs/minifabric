@@ -13,9 +13,9 @@ create new channels.
 ### New organization to application channel easy way
 
 Find the new organization's JoinRequest json file and save it as `vars/NewOrgJoinRequest.json`.
-If you are using minifabric netup command setting up the new org, that file will be in the new
-organization's `vars` directory. If you are using other means setting up new org, then you may
-have to manually create the file.
+If you are using minifabric `netup` command setting up the new org, that file will be create in the
+working directory's `vars` directory. If you are using other means setting up new org, then you most
+likely have to manually create the file.
 
 Run the following command:
 
