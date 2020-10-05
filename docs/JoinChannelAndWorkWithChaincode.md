@@ -4,7 +4,7 @@ This document describe the fully process how to do the following:
 
 add a new organization into existing fabric network
 and also installOnce you have a new organization as part of the existing Fabric network by following the process
-described in [Add New Organization](docs/AddNewOrganization.md), most likely you will need to join
+described in [Add New Organization](AddNewOrganization.md), most likely you will need to join
 the peers of the new organization to some channels and make sure that the peers will be running
 the chaincode that already running on other org's peers so that the new peers can participate in
 transactions.
