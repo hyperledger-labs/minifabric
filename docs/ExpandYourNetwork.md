@@ -1,4 +1,4 @@
-# Join new org to a channel and install,approve,commit chaincode for new organization
+# Expand an existing Fabric network with a new org
 
 This document describes the process how to do the following:
 
@@ -77,7 +77,7 @@ sudo cp ~/mysite0/vars/profiles/endpoints.yaml vars
 minifab nodeimport,join
 ```
 
-## Install chaincode `samplecc` onto orgx peers
+## Install and approve chaincode `samplecc` for orgx peers
 
 ```
 cd ~/mysite1
