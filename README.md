@@ -3,7 +3,7 @@
 [![Build Status](https://dev.azure.com/Hyperledger/Cello/_apis/build/status/litong01.minifabric?branchName=master)](https://dev.azure.com/Hyperledger/Cello/_build/latest?definitionId=107&branchName=master)
 [![Chat](https://raw.githubusercontent.com/aguel/asset/main/minifabric-chat.svg)](https://chat.hyperledger.org/channel/fabric-mini)
 
-[中文](https://github.com/litong01/minifabric/blob/master/README.zh.md)
+[中文](https://github.com/hyperledger-labs/minifabric/blob/master/README.zh.md)
 
 If you would like to learn Hyperledger Fabric or develop your smart contract, or
 just want to get a feel of Hyperledger Fabric, Minifabric is the tool to
