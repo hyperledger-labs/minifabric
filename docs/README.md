@@ -3,7 +3,7 @@ Minifabric is a tool to let you setup a Fabric network, expand your network, ins
 
 It currently provides the following functions:
 
-1. Deploy a fabric network based on this [spec](https://github.com/litong01/minifabric/blob/master/spec.yaml) or [your own spec](#Setup-a-network-using-a-different-spec)
+1. Deploy a fabric network based on this [spec](https://github.com/hyperledger-labs/minifabric/blob/master/spec.yaml) or [your own spec](#Setup-a-network-using-a-different-spec)
 2. Tear down the deployed fabric network
 3. Channel operations such as create, update, join peers to channels, channel update and channel query
 4. Chaincode operations such as install, approve, commit, upgrade, initialize, instantiate, invoke and query
@@ -276,7 +276,7 @@ metrics:   9.8.7.6:9001/metrics
 ### Execution context
 Minifab uses many settings throughout all the operations. These settings can be changed any time you run a minifab command and these settings will be saved in the vars/envsetting file. Each time a command is executed, that file will be loaded and settings specified in the command line will be written into that file. All the settings saved and specified in the command make the current execution context. They include the chaincode name, chaincode invocation parameters, chaincode version, chaincode language, channel name, Fabric release, endpoint exposure and block query number. 
 
-All the default values are set by [envsettings](https://github.com/litong01/minifabric/blob/master/envsettings). Each of the values gets updated if specified on a command line and saved back to `./vars/envsettings`. Users are strongly discouraged to manually change that file since it is basically a script. Changes to that file should only be made by the minifab command.
+All the default values are set by [envsettings](https://github.com/hyperledger-labs/minifabric/blob/master/envsettings). Each of the values gets updated if specified on a command line and saved back to `./vars/envsettings`. Users are strongly discouraged to manually change that file since it is basically a script. Changes to that file should only be made by the minifab command.
 
 Because of the execution context, when you execute a command, you do not really have to specify all the parameters necessary if the context do not need to be changed. For example, if you just executed a chaincode invoke command, and you want to execute invoke again, then you do not need to specify the -n parameter because it is already in the current execution context. The same applies to every parameter listed in that file. You do not need to specify the parameter in a command unless you intend to use a new value in your command. Once you do, the new value becomes part of the current execution context. 
 
@@ -341,7 +341,7 @@ If you would like to learn more, please watch the [series of 6 videos on how to 
 Minifabric when installed onto your system is really just a short script. After you run at least one minifab command, a docker image named hfrd/minifab:latest will be automatically pulled down from Docker Hub. Throughout the life cycle of Minifabric, your system should only have this script and the Docker image. To remove Minifabric, you only need to remove the script and the Docker image. If you would like to build the Docker image yourself, please follow the steps below, the process applies to Linux, OS X and Windows:
 
 ```
-git clone https://github.com/litong01/minifabric.git
+git clone https://github.com/hyperledger-labs/minifabric.git
 cd minifabric
 docker build -t hfrd/minifab:latest .
 ```
