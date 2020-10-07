@@ -5,7 +5,7 @@ jobs:
 - ${{ each release in parameters.param }}:
   - job: TestFabric${{ release.name }}
     steps:
-    - script: docker build -t hfrd/minifab:latest .
+    - script: docker build -t hyperledgerlabs/minifab:latest .
       displayName: 'Build up the minifabric container'
 
     - script: ./minifab up -i ${{ release.number }}
