@@ -45,11 +45,11 @@ This tool requires **docker CE 18.03** or newer, Minifabric supports Linux, OS X
 ### Get the script and make it available system wide
 ##### Run the following command for Linux or OS X
 ```
-mkdir -p ~/mywork && cd ~/mywork && curl -o minifab -sL https://tinyurl.com/twrt8zv && chmod +x minifab
+mkdir -p ~/mywork && cd ~/mywork && curl -o minifab -sL https://tinyurl.com/yxa2q6yr && chmod +x minifab
 ```
 ##### Run the following command for windows 10
 ```
-mkdir %userprofile%\mywork & cd %userprofile%\mywork & curl -o minifab.cmd -sL https://tinyurl.com/yb3ouwm3
+mkdir %userprofile%\mywork & cd %userprofile%\mywork & curl -o minifab.cmd -sL https://tinyurl.com/y3gupzby
 ```
 ##### Make minifab available system wide
 Move the minifab (Linux and OS X) or minifab.cmd (Windows) script you just downloaded to a directory which is part of your execution PATH in your system or add the directory containing it to your PATH. This is to make Minifabric executions a bit easier, you will be able to run the minifab command anywhere in your system without specify the path to the minifab script. When the term `Minifabric` is used, it refers to the tool, when the term `minifab` is used, it refers to the Minifabric command which is the only command Minifabric has.

@@ -40,12 +40,12 @@ Windows |
 ### 1. 下载工具
 ##### 如果你使用Linux或OS X系统
 ```
-mkdir -p ~/mywork && cd ~/mywork && curl -o minifab -sL https://tinyurl.com/twrt8zv && chmod +x minifab
+mkdir -p ~/mywork && cd ~/mywork && curl -o minifab -sL https://tinyurl.com/yxa2q6yr && chmod +x minifab
 ```
 
 ##### 如果你使用Windows 10系统
 ```
-mkdir %userprofile%\mywork & cd %userprofile%\mywork & curl -o minifab.cmd -sL https://tinyurl.com/yb3ouwm3
+mkdir %userprofile%\mywork & cd %userprofile%\mywork & curl -o minifab.cmd -sL https://tinyurl.com/y3gupzby
 ```
 
 ##### 让minifab在整个系统里使用起来更容易
