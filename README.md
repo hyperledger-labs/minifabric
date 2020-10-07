@@ -1,7 +1,7 @@
 # Minifabric 
 
 [![Build Status](https://dev.azure.com/Hyperledger/Cello/_apis/build/status/litong01.minifabric?branchName=master)](https://dev.azure.com/Hyperledger/Cello/_build/latest?definitionId=107&branchName=master)
-[![Chat](https://raw.githubusercontent.com/aguel/asset/main/minifabric-chat.svg)](https://chat.hyperledger.org/channel/fabric-mini)
+[![Chat](https://raw.githubusercontent.com/hyperledger/chat-assets/master/fabric-mini.svg)](https://chat.hyperledger.org/channel/fabric-mini)
 
 [中文](https://github.com/hyperledger-labs/minifabric/blob/master/README.zh.md)
 
@@ -35,12 +35,12 @@ If you would like to learn more before jumping in, watch the [series of 6 videos
 
 ##### If you are using Linux (Ubuntu, Fedora, CentOS), or OS X
 ```
-mkdir -p ~/mywork && cd ~/mywork && curl -o minifab -sL https://tinyurl.com/twrt8zv && chmod +x minifab
+mkdir -p ~/mywork && cd ~/mywork && curl -o minifab -sL https://tinyurl.com/yxa2q6yr && chmod +x minifab
 ```
 
 ##### If you are using Windows 10
 ```
-mkdir %userprofile%\mywork & cd %userprofile%\mywork & curl -o minifab.cmd -sL https://tinyurl.com/yb3ouwm3
+mkdir %userprofile%\mywork & cd %userprofile%\mywork & curl -o minifab.cmd -sL https://tinyurl.com/y3gupzby
 ```
 
 ##### Make minifab available system wide
