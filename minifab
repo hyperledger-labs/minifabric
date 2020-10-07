@@ -4,9 +4,9 @@ ADDRS=$(ifconfig|grep 'inet '|grep -v '\.1 '|tr -s ' '|awk '{$1=$1};1'|cut -d ' 
 if [ -f "$(pwd)/spec.yaml" ]; then
   echo "Using spec file: $(pwd)/spec.yaml"
   docker run --rm --name minifab -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd)/vars:/home/vars \
-  -v $(pwd)/spec.yaml:/home/spec.yaml -e "ADDRS=$ADDRS" hfrd/minifab:latest /home/main.sh "$@"
+  -v $(pwd)/spec.yaml:/home/spec.yaml -e "ADDRS=$ADDRS" hyperledgerlabs/minifab:latest /home/main.sh "$@"
 else
   echo "Using default spec file"
   docker run --rm --name minifab -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd)/vars:/home/vars \
-  -e "ADDRS=$ADDRS" hfrd/minifab:latest /home/main.sh "$@"
+  -e "ADDRS=$ADDRS" hyperledgerlabs/minifab:latest /home/main.sh "$@"
 fi

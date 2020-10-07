@@ -295,7 +295,7 @@ where  `hyperledger/fabric-nodeenv:my2.2` is the name and tag for your custom im
 Minifabric evolves very quickly. It is always a good idea to refresh your Minifabric every once in a while by simply running the following script
 ```
 curl -o minifab -L https://tinyurl.com/twrt8zv && chmod +x minifab
-docker pull hfrd/minifab:latest
+docker pull hyperledgerlabs/minifab:latest
 ```
 
 ### See more available fabric commands
@@ -308,8 +308,7 @@ Minifabric uses Hyperledger official Docker images from Docker Hub. It will auto
 
 ##### Fabric 2.0
 ```
-hfrd/minifab:latest
-hfrd/cmdash:latest
+hyperledgerlabs/minifab:latest
 hyperledger/fabric-tools:2.0
 hyperledger/fabric-peer:2.0
 hyperledger/fabric-orderer:2.0
@@ -321,8 +320,7 @@ hyperledger/fabric-couchdb:latest
 
 ##### Fabric 1.4 which is an alias to 1.4.6
 ```
-hfrd/minifab:latest
-hfrd/cmdash:latest
+hyperledgerlabs/minifab:latest
 hyperledger/fabric-ca:1.4
 hyperledger/fabric-tools:1.4
 hyperledger/fabric-ccenv:1.4
@@ -338,12 +336,12 @@ For other Fabric releases which is equal to or greater than 1.4.1, replace the t
 If you would like to learn more, please watch the [series of 6 videos on how to develop Hyperledger Fabric using Minifabric](https://www.youtube.com/playlist?list=PL0MZ85B_96CExhq0YdHLPS5cmSBvSmwyO)
 
 ### Build minifabric locally
-Minifabric when installed onto your system is really just a short script. After you run at least one minifab command, a docker image named hfrd/minifab:latest will be automatically pulled down from Docker Hub. Throughout the life cycle of Minifabric, your system should only have this script and the Docker image. To remove Minifabric, you only need to remove the script and the Docker image. If you would like to build the Docker image yourself, please follow the steps below, the process applies to Linux, OS X and Windows:
+Minifabric when installed onto your system is really just a short script. After you run at least one minifab command, a docker image named hyperledgerlabs/minifab:latest will be automatically pulled down from Docker Hub. Throughout the life cycle of Minifabric, your system should only have this script and the Docker image. To remove Minifabric, you only need to remove the script and the Docker image. If you would like to build the Docker image yourself, please follow the steps below, the process applies to Linux, OS X and Windows:
 
 ```
 git clone https://github.com/hyperledger-labs/minifabric.git
 cd minifabric
-docker build -t hfrd/minifab:latest .
+docker build -t hyperledgerlabs/minifab:latest .
 ```
 
 ### Hook up Explorer to your Fabric network
