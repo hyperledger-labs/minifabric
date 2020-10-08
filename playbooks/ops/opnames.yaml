@@ -27,6 +27,8 @@ OPNAMES:
   optionverify: "verify options"
   explorerup: "start explorer"
   explorerdown: "shutdown explorer"
+  portainerup: "start portainer"
+  portainerdown: "stop portainer"
   apprun: "run chaincode application"
   caliperrun: "run caliper test"
   update: "update Minifabric"
@@ -60,6 +62,8 @@ PRECONDITIONS:
   optionverify: []
   explorerup: []
   explorerdown: []
+  portainerup: []
+  portainerdown: []
   apprun: ['PEER', 'ORDERER']
   caliperrun: ['PEER', 'ORDERER']
   update: []
