@@ -31,7 +31,7 @@
     -v explorerdb.{{ NETNAME }}:/var/lib/postgresql/data
     --health-cmd "pg_isready -h localhost -p 5432 -q -U postgres"
     --health-interval "30s" --health-timeout "10s" --health-retries 5
-    hyperledger/explorer-db:latest
+    hyperledger/explorer-db:1.1.2
 
 - name: set two values
   set_fact:
@@ -64,7 +64,7 @@
       -v {{hostroot}}/vars/explorer/{{ CHANNEL_NAME}}_config.json:/opt/explorer/app/platform/fabric/config.json
       -v {{hostroot}}/vars/explorer:/opt/explorer/app/platform/fabric/connection-profile
       -v {{hostroot}}/vars/keyfiles:/keyfiles
-      hyperledger/explorer:latest node /opt/explorer/main.js
+      hyperledger/explorer:1.1.2 node /opt/explorer/main.js
 
 - name: "Explorer endpoint for {{ NETNAME }} "
   debug:

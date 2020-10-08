@@ -1,0 +1,9 @@
+# SPDX-License-Identifier: Apache-2.0
+
+pull_request_rules:
+  - name: Auto-Merge on Approving Label
+    conditions:
+      - label=merge
+    actions:
+      merge:
+        method: rebase
