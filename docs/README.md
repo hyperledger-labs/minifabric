@@ -38,6 +38,7 @@ The table of the content
 20. [Hook up Explorer to your fabric network](#hook-up-explorer-to-your-fabric-network)
 21. [Run your application quickly](#run-your-application-quickly)
 22. [Run Caliper test](#run-caliper-test)
+23. [Start up portainer web ui](#start-up-portainer-web-ui)
 
 ### Prerequisites
 This tool requires **docker CE 18.03** or newer, Minifabric supports Linux, OS X and Windows 10
@@ -384,3 +385,7 @@ After the commands finish, you can review the result in the `vars/report.html` f
 best to open this file in a browser.
 If you would like to test your own chaincode, the easist way is to install, approve, commit and initialize your own chaincode just like any other chaincode using Minifabric commands. Then, use your own test code to replace the code in the vars/app/callback/app.js file, your own node js code must follow Caliper callback structure, otherwise caliperrun command will certainly fail. Once your chaincode correctly installed and your callback is in place, run `minifab caliperrun` command again to test your chaincode.
 The caliperrun command will run the test for 60 seconds by default. If you wish to change the default settings that Minifabric sets to run the test, you can change vars/run/caliperbenchmarkconfig.yaml file after the first since this file gets created by Minifabric only when there is no such file. You can customize this file any way you want, make changes to any settings available in this file, and run the command again. All the changes you make will take effect the next time you run the command.
+
+### Start up portainer web ui
+While you are running your Fabric network, you can use Portainer web based management to see and interact with your running network.
+To start up Portainer web user interface, simply run `minifab portainerup` command, to shut it down, run `minifab portainerdown` command

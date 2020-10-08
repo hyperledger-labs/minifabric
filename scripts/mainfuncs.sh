@@ -20,6 +20,7 @@ OPNAMES=([up]="$LINE0$LINE1" [netup]='imageget,certgen,netup,netstats' \
   [query]='ccquery' [join]='channeljoin' [blockquery]='blockquery' \
   [channelquery]='channelquery' [profilegen]='profilegen' [caliperrun]='caliperrun' \
   [channelsign]='channelsign' [channelupdate]='channelupdate' \
+  [portainerup]='portainerup' [portainerdown]='portainerdown' \
   [anchorupdate]='anchorupdate' [explorerup]='explorerup' [explorerdown]='explorerdown' \
   [nodeimport]='nodeimport' [discover]='discover' [imageget]='imageget' [update]='update')
 
@@ -55,6 +56,8 @@ function printHelp() {
   echo "      - 'stats'  - list all nodes and status"
   echo "      - 'explorerup'  - start up Hyperledger explorer"
   echo "      - 'explorerdown'  - shutdown Hyperledger explorer"
+  echo "      - 'portainerup'  - start up portainer web management"
+  echo "      - 'portainerdown'  - shutdown portainer web management"
   echo "      - 'apprun'  - (experimental) run chaincode app if there is any"
   echo "      - 'caliperrun'  - (experimental) run caliper test"
   echo "      - 'orgjoin'  - (experimental) join an org to the current channel"
