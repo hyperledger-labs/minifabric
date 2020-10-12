@@ -1,6 +1,17 @@
 {%  set orgcas = allcas|selectattr('org', 'equalto', CURRENT_ORG)|list %}
 {%  set org = CURRENT_ORG %}
 {
+  "info": {
+    "details": {
+      "Version": "{{ fabric.release}}",
+      "PeerOrgs": "{{ peerorgs|join(',') }}",
+      "NumberOfPeers": {{ allpeers | length }},
+      "OrdererOrgs": "{{ ordererorgs|join(',') }}",
+      "NumberOfOrderers": {{ allorderers | length }},
+      "Orderer": Raft,
+      "StateDB": "{{ DB_TYPE }}"
+    }
+  },
   "caliper": {
     "blockchain": "fabric"
   },
