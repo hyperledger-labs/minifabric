@@ -18,6 +18,16 @@
         CLINAME: "{{ current_location_hash[:10] }}_cli"
         NETNAME: "{{ current_location_hash[:10] }}_net"
 
+    - name: Set endpoint address to first auto detected IP address 
+      set_fact:
+        endpoint_address: "{{ ADDRS.split(',')[0] }}"
+      when: fabric.endpoint_address is undefined
+
+    - name: Set up the endpoint address when configured in spec.yaml
+      set_fact:
+        endpoint_address: "{{ fabric.endpoint_address }}"
+      when: fabric.endpoint_address is defined
+
     - name: Remove approve and commit from the operation list if release is less than 2.0
       set_fact:
         allops: "{{ allops | difference(['ccapprove', 'cccommit']) }}"

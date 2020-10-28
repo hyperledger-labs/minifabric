@@ -15,5 +15,5 @@
 - name: "Explorer endpoint for {{ NETNAME }} "
   debug:
     msg: |
-      "Portainer web UI address:  http://{{ ADDRS.split(',')[0] }}:{{ portainer_port }}"
+      "Portainer web UI address:  http://{{ endpoint_address }}:{{ portainer_port }}"
   tags: [print_action]
