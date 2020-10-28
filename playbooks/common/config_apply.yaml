@@ -32,7 +32,7 @@
   - name: Set up starting node port
     set_fact:
       nodeport: "{{ ((EXPOSE_ENDPOINTS|lower) == 'true') | ternary(7000, EXPOSE_ENDPOINTS|int) }}"
-      ipaddr: "{{ ADDRS.split(',')[0] }}"
+      ipaddr: "{{ endpoint_address }}"
     when: (EXPOSE_ENDPOINTS|lower) != 'false'
 
   - name: When not expose endpoints

@@ -23,3 +23,6 @@ fabric:
   # goproxy: "https://proxy.golang.org,direct"
   ### the goproxy in China area
   # goproxy: "https://goproxy.cn,direct"
+  ### set the endpoint address to override the automatically detected IP address
+#  endpoint_address: 1.2.3.4
+

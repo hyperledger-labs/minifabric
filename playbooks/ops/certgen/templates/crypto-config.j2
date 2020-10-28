@@ -13,7 +13,7 @@ OrdererOrgs:
       Province: North Carolina
       Locality: Raleigh
       SANS:
-        - {{ ADDRS.split(',')[0] }}
+        - {{ endpoint_address }}
 {% endif %}
     Specs:
 {%    for item in allorderers %}

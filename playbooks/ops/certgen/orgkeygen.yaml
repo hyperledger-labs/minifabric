@@ -43,7 +43,7 @@
     -subj "/C=US/ST=North Carolina/L=Raleigh/O={{ org }}/CN={{ item.cn }}.{{ org }}"
     -addext "keyUsage=critical,digitalSignature,keyEncipherment,keyCertSign,cRLSign"
     -addext "extendedKeyUsage=serverAuth,clientAuth"
-    -addext "subjectAltName=IP.1:{{ ADDRS.split(',')[0] }},DNS.1:{{ item.cn }}.{{ org }}"
+    -addext "subjectAltName=IP.1:{{ endpoint_address }},DNS.1:{{ item.cn }}.{{ org }}"
     -key {{ orgrootpath }}/{{ item.pkey }}
     -out {{ orgrootpath }}/{{ item.cert}}{{ caname }}.{{ org }}-cert.pem
   with_items:
