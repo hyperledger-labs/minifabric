@@ -18,6 +18,10 @@ fabric:
       FABRIC_LOGGING_SPEC: DEBUG
     orderer:
       FABRIC_LOGGING_SPEC: DEBUG
+  #BatchTimeout: 2s
+  #MaxMessageCount: 10
+  #AbsoluteMaxBytes: 99 MB
+  #PreferredMaxBytes: 512 KB
   ### use go proxy when default go proxy is restricted in some of the regions.
   ### the default goproxy
   # goproxy: "https://proxy.golang.org,direct"
