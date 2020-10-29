@@ -119,7 +119,7 @@ Application: &ApplicationDefaults
 Orderer: &OrdererDefaults
   OrdererType: {{ (allorderers|length > 0)|ternary('etcdraft', 'solo') }}
 
-BatchTimeout: {{ fabric.BatchTimeout | 2 }}
+BatchTimeout: {{ fabric.BatchTimeout | 2s }}
 
 BatchSize:
   MaxMessageCount: {{ fabric.MaxMessageCount | 10 }} 
