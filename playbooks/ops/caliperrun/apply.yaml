@@ -1,4 +1,9 @@
 ---
+- name: Set up sdk release
+  set_fact:
+    sdk_release: "2.1.0"
+    caliper_release: "0.4.1"
+
 - name: Create apprun script
   template:
     src: "{{ pjroot }}/playbooks/ops/caliperrun/templates/networkconfig.j2"
@@ -17,9 +22,12 @@
 
 - name: Create caliper run script
   template:
-    src: "{{ pjroot }}/playbooks/ops/caliperrun/templates/caliperrun.j2"
-    dest: "{{ pjroot }}/vars/run/caliperrun.sh"
+    src: "{{ pjroot }}/playbooks/ops/caliperrun/templates/{{ item }}.j2"
+    dest: "{{ pjroot }}/vars/run/{{ item }}.sh"
     mode: +x
+  with_items:
+  - 'caliperbind'
+  - 'caliperrun'
 
 - name: Change var file permission
   command: >-
@@ -27,7 +35,7 @@
 
 - name: Check bond caliper image
   command: >-
-    docker image ls -q hyperledger/caliper_fabric:1.4.8
+    docker image ls -q hyperledger/caliper_fabric:{{ sdk_release }}
   register: imagestatus
 
 - name: Produce image if caliper bond image does not exist
@@ -36,11 +44,13 @@
   - name: Run a container to bind fabric sdk
     command: >-
       docker run --network {{ NETNAME }} --name calipertester --hostname calipertester
-      hyperledger/caliper:0.3.2 bind --caliper-bind-sut fabric:1.4.8
+      --entrypoint /run/caliperbind.sh
+      -v {{ hostroot }}/vars/run:/run
+      hyperledger/caliper:{{ caliper_release }}
 
   - name: Save the container as an image
     command: >-
-      docker commit calipertester hyperledger/caliper_fabric:1.4.8
+      docker commit calipertester hyperledger/caliper_fabric:{{ sdk_release }}
 
   - name: Remove the docker container
     command: >-
@@ -55,7 +65,7 @@
     -e "CALIPER-NETWORKCONFIG=run/calipernetworkconfig.json"
     -v /var/run/docker.sock:/var/run/docker.sock
     -v {{ hostroot }}/vars:/hyperledger/caliper/workspace
-    hyperledger/caliper_fabric:1.4.8
+    hyperledger/caliper_fabric:{{ sdk_release }}
   register: runresults
 
 - name: Caliper test run

@@ -7,20 +7,14 @@ test:
     rounds:
       - label: {{ CC_NAME }} test
         description: {{ CC_NAME }} benchmark
-        chaincodeId: {{ CC_NAME }}
         txDuration: 60
         rateControl: 
-          type: fixed-backlog
+          type: fixed-load
           opts:
-            unfinished_per_client: 2
-        callback: /hyperledger/caliper/workspace/app/callback/app.js
-        arguments:
-          assets: 10
-  
-monitor:
-  type:
-  - none
-  
-observer:
-  type: local
-  interval: 1
+            transactionLoad: 300
+        workload:
+          module: /hyperledger/caliper/workspace/app/callback/app.js
+          arguments:
+            contractId: {{ CC_NAME }}
+            randomSeed: 5000000
+            userID: Admin@{{ CURRENT_ORG }}

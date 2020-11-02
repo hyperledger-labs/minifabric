@@ -1,28 +1,35 @@
 'use strict';
 
-module.exports.info  = 'Template callback';
+const { WorkloadModuleBase } = require('@hyperledger/caliper-core');
 
-const contractID = 'samplecc';
-const version = '1.0';
+class MyWorkload extends WorkloadModuleBase {
+    constructor() {
+        super();
+    }
 
-let bc, ctx, clientArgs, clientIdx;
+    async initializeWorkloadModule(workerIndex, totalWorkers, roundIndex, roundArguments, sutAdapter, sutContext) {
+        await super.initializeWorkloadModule(workerIndex, totalWorkers, roundIndex, roundArguments, sutAdapter, sutContext);
+    }
 
-module.exports.init = async function(blockchain, context, args) {
-    bc = blockchain;
-    ctx = context;
-    clientArgs = args;
-    clientIdx = context.clientIdx.toString();
-};
+    async submitTransaction() {
+        const randomId = Math.floor(Math.random()*this.roundArguments.randomSeed);
+        const myArgs = {
+            contractId: this.roundArguments.contractId,
+            contractFunction: 'invoke',
+            invokerIdentity: this.roundArguments.userID,
+            contractArguments: ['put', `${this.workerIndex}_${this.roundIndex}_${randomId}`, `${this.workerIndex}_${randomId}_${randomId}`],
+            readOnly: false
+        };
 
-module.exports.run = function() {
-    const randomId = Math.floor(Math.random()*clientArgs.assets);
-    const myArgs = {
-        chaincodeFunction: 'invoke',
-        invokerIdentity: 'Admin@org0.example.com',
-        chaincodeArguments: ['put', `${clientIdx}_${randomId}`, `${clientIdx}_${randomId}`]
-    };
-    return bc.bcObj.invokeSmartContract(ctx, contractID, version, myArgs);
-};
+        await this.sutAdapter.sendRequests(myArgs);
+    }
 
-module.exports.end = async function() {
-};
+    async cleanupWorkloadModule() {
+    }
+}
+
+function createWorkloadModule() {
+    return new MyWorkload();
+}
+
+module.exports.createWorkloadModule = createWorkloadModule;

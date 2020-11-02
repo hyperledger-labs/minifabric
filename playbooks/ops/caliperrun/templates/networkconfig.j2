@@ -1,6 +1,8 @@
 {%  set orgcas = allcas|selectattr('org', 'equalto', CURRENT_ORG)|list %}
 {%  set org = CURRENT_ORG %}
 {
+  "name": "test-{{ NETNAME}}",
+  "version": "1.0",
   "info": {
     "details": {
       "Version": "{{ fabric.release}}",
@@ -11,7 +13,7 @@
       "Orderer": Raft,
       "StateDB": "{{ DB_TYPE }}"
     }
-  },
+  },  
   "caliper": {
     "blockchain": "fabric"
   },
@@ -19,8 +21,8 @@
     "Admin@{{ org }}": {
       "client": {
         "credentialStore": {
-          "path": "tmp/hfc-kvs/org1",
-          "cryptoStore": {"path": "tmp/hfc-kvs/org1"}
+          "path": "tmp/org1",
+          "cryptoStore": {"path": "tmp/org1"}
         },
         "organization": "{{ org }}",
         "clientPrivateKey": {
@@ -38,12 +40,11 @@
   "channels": {
       "{{ CHANNEL_NAME }}": {
           "created" : true,
-          "chaincodes": [
+          "contracts": [
               { "id": "{{ CC_NAME }}", "version": "{{ CC_VERSION }}" }
           ]
       }
   },
-  "name": "test-{{ NETNAME}}",
   "organizations":{
     "{{ org }}": {
       "mspid": "{{ org.split('.')|join('-') }}",
@@ -90,6 +91,5 @@
       "caName": "{{ ca.name }}"
     }{{ '' if loop.last else ',' }}
 {% endfor %}
-  },
-  "version": "1.0"
+  }
 }
