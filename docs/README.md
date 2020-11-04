@@ -164,6 +164,17 @@ In some areas, when you install a golang written chaincode, the dependencies can
 will most likely need to use goproxy to bypass these restrictions. You can do so by specifying an accessible goproxy in the spec.yaml file. The default spec.yaml
 file has an example commented out, you can uncomment that line and use your own go proxy to install your golang written chaincode.
 
+In the case of chaincode that uses private data, the install command should include the flag -r or
+--chaincode-private set to true. 
+```
+minifab install  -n <chaincodename> -v 1.0 -r true
+```
+Then minifab will generate a private data collection configuration file in the vars directory with
+the format `<chaincodename>_collection_config.json`.  This file needs to be modified for the specific
+requirements of your chaincode before proceeding to the approve, commit, and initialize steps.  
+Alternatively, a pre-configured collection config file can be placed in the vars directory using the same
+name format before the install, and minifab will use it instead of creating the default file.
+
 ### Upgrade your chaincode
 If you have changed your chaincode and would like to upgrade the chaincode installed to your Minifabric network, you can simply install the chaincode with a higher version number, for example:
 ```
