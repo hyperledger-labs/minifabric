@@ -26,4 +26,5 @@
   template:
     src: "{{ pjroot }}/playbooks/ops/templates/collection_config.j2"
     dest: "{{ pjroot }}/vars/{{CC_NAME}}_collection_config.json"
+    force: no
   when: CC_PRIVATE == 'true'
