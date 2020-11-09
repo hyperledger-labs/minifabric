@@ -65,9 +65,9 @@ esac
 done
 
 isValidateCMD
-if [ ! -z ${CC_PARAMETERS+x} ]; then CC_PARAMETERS=$(echo $CC_PARAMETERS|base64 | tr -d \\n); fi
-if [ ! -z ${CC_POLICY+x} ]; then CC_POLICY=$(echo $CC_POLICY|base64 | tr -d \\n); fi
-if [ ! -z ${TRANSIENT_DATA+x} ]; then TRANSIENT_DATA=$(echo $TRANSIENT_DATA|base64 | tr -d \\n); fi
+if [ ! -z ${CC_PARAMETERS+x} ]; then CC_PARAMETERS=$(echo "${CC_PARAMETERS}"|base64 | tr -d \\n); fi
+if [ ! -z ${CC_POLICY+x} ]; then CC_POLICY=$(echo "${CC_POLICY}"|base64 | tr -d \\n); fi
+if [ ! -z ${TRANSIENT_DATA+x} ]; then TRANSIENT_DATA=$(echo "${TRANSIENT_DATA}"|base64 | tr -d \\n); fi
 doDefaults
 
 echo "Minifab Execution Context:"
