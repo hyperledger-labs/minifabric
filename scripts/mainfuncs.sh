@@ -140,6 +140,7 @@ function isValidateCMD() {
 function getRealRootDir() {
   varpath=$(docker inspect --format '{{ range .Mounts }}{{ if eq .Destination "/home/vars" }}{{ .Source }}{{ end }}{{ end }}' minifab)
   hostroot=${varpath%/vars}
+  hostroot=${hostroot//\\/\/}
 }
 
 function startMinifab() {
