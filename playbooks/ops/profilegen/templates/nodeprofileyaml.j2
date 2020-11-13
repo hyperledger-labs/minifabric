@@ -16,16 +16,26 @@
 {% for org in allorgs %}
 {%  set orgcas = allcas|selectattr('org', 'equalto', org)|list %}
 {%  set orgelements = allkeys.values() | selectattr('org', 'equalto', org) | list %}
+{%  set orgpeers = allpeers|selectattr('org', 'equalto', org)|list %}
+{%  set orgorderers = allorderers|selectattr('org', 'equalto', org)|list %}
   "{{ org }}":
     "mspid": "{{ org.split('.')|join('-') }}"
+{%  if orgpeers|length > 0 %}
     "peers":
-{%  for peer in allpeers|selectattr('org', 'equalto', org)|list %}
+{%    for peer in orgpeers %}
     - "{{ peer.fullname }}"
-{%  endfor %}
+{%    endfor %}
+{%  else %}
+    "peers": []
+{%  endif %}
+{%  if orgorderers|length > 0 %}
     "orderers":
-{%  for orderer in allorderers|selectattr('org', 'equalto', org)|list %}
+{%    for orderer in orgorderers %}
     - "{{ orderer.fullname }}"
-{%  endfor %}
+{%    endfor %}
+{%  else %}
+    "orderers": []
+{%  endif %}
 {%  if orgcas|length > 0 %}
     "certificateAuthorities":
 {%    for ca in orgcas %}
