@@ -4,11 +4,26 @@
     leftbrace: "{"
     rightbrace: "}"
 
+- name: Check if cli container is running
+  command: >-
+    docker container ls -f name={{ CLINAME }} --format
+    '{{ leftbrace }}{{ leftbrace }} .Status {{ rightbrace }}{{ rightbrace }}'
+  register: clistatus
+
 - name: List all nodes
   command: >-
     docker ps -af network={{ NETNAME }} --format
     '{{ leftbrace }}{{ leftbrace }} .Names {{ rightbrace }}{{ rightbrace }}|{{ leftbrace }}{{ leftbrace }} .Status {{ rightbrace }}{{ rightbrace }}'
   register: nodelist
+
+- name: Quit
+  when: (clistatus.stdout_lines|length) == 0 and (nodelist.stdout_lines|length) == 0
+  block:
+    - name: Fabric network status
+      debug:
+        msg: "Network Status: 0%"
+      tags: [print_action]
+    - meta: end_play
 
 - name: Organize node status
   set_fact:
