@@ -310,7 +310,7 @@ curl -o minifab -L https://tinyurl.com/twrt8zv && chmod +x minifab
 docker pull hyperledgerlabs/minifab:latest
 ```
 
-### See more available fabric commands
+### See more available Minifabric commands
 ```
 minifab
 ```
