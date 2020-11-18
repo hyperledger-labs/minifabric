@@ -29,3 +29,5 @@ stages:
         number: '2.2.0'
       - name: 'Release_2_2'
         number: '2.2'
+      - name: 'Release_2_3'
+        number: '2.3'
