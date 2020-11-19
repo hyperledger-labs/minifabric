@@ -9,4 +9,6 @@ fi
 
 export ROOTPATH=/vars/keyfiles
 cp /vars/profiles/{{ CHANNEL_NAME}}_connection_for_gosdk.json connection.json
+mkdir -p wallets
+cp /vars/profiles/vscode/wallets/{{ CURRENT_ORG}}/Admin.id wallets/Admin.id
 go run main.go

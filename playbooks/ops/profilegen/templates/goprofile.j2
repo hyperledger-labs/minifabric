@@ -68,7 +68,7 @@
         "ssl-target-name-override": "{{ orderer.fullname }}"
       },
       "tlsCACerts": {
-        "path": "{{ '${ROOTPATH}/ordererOrganizations/'+orderer.org+'/orderers/'+orderer.fullname+'/tls/ca.crt' }}"
+        "pem": "{{ lookup('file', pjroot+'/vars/keyfiles/ordererOrganizations/'+orderer.org+'/orderers/'+orderer.fullname+'/tls/ca.crt')|regex_replace('(\n)', '\\\\n') }}"
       }
     }{{ '' if loop.last else ',' }}
 {% endfor %}
@@ -81,7 +81,7 @@
         "ssl-target-name-override": "{{ peer.fullname }}"
       },
       "tlsCACerts": {
-        "path": "${ROOTPATH}/peerOrganizations/{{ peer.org }}/peers/{{ peer.fullname }}/tls/ca.crt"
+        "pem": "{{ lookup('file', pjroot+'/vars/keyfiles/peerOrganizations/'+peer.org+'/peers/'+peer.fullname+'/tls/ca.crt')|regex_replace('(\n)', '\\\\n') }}"
       }
     }{{ '' if loop.last else ',' }}
 {% endfor %}
@@ -91,7 +91,7 @@
     "{{ ca.fullname }}": {
       "url": "https://{{ ca.url }}:{{ ca.port }}",
       "tlsCACerts": {
-        "path": "${ROOTPATH}/{{ orgattrs[ca.org].certpath }}/{{ ca.org }}/ca/{{ ca.fullname}}-cert.pem"
+        "pem": ["{{ lookup('file', pjroot+'/vars/keyfiles/'+orgattrs[ca.org].certpath+'/'+ca.org+'/ca/'+ca.fullname+'-cert.pem')|regex_replace('(\n)', '\\\\n') }}"]
       },
       "httpOptions": { "verify": "false" },
       "caName": "{{ ca.name }}",
