@@ -74,9 +74,10 @@
     "grpcOptions":
       "ssl-target-name-override": "{{ orderer.fullname }}"
     "tlsCACerts":
-      "path": "${ROOTPATH}/ordererOrganizations/{{ orderer.org }}/orderers/{{ orderer.fullname }}/tls/ca.crt"
-{% endfor %}
+      "pem": |
+{{ lookup('file', pjroot+'/vars/keyfiles/ordererOrganizations/'+orderer.org+'/orderers/'+orderer.fullname+'/tls/ca.crt')|indent(8, True) }}
 
+{% endfor %}
 "peers":
 {% for peer in allpeers %}
   "{{ peer.fullname }}":
@@ -84,15 +85,19 @@
     "grpcOptions":
       "ssl-target-name-override": "{{ peer.fullname }}"
     "tlsCACerts":
-      "path": "${ROOTPATH}/peerOrganizations/{{ peer.org }}/peers/{{ peer.fullname }}/tls/ca.crt"
-{% endfor %}
+      "pem": |
+{{ lookup('file', pjroot+'/vars/keyfiles/peerOrganizations/'+peer.org+'/peers/'+peer.fullname+'/tls/ca.crt')|indent(8, True) }}
 
+{% endfor %}
 "certificateAuthorities":
 {% for ca in allcas %}
   "{{ ca.fullname }}":
     "url": "https://{{ ca.url }}:{{ ca.port }}"
     "tlsCACerts":
-      "path": "${ROOTPATH}/{{ orgattrs[ca.org].certpath }}/{{ ca.org }}/ca/{{ ca.fullname }}-cert.pem"
+      "pem":
+      - |
+{{ lookup('file', pjroot+'/vars/keyfiles/'+orgattrs[ca.org].certpath+'/'+ca.org+'/ca/'+ca.fullname+'-cert.pem')|indent(8, True) }}
+
     "httpOptions":
       "verify": "false"
     "caName": "{{ ca.name }}"

@@ -11,6 +11,7 @@ import (
 	"github.com/hyperledger/fabric-sdk-go/pkg/gateway"
 	rmsp "github.com/hyperledger/fabric-sdk-go/pkg/msp"
 	"math/rand"
+	"os"
 	"reflect"
 	"strconv"
 	"sync"
@@ -123,6 +124,70 @@ func useGateway() {
 		gateway.WithConfig(config.FromFile("./connection.json")),
 		gateway.WithUser("Admin"),
 	)
+
+	if err != nil {
+		fmt.Printf("Failed to connect: %v", err)
+	}
+
+	if gw == nil {
+		fmt.Println("Failed to create gateway")
+	}
+
+	network, err := gw.GetNetwork("mychannel")
+	if err != nil {
+		fmt.Printf("Failed to get network: %v", err)
+	}
+
+	var seededRand *rand.Rand = rand.New(rand.NewSource(time.Now().UnixNano()))
+	contract := network.GetContract("samplecc")
+	uuid.SetRand(nil)
+
+	var wg sync.WaitGroup
+	start := time.Now()
+	for i := 1; i <= 10; i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			seededRand.Intn(20)
+			result, err := contract.SubmitTransaction("invoke", "put", uuid.New().String(),
+				strconv.Itoa(seededRand.Intn(20)))
+			if err != nil {
+				fmt.Printf("Failed to commit transaction: %v", err)
+			} else {
+				fmt.Println("Commit is successful")
+			}
+
+			fmt.Println(reflect.TypeOf(result))
+			fmt.Printf("The results is %v", result)
+		}()
+	}
+	wg.Wait()
+	fmt.Println("The time took is ", time.Now().Sub(start))
+}
+
+/*
+To run this app, make sure that one of the wallet files such as Admin.id from
+vars/profiles/vscode/wallets directory is copied onto ./wallets directory,
+then this example code will use the wallet file and connection file to make
+connections to Fabric network
+*/
+func useWalletGateway() {
+	wallet, err := gateway.NewFileSystemWallet("./wallets")
+	if err != nil {
+		fmt.Printf("Failed to create wallet: %s\n", err)
+		os.Exit(1)
+	}
+
+	if !wallet.Exists("Admin") {
+		fmt.Println("Failed to get Admin from wallet")
+		os.Exit(1)
+	}
+
+	gw, err := gateway.Connect(
+		gateway.WithConfig(config.FromFile("./connection.json")),
+		gateway.WithIdentity(wallet, "Admin"),
+	)
+
 	if err != nil {
 		fmt.Printf("Failed to connect: %v", err)
 	}
@@ -164,5 +229,5 @@ func useGateway() {
 }
 
 func main() {
-	useGateway()
+	useWalletGateway()
 }
