@@ -1,19 +1,30 @@
 ---
 - name: set two values
   set_fact:
-    leftbrace: "{"
-    rightbrace: "}"
+    LB: "{"
+    RB: "}"
+
+- name: Get current image date and time
+  command: >-
+    docker images hyperledgerlabs/minifab:latest --format 
+    "{{LB}}{{LB}}.ID{{RB}}{{RB}}   {{LB}}{{LB}}.CreatedAt{{RB}}{{RB}}"
+  register: theresult
+
+- name: Current Minifabric image ID and created at date time
+  debug:
+    msg: "{{ theresult.stdout }}"
+  tags: [print_action]
 
 - name: Check if cli container is running
   command: >-
     docker container ls -f name={{ CLINAME }} --format
-    '{{ leftbrace }}{{ leftbrace }} .Status {{ rightbrace }}{{ rightbrace }}'
+    '{{LB}}{{LB}} .Status {{RB}}{{RB}}'
   register: clistatus
 
 - name: List all nodes
   command: >-
     docker ps -af network={{ NETNAME }} --format
-    '{{ leftbrace }}{{ leftbrace }} .Names {{ rightbrace }}{{ rightbrace }}|{{ leftbrace }}{{ leftbrace }} .Status {{ rightbrace }}{{ rightbrace }}'
+    '{{LB}}{{LB}} .Names {{RB}}{{RB}}|{{LB}}{{LB}} .Status {{RB}}{{RB}}'
   register: nodelist
 
 - name: Quit
