@@ -26,3 +26,19 @@
   debug:
     msg: "{{ theresult.stdout_lines }}"
   tags: [print_action]
+
+- name: set two values
+  set_fact:
+    LB: "{"
+    RB: "}"
+
+- name: Get current image date and time
+  command: >-
+    docker images hyperledgerlabs/minifab:latest --format 
+    "{{LB}}{{LB}}.ID{{RB}}{{RB}}   {{LB}}{{LB}}.CreatedAt {{RB}}{{RB}}"
+  register: theresult
+
+- name: Current Minifabric image ID and created at date time
+  debug:
+    msg: "{{ theresult.stdout }}"
+  tags: [print_action]
