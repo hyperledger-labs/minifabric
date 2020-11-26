@@ -28,6 +28,11 @@
         endpoint_address: "{{ fabric.endpoint_address }}"
       when: fabric.endpoint_address is defined
 
+    - name: Set up the goproxy when configured in spec.yaml
+      set_fact:
+        goproxy: "{{ fabric.goproxy }}"
+      when: fabric.goproxy is defined
+
     - name: Remove approve and commit from the operation list if release is less than 2.0
       set_fact:
         allops: "{{ allops | difference(['ccapprove', 'cccommit']) }}"
