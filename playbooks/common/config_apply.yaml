@@ -26,6 +26,7 @@
       allcas: "{{ [] }}"
       allpeers: "{{ [] }}"
       allorderers: "{{ [] }}"
+      allcouchdbs: "{{ [] }}"
       alldash: "{{ [] }}"
       nodeport: '0'
 
@@ -55,6 +56,15 @@
             'name':item.split('.')[0], 'fullname': item, 'type': 'peer' }] }}
       with_items: "{{ fabric.peers }}"
       when: fabric.peers is defined
+
+    - name: Get all couchdb object list
+      set_fact:
+        allcouchdbs: |
+          {{ allcouchdbs + [{'org':item.split('.')[1:] | join("."), 'portmap':'',
+            'url': item+'.couchdb', 'port': '5984', 'mspid': item.split('.')[1:] | join('-'),
+            'name':item.split('.')[0]+'.couchdb', 'fullname': item+'.couchdb', 'type': 'db' }] }}
+      with_items: "{{ fabric.peers }}"
+      when: fabric.peers is defined and (DB_TYPE|lower) == "couchdb"
 
     - name: Get all orderer object list
       set_fact:
@@ -91,6 +101,17 @@
         nodeport: "{{ nodeport|int + 1 }}"
       with_items: "{{ fabric.peers }}"
       when: fabric.peers is defined
+
+    - name: Get all couchdb object list
+      set_fact:
+        allcouchdbs: |
+          {{ allcouchdbs + [{'org':item.split('.')[1:] | join("."),
+            'url': ipaddr, 'port': nodeport, 'portmap':'-p '+nodeport+':5984',
+            'mspid': item.split('.')[1:] | join('-'),
+            'name':item.split('.')[0]+'.couchdb', 'fullname': item+'.couchdb', 'type': 'db' }] }}
+        nodeport: "{{ nodeport|int + 1 }}"
+      with_items: "{{ fabric.peers }}"
+      when: fabric.peers is defined and (DB_TYPE|lower) == "couchdb"
 
     - name: Get all orderer object list
       set_fact:
@@ -138,6 +159,17 @@
       portainer_port: "{{ nodeport|int +2 }}"
 
   - name: Produce the node env file
+    when: (DB_TYPE|lower) == "couchdb"
+    copy:
+      dest: "{{ pjroot }}/vars/node_vars.json"
+      content: >-
+        {{ {'allcas': allcas, 'allpeers': allpeers, 'allorderers': allorderers, 'explorer_port': explorer_port,
+            'portainer_port': portainer_port, 'allcouchdbs': allcouchdbs,
+            'caorgs': caorgs, 'peerorgs': peerorgs, 'ordererorgs': ordererorgs, 'allorgs': allorgs,
+            'orgattrs': orgattrs } | to_nice_json(indent=2) }}
+
+  - name: Produce the node env file
+    when: (DB_TYPE|lower) != "couchdb"
     copy:
       dest: "{{ pjroot }}/vars/node_vars.json"
       content: >-

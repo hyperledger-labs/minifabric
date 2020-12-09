@@ -29,9 +29,10 @@
 
 - name: Start couchdb nodes if db type is set to couchdb
   command: >-
-    docker run -d --network {{ NETNAME }} --name {{ item.fullname }}.couchdb
-    --hostname {{ item.fullname }}.couchdb hyperledger/fabric-couchdb:latest
-  with_items: "{{ allpeers }}"
+    docker run -d --network {{ NETNAME }} --name {{ item.fullname }} {{ item.portmap }}
+    -e COUCHDB_USER=admin -e COUCHDB_PASSWORD=adminpw
+    --hostname {{ item.fullname }} hyperledger/fabric-couchdb:latest
+  with_items: "{{ allcouchdbs }}"
   when: (DB_TYPE|lower) == "couchdb"
 
 - name: Start all peer nodes
