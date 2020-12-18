@@ -1,6 +1,10 @@
 #!/bin/bash
 [ ! -d "$(pwd)/vars" ] && mkdir vars
-ADDRS=$(ifconfig|grep 'inet '|grep -v '\.1 '|tr -s ' '|awk '{$1=$1};1'|cut -d ' ' -f 2|cut -d '/' -f 1|paste -sd "," -|sed s/addr://g)
+if type ip > /dev/null 2>&1; then
+  ADDRS=$(ip addr|grep 'inet '|grep -v '\.1/'|tr -s ' '|awk '{$1=$1};1'|cut -d ' ' -f 2|cut -d '/' -f 1|paste -sd "," -|sed s/addr://g)
+else 
+  ADDRS=$(ifconfig|grep 'inet '|grep -v '\.1 '|tr -s ' '|awk '{$1=$1};1'|cut -d ' ' -f 2|cut -d '/' -f 1|paste -sd "," -|sed s/addr://g)
+fi
 if [ -f "$(pwd)/spec.yaml" ]; then
   echo "Using spec file: $(pwd)/spec.yaml"
   docker run --rm --name minifab -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd)/vars:/home/vars \
