@@ -137,7 +137,11 @@ Example `peer` section
 > peer1.org1.com --> mspid = org1-com, organization name = org1.com hostPort=7779  
 > peer0.org2.com --> mspid = org2-com, organization name = org2.com hostPort=7780  
 
-Currently **docker network** name is not configurable, it is automatically generated based on the working directory. This ensures that two different working directories will result in two different docker networks. This allows you to setup multiple sites on the same machine to mimic multiple organizations across multiple machines.
+In default, **docker network** is automatically generated based on the working directory. This ensures that two different working directories will result in two different docker networks. This allows you to setup multiple sites on the same machine to mimic multiple organizations across multiple machines.
+You can assign specific docker network name by uncomment bellow line in spec.yaml file. This allows you to setup fabric capability on the existing docker network easily.
+```
+  # netname: "specific_docker_network"
+```
 
 ### Install your own chaincode
 To install your own chaincode, create the following subdirectory in your working directory:

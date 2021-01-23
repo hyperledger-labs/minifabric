@@ -14,9 +14,17 @@
         status_flag: "Success"
         current_location_hash: "{{ hostroot | hash('sha256') }}"
 
-    - set_fact:
+    - name: Set NETNAME and CLINAME to automatically generated name based on the working directory.
+      set_fact:
         CLINAME: "{{ current_location_hash[:10] }}_cli"
         NETNAME: "{{ current_location_hash[:10] }}_net"
+      when: fabric.netname is undefined
+
+    - name: Set NETNAME and CLINAME to specific name when configured in spec.yaml
+      set_fact:
+        CLINAME: "{{ fabric.netname }}_cli"
+        NETNAME: "{{ fabric.netname }}"
+      when: fabric.netname is defined
 
     - name: Set endpoint address to first auto detected IP address 
       set_fact:

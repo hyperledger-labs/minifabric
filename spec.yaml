@@ -25,4 +25,5 @@ fabric:
   # goproxy: "https://goproxy.cn,direct"
   ### set the endpoint address to override the automatically detected IP address
   # endpoint_address: 1.2.3.4
-
+  ### set the docker network name to override the automatically generated name.
+  # netname: "specific_docker_network"
