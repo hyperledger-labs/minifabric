@@ -138,9 +138,10 @@ Example `peer` section
 > peer0.org2.com --> mspid = org2-com, organization name = org2.com hostPort=7780  
 
 In default, **docker network** is automatically generated based on the working directory. This ensures that two different working directories will result in two different docker networks. This allows you to setup multiple sites on the same machine to mimic multiple organizations across multiple machines.
-You can assign specific docker network name by uncomment bellow line in spec.yaml file. This allows you to setup fabric capability on the existing docker network easily.
+You can assign specific docker network name by uncomment bellow line in spec.yaml file. This allows you to setup fabric capability on the existing docker network easily. If you have multiple sites on same machine, it will be necessary to have different name for each site to avoid network conflict.
+
 ```
-  # netname: "specific_docker_network"
+  # netname: "mysite0"
 ```
 
 ### Install your own chaincode
