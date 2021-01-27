@@ -15,8 +15,8 @@
         current_location_hash: "{{ hostroot | hash('sha256') }}"
 
     - set_fact:
-        CLINAME: "{{ current_location_hash[:10] }}_cli"
-        NETNAME: "{{ current_location_hash[:10] }}_net"
+        CLINAME: "{{ (fabric.netname is defined) | ternary(fabric.netname, current_location_hash[:10]+'_cli') }}"
+        NETNAME: "{{ (fabric.netname is defined) | ternary(fabric.netname, current_location_hash[:10]+'_net') }}"
 
     - name: Set endpoint address to first auto detected IP address 
       set_fact:
