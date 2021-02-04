@@ -1,0 +1,75 @@
+---
+"name": "{{ NETNAME }}"
+"x-type": "hlfv1"
+"version": "1.0.0"
+"client":
+  "organization": {{ CURRENT_ORG }}
+  "connection":
+    "timeout":
+      "peer":
+        "endorser": "300"
+"organizations":
+{% for org in allorgs %}
+{%  set orgcas = allcas|selectattr('org', 'equalto', org)|list %}
+{%  set orgelements = allkeys.values() | selectattr('org', 'equalto', org) | list %}
+{%  set orgpeers = allpeers|selectattr('org', 'equalto', org)|list %}
+{%  set orgorderers = allorderers|selectattr('org', 'equalto', org)|list %}
+  "{{ org }}":
+    "mspid": "{{ org.split('.')|join('-') }}"
+{%  if orgpeers|length > 0 %}
+    "peers":
+{%    for peer in orgpeers %}
+    - "{{ peer.fullname }}"
+{%    endfor %}
+{%  else %}
+    "peers": []
+{%  endif %}
+{%  if orgorderers|length > 0 %}
+    "orderers":
+{%    for orderer in orgorderers %}
+    - "{{ orderer.fullname }}"
+{%    endfor %}
+{%  else %}
+    "orderers": []
+{%  endif %}
+{%  if orgcas|length > 0 %}
+    "certificateAuthorities":
+{%    for ca in orgcas %}
+    - "{{ ca.fullname }}"
+{%    endfor %}
+{%  endif %}
+{% endfor %}
+
+"orderers":
+{% for orderer in allorderers %}
+  "{{ orderer.fullname }}":
+    "url": "grpcs://{{ orderer.url }}:{{ orderer.port }}"
+    "grpcOptions":
+      "ssl-target-name-override": "{{ orderer.fullname }}"
+    "tlsCACerts":
+      "pem": "{{ lookup('file', pjroot+'/vars/keyfiles/ordererOrganizations/'+orderer.org+'/orderers/'+orderer.fullname+'/tls/ca.crt')|regex_replace('(\n)', '\\\\n') }}"
+{% endfor %}
+
+"peers":
+{% for peer in allpeers %}
+  "{{ peer.fullname }}":
+    "url": "grpcs://{{ peer.url }}:{{ peer.port }}"
+    "grpcOptions":
+      "ssl-target-name-override": "{{ peer.fullname }}"
+    "tlsCACerts":
+      "pem": "{{ lookup('file', pjroot+'/vars/keyfiles/peerOrganizations/'+peer.org+'/peers/'+peer.fullname+'/tls/ca.crt')|regex_replace('(\n)', '\\\\n') }}"
+{% endfor %}
+
+"certificateAuthorities":
+{% for ca in allcas %}
+  "{{ ca.fullname }}":
+    "url": "https://{{ ca.url }}:{{ ca.port }}"
+    "tlsCACerts":
+      "pem": "{{ lookup('file', pjroot+'/vars/keyfiles/'+orgattrs[ca.org].certpath+'/'+ca.org+'/ca/'+ca.fullname+'-cert.pem')|regex_replace('(\n)', '\\\\n') }}"
+    "httpOptions":
+      "verify": "false"
+    "caName": "{{ ca.name }}"
+    "registrar":
+      "enrollId": "admin"
+      "enrollSecret": "adminpw"
+{% endfor %}
