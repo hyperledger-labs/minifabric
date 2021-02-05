@@ -12,7 +12,7 @@
   command: >-
     docker volume create {{ item.fullname }}
   with_items:
-    - "{{ allpeers + allorderers }}"
+    - "{{ ((DB_TYPE|lower) == 'couchdb') | ternary(allpeers+allorderers+allcas+allcouchdbs, allpeers+allorderers+allcas) }}"
 
 - name: "Process keys"
   include_tasks: "{{ pjroot }}/playbooks/common/processkeys.yaml"
@@ -31,6 +31,7 @@
   command: >-
     docker run -d --network {{ NETNAME }} --name {{ item.fullname }} {{ item.portmap }}
     -e COUCHDB_USER=admin -e COUCHDB_PASSWORD=adminpw
+    -v {{ item.fullname }}:/opt/couchdb/data
     --hostname {{ item.fullname }} hyperledger/fabric-couchdb:latest
   with_items: "{{ allcouchdbs }}"
   when: (DB_TYPE|lower) == "couchdb"
@@ -96,6 +97,7 @@
     docker run -d --network {{ NETNAME }} --name {{ item.fullname }} --hostname {{ item.fullname }}
     --env-file {{ pjroot }}/vars/run/{{ item.fullname }}.env {{ item.portmap }}
     -v {{ hostroot }}/vars/keyfiles/{{ orgattrs[item.org].certpath }}/{{item.org}}:/certs
+    -v {{ item.fullname }}:/etc/hyperledger/fabric-ca-server
     hyperledger/fabric-ca:{{ desiredrelease }}
   with_items: "{{ allcas }}"
   register: castat
