@@ -32,6 +32,7 @@
     docker run -d --network {{ NETNAME }} --name {{ item.fullname }} {{ item.portmap }}
     -e COUCHDB_USER=admin -e COUCHDB_PASSWORD=adminpw
     -v {{ item.fullname }}:/opt/couchdb/data
+    {{ container_options }}
     --hostname {{ item.fullname }} hyperledger/fabric-couchdb:latest
   with_items: "{{ allcouchdbs }}"
   when: (DB_TYPE|lower) == "couchdb"
@@ -44,6 +45,7 @@
     -v {{ mpath }}/{{item.org}}/peers/{{item.fullname}}/msp:/etc/hyperledger/fabric/msp
     -v {{ mpath }}/{{item.org}}/peers/{{item.fullname}}/tls:/etc/hyperledger/fabric/tls
     -v {{ item.fullname }}:/var/hyperledger/production
+    {{ container_options }}
     hyperledger/fabric-peer:{{ fabric.release }} peer node start
   with_items: "{{ allpeers }}"
   register: peerstat
@@ -72,6 +74,7 @@
     -v {{ mpath }}/{{item.org}}/orderers/{{item.fullname}}/msp:/var/hyperledger/orderer/msp
     -v {{ mpath }}/{{item.org}}/orderers/{{item.fullname}}/tls:/var/hyperledger/orderer/tls
     -v {{ item.fullname }}:/var/hyperledger/production/orderer
+    {{ container_options }}
     hyperledger/fabric-orderer:{{ fabric.release }}
   with_items: "{{ allorderers }}"
   register: ordererstat
@@ -98,6 +101,7 @@
     --env-file {{ pjroot }}/vars/run/{{ item.fullname }}.env {{ item.portmap }}
     -v {{ hostroot }}/vars/keyfiles/{{ orgattrs[item.org].certpath }}/{{item.org}}:/certs
     -v {{ item.fullname }}:/etc/hyperledger/fabric-ca-server
+    {{ container_options }}
     hyperledger/fabric-ca:{{ desiredrelease }}
   with_items: "{{ allcas }}"
   register: castat
@@ -124,6 +128,7 @@
     -v /var/run/docker.sock:/var/run/docker.sock
     -v {{ hostroot }}/vars:/vars
     -v {{ hostroot }}/vars/chaincode:{{ gopath }}/src/github.com/chaincode
+    {{ container_options }}
     hyperledger/fabric-tools:{{ fabric.release }}
 
 - name: Check if orderer raft leader node has been elected

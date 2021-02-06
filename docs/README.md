@@ -144,6 +144,12 @@ You can assign specific docker network name by uncomment bellow line in spec.yam
   # netname: "mysite0"
 ```
 
+You can add options for starting containers by uncomment bellow line in spec.yaml file. you can specify any option which supported by 'docker run' command.
+Note that the value specified by container_options will be added when minifabric starts all node type containers (CA, peer, orderer, cli) without distinction.
+```
+  # container_options: "--restart=always --log-opt max-size=10m --log-opt max-file=3"
+```
+
 ### Install your own chaincode
 To install your own chaincode, create the following subdirectory in your working directory:
 ```
