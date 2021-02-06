@@ -10,7 +10,7 @@ just want to get a feel of Hyperledger Fabric, Minifabric is the tool to
 get you started. Minifabric can stand up a Fabric network on a small machine
 like a VirtualBox VM but can also deploy Fabric networks across multiple production
 grade servers. Minifabric has been tested on Linux, OS X, Windows 10 and supports
-Fabric releases 1.4.1 or newer.
+Fabric releases 1.4.4 or newer.
 
 ## Feature Highlight
 
