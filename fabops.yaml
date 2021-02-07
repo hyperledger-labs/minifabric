@@ -34,6 +34,10 @@
         OPNAMES: "{{ OPNAMES | combine({'ccinstantiate': 'cc instantiate'}) }}"
       when: IMAGETAG is version('2.0', '<')
 
+    - name: Setup container_options for appending docker run command
+      set_fact:
+        container_options: "{{ ( fabric.container_options is defined ) | ternary(fabric.container_options, '') }}"
+
     - meta: end_play
       when: allops|length == 0
 
