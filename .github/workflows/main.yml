@@ -1,0 +1,33 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ $default-branch ]
+  pull_request:
+    branches: [ $default-branch ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        fabric: ['1.4.4', '1.4.6', '1.4.8', '2.0.0', '2.1.0', '2.2', '2.2.0', '2.3']
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      - name: 'Build up the minifabric container'
+        run: docker build -t hyperledgerlabs/minifab:latest .
+
+      - name: 'Setup minifabric network'
+        run: ./minifab up -i ${{ matrix.fabric }}
+
+      - name: 'Tear down the network'
+        run: ./minifab cleanup
