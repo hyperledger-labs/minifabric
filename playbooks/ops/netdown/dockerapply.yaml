@@ -1,0 +1,41 @@
+---
+- name: set two values
+  set_fact:
+    leftbrace: "{"
+    rightbrace: "}"
+
+- name: List all the containers on the network
+  command: >-
+    docker ps -aqf network={{ NETNAME }}
+  register: containers
+
+- name: List all the chaincode container images
+  command: >-
+    docker ps -af network={{ NETNAME }} --format
+    '{{ leftbrace }}{{ leftbrace }} .Image {{ rightbrace }}{{ rightbrace }}'
+  register: chaincodeimages
+
+- name: Remove the container
+  command: >-
+    docker rm -f {{ containers.stdout_lines | join(' ') }}
+  when: containers.stdout_lines | length > 0
+
+- name: Remove the chaincode container images
+  command: >-
+    docker rmi -f {{ item }}:latest
+  with_items: "{{ chaincodeimages.stdout_lines|select('match', '^dev-[.]*')|list }}"
+
+- name: Remove env file for all nodes
+  file:
+    path: "{{ pjroot }}/vars/run/{{ item.fullname }}.env"
+    state: absent
+  with_items: "{{ allpeers + allorderers + allcas }}"
+
+- name: Query Fabric docker network
+  command: >-
+    docker network ls -f name={{ NETNAME }} -q
+  register: netstat
+
+- name: Delete fabric docker network if it exists
+  command: "docker network rm {{ NETNAME }}"
+  when: netstat.stdout != ""

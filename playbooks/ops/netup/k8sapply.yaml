@@ -1,0 +1,57 @@
+---
+- name: Query Fabric docker network
+  command: >-
+    docker network ls -f name={{ NETNAME }} -q
+  register: netstat
+
+- name: Create fabric docker network if it does not exist
+  command: "docker network create {{ NETNAME }}"
+  when: netstat.stdout == ""
+
+- name: Set ca image release
+  set_fact:
+    desiredrelease: "{{ fabric.release is version('2.0', '<') | ternary(fabric.release, '1.4') }}"
+
+- name: "Process keys"
+  include_tasks: "{{ pjroot }}/playbooks/common/processkeys.yaml"
+
+- name: Create deployment spec and service file
+  template:
+    src: "{{ pjroot }}/playbooks/ops/netup/k8stemplates/allnodes.j2"
+    dest: "{{ pjroot }}/vars/run/allnodes.yaml"
+
+- name: Deploy all nodes and their service
+  k8s:
+    kubeconfig: "{{ pjroot }}/vars/kubeconfig/config"
+    state: present
+    src: "{{ pjroot }}/vars/run/allnodes.yaml"
+
+- name: Create nginx ingress services patch
+  template:
+    src: "{{ pjroot }}/playbooks/ops/netup/k8stemplates/allservices.j2"
+    dest: "{{ pjroot }}/vars/run/allservices.yaml"
+
+- name: Patch nginx ingress controller
+  k8s:
+    kubeconfig: "{{ pjroot }}/vars/kubeconfig/config"
+    merge_type: strategic-merge
+    src: "{{ pjroot }}/vars/run/allservices.yaml"
+
+- name: Wait for all nodes to be ready
+  pause:
+    minutes: 2
+    prompt: "Waiting for all nodes to be ready to serve requests..."
+
+- name: Set tool gopath
+  set_fact:
+    gopath: "{{ (fabric.release is version('2.0', '>='))|ternary('/go', '/opt/gopath') }}"
+
+- name: Start cli container for all fabric operations
+  command: >-
+    docker run -dit --network {{ NETNAME }} --name {{ CLINAME }} --hostname {{ CLINAME }}
+    -v /var/run/docker.sock:/var/run/docker.sock
+    -v {{ hostroot }}/vars:/vars
+    -v {{ hostroot }}/vars/chaincode:{{ gopath }}/src/github.com/chaincode
+    {{ container_options }}
+    hyperledger/fabric-tools:{{ fabric.release }}
+  ignore_errors: yes

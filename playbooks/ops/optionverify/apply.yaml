@@ -4,3 +4,15 @@
     msg: "Default option org is {{ CURRENT_ORG }} which does not exist in your spec, use -o to specify one"
   when: CURRENT_ORG not in allorgs
   tags: [print_action]
+
+- name: Verify expose-endpoints flag is true or a starting port for k8s deployment
+  fail:
+    msg: "The flag is set to {{ EXPOSE_ENDPOINTS }}, it has to be true or a port number for K8S deployment, use -e to set a value"
+  when: (EXPOSE_ENDPOINTS|lower) == 'false' and ISK8S
+  tags: [print_action]
+
+- name: Verify the endpoint address is set for k8s deployment
+  fail:
+    msg: "The endpoint address has to be set, please set it in your spec.yaml file!"
+  when: ISK8S and fabric.endpoint_address is not defined
+  tags: [print_action]

@@ -1,7 +1,8 @@
 ---
 - name: "Check and pull necessary image {{ image }}:{{ fabric.release }}"
   include_tasks: "getimage.yaml"
-  loop: "{{ ['peer', 'orderer', 'tools', 'ccenv', 'ca'] }}"
+  loop: "{{ ISK8S | ternary(['tools'], ['peer', 'orderer', 'tools', 'ccenv', 'ca']) }}"
   loop_control:
     loop_var: image
   when: status_flag == "Success"
+

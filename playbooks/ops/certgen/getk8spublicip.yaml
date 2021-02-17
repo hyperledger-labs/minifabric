@@ -1,0 +1,61 @@
+- name: Deploy gninx ingress controller if not already exists
+  when: ISK8S == true
+  block:
+  - name: Check status of nginx ingress controller
+    k8s_info:
+      kubeconfig: "{{ pjroot }}/vars/kubeconfig/config"
+      namespace: "ingress-nginx"
+      name: "ingress-nginx-controller"
+      kind: Service
+    register: nginx
+
+  - name: Get public ip address
+    when: (nginx.resources|length) > 0
+    set_fact:
+      K8SIP: "{{ nginx.resources[0].status.loadBalancer.ingress[0].ip }}"
+
+  - name: Deploy nginx ingress controller if not already exists
+    when: (nginx.resources|length) == 0
+    k8s:
+      kubeconfig: "{{ pjroot }}/vars/kubeconfig/config"
+      state: present
+      src: "{{ pjroot }}/playbooks/ops/certgen/templates/ingresscontroller.yaml"
+
+  - name: Wait for ingress controller to be ready
+    when: (nginx.resources|length) == 0
+    k8s_info:
+      kubeconfig: "{{ pjroot }}/vars/kubeconfig/config"
+      namespace: "ingress-nginx"
+      name: "ingress-nginx-controller"
+      kind: Deployment
+      wait: yes
+      wait_condition:
+        type: "Available"
+        status: "True"
+        reason: "MinimumReplicasAvailable"
+      wait_sleep: 3
+      wait_timeout: 90
+
+  - name: Now try to get nginx ingress controller external IP address
+    when: (nginx.resources|length) == 0
+    k8s_info:
+      kubeconfig: "{{ pjroot }}/vars/kubeconfig/config"
+      namespace: "ingress-nginx"
+      name: "ingress-nginx-controller"
+      kind: Service
+    register: nginx
+
+  - name: Get public ip address
+    when: K8SIP is not defined and nginx.resources is defined
+    set_fact:
+      K8SIP: "{{ nginx.resources[0].status.loadBalancer.ingress[0].ip }}"
+
+  - name: K8S Public IP Address
+    debug:
+      msg: "{{ K8SIP }}"
+    tags: [print_action]
+
+  - name: Use the obtained IP address as endpoint
+    when: K8SIP is defined
+    set_fact:
+      endpoint_address: "{{ K8SIP }}"

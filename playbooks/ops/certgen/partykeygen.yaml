@@ -93,3 +93,40 @@
   loop: "{{ privatekeys }}"
   loop_control:
     loop_var: privatekey
+
+- name: Upload certificates to k8s
+  when: ISK8S == true
+  block:
+  - name: Upload party certificate and key
+    k8s:
+      kubeconfig: "{{ pjroot }}/vars/kubeconfig/config"
+      state: present
+      definition:
+        apiVersion: v1
+        kind: Secret
+        type: Opaque
+        metadata:
+          name: "{{ partycn | replace('@', '-') | replace('.', '-') | lower }}-secret"
+          namespace: "{{ NETNAME }}"
+        data:
+          tls.crt: >-
+            {{ lookup('file', orgrootpath+partyroot+'/msp/signcerts/'+partycn+'-cert.pem', errors='ignore') | b64encode }}
+          tls.key: >-
+            {{ lookup('file', orgrootpath+partyroot+'/msp/keystore/priv_sk', errors='ignore') | b64encode }}
+
+  - name: Upload party tls certificate and key
+    k8s:
+      kubeconfig: "{{ pjroot }}/vars/kubeconfig/config"
+      state: present
+      definition:
+        apiVersion: v1
+        kind: Secret
+        type: Opaque
+        metadata:
+          name: "{{ partycn | replace('@', '-') | replace('.', '-') | lower }}-tls-secret"
+          namespace: "{{ NETNAME }}"
+        data:
+          tls.crt: >-
+            {{ lookup('file', orgrootpath+partyroot+'/tls/'+partytype+'.crt', errors='ignore') | b64encode }}
+          tls.key: >-
+            {{ lookup('file', orgrootpath+partyroot+'/tls/'+partytype+'.key', errors='ignore') | b64encode }}

@@ -1,3 +1,4 @@
+
 - name: "Ensure certificate directory is clean"
   file:
     path: "{{ pjroot }}/vars/keyfiles"
@@ -63,6 +64,21 @@
     -v /var/run/:/host/var/run
     -v {{ hostroot}}/vars:/etc/hyperledger/fabric
     hyperledger/fabric-tools:{{ fabric.release }} /etc/hyperledger/fabric/run/certtxgen.sh
+
+- name: Upload gensis block for orderers
+  when: ISK8S == true and (ordererorgs|length > 0)
+  k8s:
+    kubeconfig: "{{ pjroot }}/vars/kubeconfig/config"
+    state: present
+    definition:
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: "genesis-blocks"
+        namespace: "{{ NETNAME }}"
+      binaryData:
+        genesis.block: >-
+          {{ lookup('file', pjroot+'/vars/genesis.block', errors='ignore') | b64encode }}
 
 - name: Package all the certs to one file
   archive:

@@ -1,0 +1,149 @@
+---
+- name: Query Fabric docker network
+  command: >-
+    docker network ls -f name={{ NETNAME }} -q
+  register: netstat
+
+- name: Create fabric docker network if it does not exist
+  command: "docker network create {{ NETNAME }}"
+  when: netstat.stdout == ""
+
+- name: Create volumes for peer and orderer nodes
+  command: >-
+    docker volume create {{ item.fullname }}
+  with_items:
+    - "{{ ((DB_TYPE|lower) == 'couchdb') | ternary(allpeers+allorderers+allcas+(allcouchdbs|default([])), allpeers+allorderers+allcas) }}"
+
+- name: "Process keys"
+  include_tasks: "{{ pjroot }}/playbooks/common/processkeys.yaml"
+
+- name: Create env file for all nodes
+  template:
+    src: "{{ pjroot }}/playbooks/ops/netup/templates/{{ item.type }}env.j2"
+    dest: "{{ pjroot }}/vars/run/{{ item.fullname }}.env"
+  with_items: "{{ allpeers + allorderers + allcas }}"
+
+- name: Set absolute mounting path
+  set_fact:
+    mpath: "{{hostroot}}/vars/keyfiles/peerOrganizations"
+
+- name: Start couchdb nodes if db type is set to couchdb
+  command: >-
+    docker run -d --network {{ NETNAME }} --name {{ item.fullname }} {{ item.portmap }}
+    -e COUCHDB_USER=admin -e COUCHDB_PASSWORD=adminpw
+    -v {{ item.fullname }}:/opt/couchdb/data
+    {{ container_options }}
+    --hostname {{ item.fullname }} hyperledger/fabric-couchdb:latest
+  with_items: "{{ allcouchdbs }}"
+  when: (DB_TYPE|lower) == "couchdb"
+
+- name: Start all peer nodes
+  command: >-
+    docker run -d --network {{ NETNAME }} --name {{ item.fullname }} --hostname {{ item.fullname }}
+    --env-file {{ pjroot }}/vars/run/{{ item.fullname }}.env {{ item.portmap }}
+    -v /var/run/:/host/var/run
+    -v {{ mpath }}/{{item.org}}/peers/{{item.fullname}}/msp:/etc/hyperledger/fabric/msp
+    -v {{ mpath }}/{{item.org}}/peers/{{item.fullname}}/tls:/etc/hyperledger/fabric/tls
+    -v {{ item.fullname }}:/var/hyperledger/production
+    {{ container_options }}
+    hyperledger/fabric-peer:{{ fabric.release }} peer node start
+  with_items: "{{ allpeers }}"
+  register: peerstat
+  ignore_errors: yes
+
+- name: "Check errors"
+  when: peerstat.failed is defined and peerstat.failed == true
+  block:
+  - name: Error!
+    debug:
+      msg: "{{ peerstat.results[0].stderr }}"
+    tags: [print_action]
+
+  - name: Exit play when there is an error
+    meta: end_play
+
+- name: Set absolute mounting path
+  set_fact:
+    mpath: "{{hostroot}}/vars/keyfiles/ordererOrganizations"
+
+- name: Start all orderer nodes
+  command: >-
+    docker run -d --network {{ NETNAME }} --name {{ item.fullname }} --hostname {{ item.fullname }}
+    --env-file {{ pjroot }}/vars/run/{{ item.fullname }}.env {{ item.portmap }}
+    -v {{ hostroot }}/vars/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
+    -v {{ mpath }}/{{item.org}}/orderers/{{item.fullname}}/msp:/var/hyperledger/orderer/msp
+    -v {{ mpath }}/{{item.org}}/orderers/{{item.fullname}}/tls:/var/hyperledger/orderer/tls
+    -v {{ item.fullname }}:/var/hyperledger/production/orderer
+    {{ container_options }}
+    hyperledger/fabric-orderer:{{ fabric.release }}
+  with_items: "{{ allorderers }}"
+  register: ordererstat
+  ignore_errors: yes
+
+- name: "Check errors"
+  when: ordererstat.failed is defined and ordererstat.failed == true
+  block:
+  - name: Error!
+    debug:
+      msg: "{{ ordererstat.results[0].stderr }}"
+    tags: [print_action]
+
+  - name: Exit play when there is an error
+    meta: end_play
+
+- name: Set ca image release
+  set_fact:
+    desiredrelease: "{{ fabric.release is version('2.0', '<') | ternary(fabric.release, '1.4') }}"
+
+- name: Start all ca nodes
+  command: >-
+    docker run -d --network {{ NETNAME }} --name {{ item.fullname }} --hostname {{ item.fullname }}
+    --env-file {{ pjroot }}/vars/run/{{ item.fullname }}.env {{ item.portmap }}
+    -v {{ hostroot }}/vars/keyfiles/{{ orgattrs[item.org].certpath }}/{{item.org}}:/certs
+    -v {{ item.fullname }}:/etc/hyperledger/fabric-ca-server
+    {{ container_options }}
+    hyperledger/fabric-ca:{{ desiredrelease }}
+  with_items: "{{ allcas }}"
+  register: castat
+  ignore_errors: yes
+
+- name: "Check errors"
+  when: castat.failed is defined and castat.failed == true
+  block:
+  - name: Error!
+    debug:
+      msg: "{{ castat.results[0].stderr }}"
+    tags: [print_action]
+
+  - name: Exit play when there is an error
+    meta: end_play
+
+- name: Set tool gopath
+  set_fact:
+    gopath: "{{ (fabric.release is version('2.0', '>='))|ternary('/go', '/opt/gopath') }}"
+
+- name: Start cli container for all fabric operations
+  command: >-
+    docker run -dit --network {{ NETNAME }} --name {{ CLINAME }} --hostname {{ CLINAME }}
+    -v /var/run/docker.sock:/var/run/docker.sock
+    -v {{ hostroot }}/vars:/vars
+    -v {{ hostroot }}/vars/chaincode:{{ gopath }}/src/github.com/chaincode
+    {{ container_options }}
+    hyperledger/fabric-tools:{{ fabric.release }}
+
+- name: Check if orderer raft leader node has been elected
+  when: allorderers | length > 0
+  block:
+    - name: wait for 3 seconds and orderer nodes to select leader
+      wait_for:
+        timeout: 3
+
+    - name: generate the script to check status
+      template:
+        src: "{{ pjroot }}/playbooks/ops/netup/templates/statuscheck.j2"
+        dest: "{{ pjroot }}/vars/run/statuscheck.sh"
+        mode: +x
+
+    - name: Run the orderer raft leader election script on cli container
+      command: >-
+        docker exec {{ CLINAME }} /vars/run/statuscheck.sh
