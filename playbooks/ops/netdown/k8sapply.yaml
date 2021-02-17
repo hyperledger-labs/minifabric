@@ -1,0 +1,53 @@
+---
+- name: Create deployment spec and service file
+  template:
+    src: "{{ pjroot }}/playbooks/ops/netup/k8stemplates/allnodes.j2"
+    dest: "{{ pjroot }}/vars/run/allnodes.yaml"
+
+- name: Deploy all nodes and their service
+  k8s:
+    kubeconfig: "{{ pjroot }}/vars/kubeconfig/config"
+    state: absent
+    src: "{{ pjroot }}/vars/run/allnodes.yaml"
+
+- name: Get all pvcs
+  k8s_info:
+    kubeconfig: "{{ pjroot }}/vars/kubeconfig/config"
+    namespace: "{{ NETNAME }}"
+    kind: PersistentVolumeClaim
+  register: pvcs
+
+- name: Remove all pvcs
+  k8s:
+    kubeconfig: "{{ pjroot }}/vars/kubeconfig/config"
+    state: absent
+    kind: PersistentVolumeClaim
+    namespace: "{{ NETNAME }}"
+    name: "{{ item.metadata.name }}"
+  with_items: "{{ pvcs.resources }}"
+
+- name: Remove the namespace
+  k8s:
+    kubeconfig: "{{ pjroot }}/vars/kubeconfig/config"
+    state: absent
+    kind: Namespace
+    name: "{{ NETNAME }}"
+
+- name: List all the containers on the network
+  command: >-
+    docker ps -aqf network={{ NETNAME }}
+  register: containers
+
+- name: Remove the container
+  command: >-
+    docker rm -f {{ containers.stdout_lines | join(' ') }}
+  when: containers.stdout_lines | length > 0
+
+- name: Query Fabric docker network
+  command: >-
+    docker network ls -f name={{ NETNAME }} -q
+  register: netstat
+
+- name: Delete fabric docker network if it exists
+  command: "docker network rm {{ NETNAME }}"
+  when: netstat.stdout != ""

@@ -43,12 +43,59 @@
     -subj "/C=US/ST=North Carolina/L=Raleigh/O={{ org }}/CN={{ item.cn }}.{{ org }}"
     -addext "keyUsage=critical,digitalSignature,keyEncipherment,keyCertSign,cRLSign"
     -addext "extendedKeyUsage=serverAuth,clientAuth"
-    -addext "subjectAltName=IP.1:{{ endpoint_address }},DNS.1:{{ item.cn }}.{{ org }}"
+    -addext "subjectAltName=IP.1:{{ endpoint_address }},DNS.1:{{ item.cn }}.{{ org }} DNS.2:{{ item.cn }}-{{ org | replace('.','-') }}"
     -key {{ orgrootpath }}/{{ item.pkey }}
     -out {{ orgrootpath }}/{{ item.cert}}{{ caname }}.{{ org }}-cert.pem
   with_items:
   - "{{ {'pkey': 'ca/priv_sk', 'cert': 'ca/', 'cn': caname } }}"
   - "{{ {'pkey': 'tlsca/priv_sk','cert': 'tlsca/tls', 'cn': 'tls'+caname } }}"
+
+- name: Upload ca certificates to k8s
+  when: ISK8S == true
+  block:
+  - name: Create the namespace
+    k8s:
+      kubeconfig: "{{ pjroot }}/vars/kubeconfig/config"
+      state: present
+      definition:
+        apiVersion: v1
+        kind: Namespace
+        metadata:
+          name: "{{ NETNAME }}"
+
+  - name: Upload org certificate and key
+    k8s:
+      kubeconfig: "{{ pjroot }}/vars/kubeconfig/config"
+      state: present
+      definition:
+        apiVersion: v1
+        kind: Secret
+        type: Opaque
+        metadata:
+          name: "{{ (caname + '-' + org) | replace('.', '-') | lower }}-secret"
+          namespace: "{{ NETNAME }}"
+        data:
+          tls.crt: >-
+            {{ lookup('file', orgrootpath+'/ca/'+caname+'.'+org+'-cert.pem', errors='ignore') | b64encode }}
+          tls.key: >-
+            {{ lookup('file', orgrootpath+'/ca/priv_sk', errors='ignore') | b64encode }}
+
+  - name: Upload org tls certificate and key
+    k8s:
+      kubeconfig: "{{ pjroot }}/vars/kubeconfig/config"
+      state: present
+      definition:
+        apiVersion: v1
+        kind: Secret
+        type: Opaque
+        metadata:
+          name: "{{ (caname + '-' + org) | replace('.', '-') | lower }}-tls-secret"
+          namespace: "{{ NETNAME }}"
+        data:
+          tls.crt: >-
+            {{ lookup('file', orgrootpath+'/tlsca/tls'+caname+'.'+org+'-cert.pem', errors='ignore') | b64encode }}
+          tls.key: >-
+            {{ lookup('file', orgrootpath+'/tlsca/priv_sk', errors='ignore') | b64encode }}
 
 - name: Copy the certificate to the msp directory
   command: >-

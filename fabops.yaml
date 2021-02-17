@@ -9,6 +9,15 @@
     - "./spec.yaml"
     - "./playbooks/ops/opnames.yaml"
   tasks:
+    - name: Check if this is k8s
+      stat: 
+        path: "{{ pjroot }}/vars/kubeconfig/config"
+      register: k8sflag
+
+    - name: "Set k8s env flag"
+      set_fact:
+        ISK8S: "{{ k8sflag.stat.exists }}"
+
     - set_fact:
         allops: "{{ mode.split(',')|list }}"
         status_flag: "Success"

@@ -8,6 +8,7 @@
     path: "{{ pjroot }}/vars"
     file_type: any
     patterns: "*"
+    excludes: 'kubeconfig'
   register: toberemoved
 
 - name: Ansible remove file glob
@@ -28,7 +29,7 @@
   register: toberemoved
   ignore_errors: yes
 
-- name: Ansible remove file glob
+- name: Remove all chaincode images
   when: (toberemoved.stdout_lines|length) > 0
   command: >-
     docker rmi -f {{ toberemoved.stdout_lines|join(' ') }}
