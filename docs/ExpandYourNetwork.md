@@ -89,7 +89,7 @@ Since new orgs joined, the chaincode will need to be approved again so that new 
 
 ```
 cd ~/mysite0
-minifab approve,commit
+minifab approve,discover,commit
 ```
 
 ## Discover and verify the chaincode on orgx
