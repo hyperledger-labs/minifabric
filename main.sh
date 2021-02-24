@@ -15,7 +15,7 @@
 # this may be commented out to resolve installed version of tools if desired
 export PATH=${PWD}/../bin:${PWD}:$PATH
 export FABRIC_CFG_PATH=${PWD}
-export VERBOSE=false
+export VERBOSE=""
 export DOCKER_API_VERSION=1.39
 
 . scripts/mainfuncs.sh
@@ -59,6 +59,8 @@ case $optkey in
     CC_INIT_REQUIRED="$2";shift;shift;;
   -f|--run-output)
     RUN_OUTPUT="$2";shift;shift;;
+  --verbose)
+    VERBOSE="enable";shift;shift;;
   *) # unknown option
     echo "$1 is a not supported option"; exit 1;;
 esac
@@ -97,3 +99,4 @@ if [ ! -d "$(pwd)/vars/app" ]; then
 fi
 
 startMinifab
+unset VERBOSE

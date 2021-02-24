@@ -29,7 +29,7 @@ jobs:
         run: docker build -t hyperledgerlabs/minifab:latest .
 
       - name: 'Setup minifabric network'
-        run: ./minifab up -i ${{ matrix.fabric }}
+        run: ./minifab up -i ${{ matrix.fabric }} --verbose
 
       - name: 'Tear down the network'
         run: ./minifab cleanup

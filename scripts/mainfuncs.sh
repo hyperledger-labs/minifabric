@@ -80,6 +80,7 @@ function printHelp() {
   echo "    -d|--init-required        - chaincode initialization flag, default is true"
   echo "    -f|--run-output           - minifabric run time output callback, can be 'minifab'(default), 'default', 'dense'"
   echo "    -h|--help                 - print this message"
+  echo "    --verbose                 - verbose mode"
   echo
 }
 
@@ -104,7 +105,11 @@ function doDefaults() {
 }
 
 function doOp() {
-  ansible-playbook -i hosts                                                           \
+  export VERBOSE_CMD=""
+  if [ "$VERBOSE" = "enable" ]; then
+      VERBOSE_CMD="-vvvv"
+  fi
+  ansible-playbook -i hosts $VERBOSE_CMD                                              \
   -e "mode=$1" -e "hostroot=$hostroot" -e "CC_LANGUAGE=$CC_LANGUAGE"                  \
   -e "DB_TYPE=$DB_TYPE" -e "CHANNEL_NAME=$CHANNEL_NAME" -e "CC_NAME=$CC_NAME"         \
   -e "CC_VERSION=$CC_VERSION" -e "CHANNEL_NAME=$CHANNEL_NAME" -e "IMAGETAG=$IMAGETAG" \
@@ -112,6 +117,7 @@ function doOp() {
   -e "ADDRS=$ADDRS" -e "CURRENT_ORG=$CURRENT_ORG" -e "BLOCK_NUMBER=$BLOCK_NUMBER"     \
   -e "TRANSIENT_DATA=$TRANSIENT_DATA" -e "CC_PRIVATE=$CC_PRIVATE"                     \
   -e "CC_POLICY=$CC_POLICY" -e "CC_INIT_REQUIRED=$CC_INIT_REQUIRED" fabops.yaml
+  unset VERBOSE_CMD
 }
 
 funcparams='optionverify'
