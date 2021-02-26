@@ -1,7 +1,7 @@
 ---
 - name: Download scripts
   get_url:
-    url: "https://raw.githubusercontent.com/hyperledger-labs/minifabric/master/{{ item.src }}"
+    url: "https://raw.githubusercontent.com/hyperledger-labs/minifabric/main/{{ item.src }}"
     dest: "{{ pjroot }}/vars/{{ item.dest }}"
   with_items:
   - "{{ { 'src': 'minifab', 'dest': 'minifab' } }}"
