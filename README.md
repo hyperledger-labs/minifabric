@@ -1,9 +1,9 @@
 # Minifabric 
 
 ![MiniFab CI](https://github.com/hyperledger-labs/minifabric/workflows/MiniFab%20CI/badge.svg)
-[![Chat](https://raw.githubusercontent.com/hyperledger/chat-assets/master/fabric-mini.svg)](https://chat.hyperledger.org/channel/fabric-mini)
+[![Chat](https://raw.githubusercontent.com/hyperledger/chat-assets/main/fabric-mini.svg)](https://chat.hyperledger.org/channel/fabric-mini)
 
-[中文](https://github.com/hyperledger-labs/minifabric/blob/master/README.zh.md)
+[中文](https://github.com/hyperledger-labs/minifabric/blob/main/README.zh.md)
 
 If you would like to learn Hyperledger Fabric or develop your smart contract, or
 just want to get a feel of Hyperledger Fabric, Minifabric is the tool to
