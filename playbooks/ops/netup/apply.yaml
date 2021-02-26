@@ -12,7 +12,7 @@
   command: >-
     docker volume create {{ item.fullname }}
   with_items:
-    - "{{ ((DB_TYPE|lower) == 'couchdb') | ternary(allpeers+allorderers+allcas+allcouchdbs, allpeers+allorderers+allcas) }}"
+    - "{{ allpeers+allorderers+allcas+(allcouchdbs|default([])) }}"
 
 - name: "Process keys"
   include_tasks: "{{ pjroot }}/playbooks/common/processkeys.yaml"

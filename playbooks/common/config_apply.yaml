@@ -159,21 +159,10 @@
       portainer_port: "{{ nodeport|int +2 }}"
 
   - name: Produce the node env file
-    when: (DB_TYPE|lower) == "couchdb"
     copy:
       dest: "{{ pjroot }}/vars/node_vars.json"
       content: >-
         {{ {'allcas': allcas, 'allpeers': allpeers, 'allorderers': allorderers, 'explorer_port': explorer_port,
-            'portainer_port': portainer_port, 'allcouchdbs': allcouchdbs,
-            'caorgs': caorgs, 'peerorgs': peerorgs, 'ordererorgs': ordererorgs, 'allorgs': allorgs,
-            'orgattrs': orgattrs } | to_nice_json(indent=2) }}
-
-  - name: Produce the node env file
-    when: (DB_TYPE|lower) != "couchdb"
-    copy:
-      dest: "{{ pjroot }}/vars/node_vars.json"
-      content: >-
-        {{ {'allcas': allcas, 'allpeers': allpeers, 'allorderers': allorderers, 'explorer_port': explorer_port,
-            'portainer_port': portainer_port,
+            'portainer_port': portainer_port, 'allcouchdbs': allcouchdbs|default([]),
             'caorgs': caorgs, 'peerorgs': peerorgs, 'ordererorgs': ordererorgs, 'allorgs': allorgs,
             'orgattrs': orgattrs } | to_nice_json(indent=2) }}
