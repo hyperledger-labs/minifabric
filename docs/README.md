@@ -133,9 +133,10 @@ You can place any ca, peer, or orderer node configuration parameters under each 
 
 Example `peer` section
 
-> peer0.org1.com --> mspid = org1-com, organization name = org1.com hostPort=7778  
-> peer1.org1.com --> mspid = org1-com, organization name = org1.com hostPort=7779  
-> peer0.org2.com --> mspid = org2-com, organization name = org2.com hostPort=7780  
+> peer1.org0.example.com --> mspid = org0-example-com, organization name = org0.example.com, hostPort=7778  
+> peer2.org0.example.com --> mspid = org0-example-com, organization name = org0.example.com, hostPort=7779  
+> peer1.org1.example.com --> mspid = org1-example-com, organization name = org1.example.com, hostPort=7780  
+> peer2.org1.example.com --> mspid = org1-example-com, organization name = org1.example.com, hostPort=7781  
 
 In default, **docker network** is automatically generated based on the working directory. This ensures that two different working directories will result in two different docker networks. This allows you to setup multiple sites on the same machine to mimic multiple organizations across multiple machines.
 You can assign specific docker network name by uncomment bellow line in spec.yaml file. This allows you to setup fabric capability on the existing docker network easily. If you have multiple sites on same machine, it will be necessary to have different name for each site to avoid network conflict.
