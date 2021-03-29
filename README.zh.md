@@ -20,11 +20,11 @@ Hyperledger Fabric，迷你Fabric是让您快速开始的良好工具。迷
 
 ## 必要的运行环境
 
-操作系统支持 | 
----- | 
-Linux | 
-OS X |
-Windows |  
+操作系统支持 | 存储空间 |
+|---- | ---- |
+Linux | 5GB |
+OS X |  |
+Windows |   |  
 
 - [docker](https://www.docker.com/)（18.03或更高版本）
 
@@ -74,3 +74,5 @@ minifab
 docker load < fabric_2.1.tar.gz
 docker load < minifab.tar.gz
 ```
+## 文档
+想进一步了解MiniFabric？请参考[文档目录](./docs/README.md)
