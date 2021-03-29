@@ -26,7 +26,8 @@ capabilities of Hyperledger Fabric.
 
 ## Prerequisites
 [docker](https://www.docker.com/) (18.03 or newer) environment
- 
+
+5 GB remaining Disk Storage available
 ## Getting Started    
 
 If you would like to learn more before jumping in, watch the [series of 6 videos](https://www.youtube.com/playlist?list=PL0MZ85B_96CExhq0YdHLPS5cmSBvSmwyO) on how to develop Hyperledger Fabric using Minifabric and read the [blog](https://www.hyperledger.org/blog/2020/04/29/minifabric-a-hyperledger-fabric-quick-start-tool-with-video-guides). For those impatient, please follow the steps below to start things off.
@@ -62,3 +63,6 @@ minifab cleanup
 ```
 minifab
 ```
+
+## Documents
+To know more about MiniFabric, see in [docs](./docs/README.md)
