@@ -2,7 +2,7 @@
 #
 # @see https://github.com/hyperledger-labs/minifabric
 #
-FROM alpine/git AS BUILD
+FROM alpine/git:v2.30.1 AS BUILD
 
 RUN cd /tmp && git init minifabric && cd minifabric                && \
     git remote add origin https://github.com/hyperledger-labs/minifabric   && \
@@ -10,7 +10,7 @@ RUN cd /tmp && git init minifabric && cd minifabric                && \
     mv pypatch /tmp && \
     rm -f .dockerignore .gitignore Dockerfile DockerfileHub 
 
-FROM alpine:latest
+FROM alpine:3.13
 
 LABEL maintainer="litong01@us.ibm.com"
 
