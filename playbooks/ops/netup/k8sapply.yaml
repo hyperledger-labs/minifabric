@@ -10,7 +10,7 @@
 
 - name: Set ca image release
   set_fact:
-    desiredrelease: "{{ fabric.release is version('2.0', '<') | ternary(fabric.release, '1.4') }}"
+    desiredrelease: "{{ fabric.release is version('2.0', '<') | ternary(fabric.release, '1.5') }}"
 
 - name: "Process keys"
   include_tasks: "{{ pjroot }}/playbooks/common/processkeys.yaml"
