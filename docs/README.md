@@ -130,19 +130,25 @@ You can place any ca, peer, or orderer node configuration parameters under each 
 - **Organization Name** for each node is the part of the domain name after the first dot (.)
 - **mspid** for each Organization is the translated Organization Name by substituting every dot (.) with a dash (-)
 - host **port** is generated as incremental sequences of starting port number (supplied in -e 7778)
+    - The second port(`7061`) of peer will be mapped to host port of [1000 + mapped host port number of its first port(`7051`)]
 
-Example `peer` section
+For example, following is the result for default spec.yaml with `-e 7778`
 
-> peer1.org0.example.com --> mspid = org0-example-com, organization name = org0.example.com, hostPort=7778  
-> peer2.org0.example.com --> mspid = org0-example-com, organization name = org0.example.com, hostPort=7779  
-> peer1.org1.example.com --> mspid = org1-example-com, organization name = org1.example.com, hostPort=7780  
-> peer2.org1.example.com --> mspid = org1-example-com, organization name = org1.example.com, hostPort=7781  
+> ca1.org0.example.com --> hostPort=7778
+> ca1.org1.example.com --> hostPort=7779
+> orderer1.example.com --> 0.0.0.0:7784->7050/tcp, 0.0.0.0:8784->7060/tcp   
+> orderer2.example.com --> 0.0.0.0:7785->7050/tcp, 0.0.0.0:8785->7060/tcp   
+> orderer3.example.com --> 0.0.0.0:7786->7050/tcp, 0.0.0.0:8786->7060/tcp   
+> peer1.org0.example.com --> mspid = org0-example-com, organization name = org0.example.com, hostPort=7780, 8780
+> peer2.org0.example.com --> mspid = org0-example-com, organization name = org0.example.com, hostPort=7781, 8781
+> peer1.org1.example.com --> mspid = org1-example-com, organization name = org1.example.com, hostPort=7782, 8782
+> peer2.org1.example.com --> mspid = org1-example-com, organization name = org1.example.com, hostPort=7783, 8783
 
 In default, **docker network** is automatically generated based on the working directory. This ensures that two different working directories will result in two different docker networks. This allows you to setup multiple sites on the same machine to mimic multiple organizations across multiple machines.
 You can assign specific docker network name by uncomment bellow line in spec.yaml file. This allows you to setup fabric capability on the existing docker network easily. If you have multiple sites on same machine, it will be necessary to have different name for each site to avoid network conflict.
 
 ```
-  # netname: "mysite0"
+  # netname: "mysite"
 ```
 
 You can add options for starting containers by uncomment bellow line in spec.yaml file. you can specify any option which supported by 'docker run' command.
