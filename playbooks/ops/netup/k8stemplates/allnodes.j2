@@ -45,7 +45,7 @@ spec:
           secretName: "{{ nodename }}-tls-secret"
       containers:
       - name: {{ nodename }}
-        image: hyperledger/fabric-ca:1.5
+        image: hyperledger/fabric-ca:1.4
         imagePullPolicy: IfNotPresent
         env:
         - { name: "FABRIC_CA_HOME", value: "/etc/hyperledger/fabric-ca-server" }

@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        fabric: ['2.0.0', '2.1.0', '2.2', '2.2.0', '2.3', '2.4']
+        fabric: ['1.4.4', '1.4.6', '1.4.8', '2.0.0', '2.1.0', '2.2', '2.2.0', '2.3']
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
