@@ -181,6 +181,66 @@ spec:
 {%   endfor %}
 {% endif %}
 
+{% if (DB_TYPE|lower) == "couchdb" and (allcouchdbs | length > 0) %}
+# All couchDB nodes and services
+{%   for node in allcouchdbs %}
+{%     set nodename=(node.fullname|replace('.','-'))  %}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    k8s-app: {{ nodename }}
+  name: {{ nodename }}
+  namespace: "{{ NETNAME }}"
+spec:
+  selector:
+    k8s-app: {{ nodename }}
+  ports:
+  - name: couchport
+    port: 5984
+    targetPort: 5984
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ nodename }}
+  namespace: "{{ NETNAME }}"
+spec:
+  selector:
+    matchLabels:
+      k8s-app: {{ nodename }}
+      type: couchdb
+  serviceName: {{ nodename }}
+  replicas: 1
+  volumeClaimTemplates:
+  - metadata:
+      name: {{ nodename }}-data
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 5Gi
+  template:
+    metadata:
+      labels:
+        k8s-app: {{ nodename }}
+        type: couchdb
+    spec:
+     #volumes:
+     #initContainers:
+      containers:
+      - name: couchdb
+        image: hyperledger/fabric-couchdb:latest
+        imagePullPolicy: IfNotPresent
+        env:
+        - { name: "COUCHDB_USER",     value: "admin"   }
+        - { name: "COUCHDB_PASSWORD", value: "adminpw" }
+        volumeMounts:
+        - { mountPath: "/opt/couchdb/data", name: "{{ nodename }}-data" }
+{%   endfor %}
+{% endif %}
 
 {% if allpeers is defined and (allpeers | length > 0) %}
 # All peer nodes and services
@@ -330,6 +390,12 @@ spec:
 {%        for setting in (fabric.settings.peer|dict2items) %}
         - { name: "{{ setting.key }}", value: "{{ setting.value }}" }
 {%        endfor %}
+{%      endif %}
+{%      if (DB_TYPE|lower) == "couchdb"  %}
+        - { name: "CORE_LEDGER_STATE_STATEDATABASE",                  value: "CouchDB" }
+        - { name: "CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS",   value: "{{ node.fullname | replace('.','-') }}-couchdb:5984" }
+        - { name: "CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME",         value: "admin" }
+        - { name: "CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD",         value: "adminpw" }
 {%      endif %}
         volumeMounts:
           - { mountPath: "/cacerts", name: "ca-cert-key" }
