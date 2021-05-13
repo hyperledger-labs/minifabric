@@ -160,7 +160,10 @@ spec:
         - { name: "ORDERER_GENERAL_TLS_SERVERHOSTOVERRIDE",    value: "{{ node.name }}" }
         - { name: "ORDERER_GENERAL_TLS_PRIVATEKEY",            value: "/etc/hyperledger/tlscerts/tls.key" }
         - { name: "ORDERER_GENERAL_TLS_CERTIFICATE",           value: "/etc/hyperledger/tlscerts/tls.crt" }
-        - { name: "ORDERER_GENERAL_TLS_ROOTCAS",               value: "[/etc/hyperledger/tlscerts/tls.crt]" }
+        - { name: "ORDERER_GENERAL_TLS_ROOTCAS",               value: "[/etc/hyperledger/tlscerts/ca.crt]" }
+        - { name: "ORDERER_GENERAL_CLUSTER_CLIENTPRIVATEKEY",  value: "/etc/hyperledger/tlscerts/tls.key" }
+        - { name: "ORDERER_GENERAL_CLUSTER_CLIENTCERTIFICATE", value: "/etc/hyperledger/tlscerts/tls.crt" }
+        - { name: "ORDERER_GENERAL_CLUSTER_ROOTCAS",           value: "[/etc/hyperledger/tlscerts/ca.crt]" }
         - { name: "ORDERER_GENERAL_FILELEDGER_LOCATION",       value: "/var/hyperledger/production" }
 {%      if fabric.settings is defined and fabric.settings.orderer is defined %}
 {%        for setting in (fabric.settings.orderer|dict2items) %}
