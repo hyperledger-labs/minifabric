@@ -130,3 +130,5 @@
             {{ lookup('file', orgrootpath+partyroot+'/tls/'+partytype+'.crt', errors='ignore') | b64encode }}
           tls.key: >-
             {{ lookup('file', orgrootpath+partyroot+'/tls/'+partytype+'.key', errors='ignore') | b64encode }}
+          ca.crt: >-
+            {{ lookup('file', orgrootpath+partyroot+'/tls/ca.crt', errors='ignore') | b64encode }}
