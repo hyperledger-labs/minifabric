@@ -40,9 +40,6 @@ spec:
       - name: cert-key-id
         secret:
           secretName: "{{ nodename }}-secret"
-      - name: cert-key-tls
-        secret:
-          secretName: "{{ nodename }}-tls-secret"
       containers:
       - name: {{ nodename }}
         image: hyperledger/fabric-ca:1.4
@@ -53,11 +50,10 @@ spec:
         - { name: "FABRIC_CA_SERVER_CA_KEYFILE", value: "/etc/hyperledger/fabric-ca/idcerts/tls.key" }
         - { name: "FABRIC_CA_SERVER_CA_CERTFILE", value: "/etc/hyperledger/fabric-ca/idcerts/tls.crt" }
         - { name: "FABRIC_CA_SERVER_TLS_ENABLED", value: "true" }
-        - { name: "FABRIC_CA_SERVER_TLS_KEYFILE", value: "/etc/hyperledger/fabric-ca/tlscerts/tls.key" }
-        - { name: "FABRIC_CA_SERVER_TLS_CERTFILE", value: "/etc/hyperledger/fabric-ca/tlscerts/tls.crt" }
+        - { name: "FABRIC_CA_SERVER_TLS_KEYFILE", value: "/etc/hyperledger/fabric-ca/idcerts/tls.key" }
+        - { name: "FABRIC_CA_SERVER_TLS_CERTFILE", value: "/etc/hyperledger/fabric-ca/idcerts/tls.crt" }
         volumeMounts:
           - { mountPath: "/etc/hyperledger/fabric-ca/idcerts", name: "cert-key-id" }
-          - { mountPath: "/etc/hyperledger/fabric-ca/tlscerts", name: "cert-key-tls" }
         command: ["fabric-ca-server"]
         args:  ["start", "-b", "admin:adminpw", "-d"]
 {%   endfor %}
