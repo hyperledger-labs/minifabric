@@ -52,6 +52,11 @@ spec:
         - { name: "FABRIC_CA_SERVER_TLS_ENABLED", value: "true" }
         - { name: "FABRIC_CA_SERVER_TLS_KEYFILE", value: "/etc/hyperledger/fabric-ca/idcerts/tls.key" }
         - { name: "FABRIC_CA_SERVER_TLS_CERTFILE", value: "/etc/hyperledger/fabric-ca/idcerts/tls.crt" }
+{%      if fabric.settings is defined and fabric.settings.ca is defined %}
+{%        for setting in (fabric.settings.ca|dict2items) %}
+        - { name: "{{ setting.key }}",                      value: "{{ setting.value }}" }
+{%        endfor %}
+{%      endif %}
         volumeMounts:
           - { mountPath: "/etc/hyperledger/fabric-ca/idcerts", name: "cert-key-id" }
         command: ["fabric-ca-server"]
