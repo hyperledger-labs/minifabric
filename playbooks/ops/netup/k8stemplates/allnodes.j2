@@ -30,6 +30,15 @@ spec:
       type: ca
   serviceName: {{ nodename }}
   replicas: 1
+  volumeClaimTemplates:
+  - metadata:
+      name: {{ nodename }}-data
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 1Gi
   template:
     metadata:
       labels:
@@ -59,6 +68,7 @@ spec:
 {%      endif %}
         volumeMounts:
           - { mountPath: "/etc/hyperledger/fabric-ca/idcerts", name: "cert-key-id" }
+          - { mountPath: "/etc/hyperledger/fabric-ca-server", name: "{{ nodename }}-data" }
         command: ["fabric-ca-server"]
         args:  ["start", "-b", "admin:adminpw", "-d"]
 {%   endfor %}
