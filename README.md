@@ -66,3 +66,6 @@ minifab
 
 ## Documents
 To know more about MiniFabric, see in [docs](./docs/README.md)
+
+## known issues
+To know more details, see in [KnownIssues](./docs/KnownIssues.md)
