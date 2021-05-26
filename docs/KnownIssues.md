@@ -1,11 +1,15 @@
 # Known Issues
 This document lists the known issues that you may experience during operation of minifabric.
+
+1. [Error installing chaincode](#1)
+2. [Service Endpoint Error](#2)
+
 ****
 ### ISSUE:
 
-Error: chaincode install failed with status: 500 - failed to invoke backing implementation of 'InstallChaincode'
+<a name="1"></a>Error: chaincode install failed with status: 500 - failed to invoke backing implementation of 'InstallChaincode'
 
-### ENVIRONMENT: 
+### ENVIRONMENT:
 
 Mac with Intel Chip / MacOS Big Sur 11.3.1 / Docker 20.10.6
 
@@ -23,9 +27,9 @@ Mac with Intel Chip / MacOS Big Sur 11.3.1 / Docker 20.10.6
 
 ### ISSUE:
 
-ServiceEndpoint Error: Failed to connect to remote gRPC server x.x.x.x:xxxx, url:grpcs://localhost:xxxx  
+<a name="2"></a>ServiceEndpoint Error: Failed to connect to remote gRPC server x.x.x.x:xxxx, url:grpcs://localhost:xxxx
 
-### ENVIRONMENT: 
+### ENVIRONMENT:
 
 Kubernetes / K8S
 
