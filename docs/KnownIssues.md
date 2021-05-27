@@ -1,8 +1,11 @@
 # Known Issues
 This document lists the known issues that you may experience during operation of minifabric.
 
+### Chaincode Installation
 1. [Error installing chaincode](#1)
-2. [Service Endpoint Error](#2)
+
+### Kubernetes
+1. [Service Endpoint Error](#2)
 
 ****
 ### ISSUE:
