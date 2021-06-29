@@ -15,7 +15,7 @@
     register: ingressvc
   - name: pickup ports in ingress
     set_fact:
-      lives: "{{ ingressvc.resources[0].spec.ports }}"
+      lives: "{{ ingressvc.resources[0].spec.ports | default([])  }}"
   - name: build the list of items to remove from ingress services
     set_fact:
       jsonpaths: "{{ jsonpaths + [ '/spec/ports/' + (idx|string) ]  }}"
