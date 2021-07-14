@@ -1,3 +1,9 @@
+{% set affinity_stress =  { 'prefer': 'preferredDuringSchedulingIgnoredDuringExecution' }
+%}
+{% set affinity_conf = { 'keyprefix': 'dock',
+                         'weight': { 'hlf-fqdn': 60, 'hlf-type': 40, 'hlf-dn': 10 } }
+%}
+
 {% if allcas is defined and (allcas | length > 0) %}
 # All the ca nodes and services
 {%   for node in allcas %}
@@ -27,7 +33,10 @@ spec:
   selector:
     matchLabels:
       k8s-app: {{ nodename }}
-      type: ca
+      hlf-type: {{ node.type }}
+      hlf-fqdn: {{ node.fullname }}
+      hlf-dn:  {{ node.org }}
+      hlf-mspid: {{ node.mspid }}
   serviceName: {{ nodename }}
   replicas: 1
   volumeClaimTemplates:
@@ -43,8 +52,37 @@ spec:
     metadata:
       labels:
         k8s-app: {{ nodename }}
-        type: ca
+        hlf-type: {{ node.type }}
+        hlf-fqdn: {{ node.fullname }}
+        hlf-dn:  {{ node.org }}
+        hlf-mspid: {{ node.mspid }}
     spec:
+      # in case of statefulset, affinity location is  spec.template.spec.affinity
+      # cf. https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/
+      affinity:
+          nodeAffinity:
+            {{affinity_stress.prefer }}:
+              - weight: {{ affinity_conf.weight['hlf-fqdn'] }}
+                preference:
+                  matchExpressions:
+                    - key: {{affinity_conf.keyprefix}}.hlf-fqdn/{{node.fullname}}
+                      operator: In
+                      values:
+                        - "ok"
+              - weight: {{affinity_conf.weight['hlf-type']}}
+                preference:
+                  matchExpressions:
+                    - key: {{affinity_conf.keyprefix}}.hlf-type/{{node.type}}
+                      operator: In
+                      values:
+                        - "ok"
+              - weight: {{affinity_conf.weight['hlf-dn']}}
+                preference:
+                  matchExpressions:
+                    - key: {{affinity_conf.keyprefix}}.hlf-dn/{{node.org}}
+                      operator: In
+                      values:
+                        - "ok"
       volumes:
       - name: cert-key-id
         secret:
@@ -105,7 +143,10 @@ spec:
   selector:
     matchLabels:
       k8s-app: {{ nodename }}
-      type: orderer
+      hlf-type: {{ node.type }}
+      hlf-fqdn: {{ node.fullname }}
+      hlf-dn:  {{ node.org }}
+      hlf-mspid: {{ node.mspid }}
   serviceName: {{ nodename }}
   replicas: 1
   volumeClaimTemplates:
@@ -121,8 +162,37 @@ spec:
     metadata:
       labels:
         k8s-app: {{ nodename }}
-        type: orderer
+        hlf-type: {{ node.type }}
+        hlf-fqdn: {{ node.fullname }}
+        hlf-dn:  {{ node.org }}
+        hlf-mspid: {{ node.mspid }}
     spec:
+      # cf. https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/
+      # in case of statefulset, affinity location is  template.sepc.affinity
+      affinity:
+          nodeAffinity:
+            {{affinity_stress.prefer }}:
+              - weight: {{ affinity_conf.weight['hlf-fqdn'] }}
+                preference:
+                  matchExpressions:
+                    - key: {{affinity_conf.keyprefix}}.hlf-fqdn/{{node.fullname}}
+                      operator: In
+                      values:
+                        - "ok"
+              - weight: {{affinity_conf.weight['hlf-type']}}
+                preference:
+                  matchExpressions:
+                    - key: {{affinity_conf.keyprefix}}.hlf-type/{{node.type}}
+                      operator: In
+                      values:
+                        - "ok"
+              - weight: {{affinity_conf.weight['hlf-dn']}}
+                preference:
+                  matchExpressions:
+                    - key: {{affinity_conf.keyprefix}}.hlf-dn/{{node.org}}
+                      operator: In
+                      values:
+                        - "ok"
       volumes:
       - name: cert-key-id
         secret:
@@ -224,7 +294,10 @@ spec:
   selector:
     matchLabels:
       k8s-app: {{ nodename }}
-      type: couchdb
+      hlf-type: {{ node.type }}
+      hlf-fqdn: {{ node.fullname }}
+      hlf-dn:  {{ node.org }}
+      hlf-mspid: {{ node.mspid }}
   serviceName: {{ nodename }}
   replicas: 1
   volumeClaimTemplates:
@@ -240,8 +313,35 @@ spec:
     metadata:
       labels:
         k8s-app: {{ nodename }}
-        type: couchdb
+        hlf-type: {{ node.type }}
+        hlf-fqdn: {{ node.fullname }}
+        hlf-dn:  {{ node.org }}
+        hlf-mspid: {{ node.mspid }}
     spec:
+      affinity:
+          nodeAffinity:
+            {{affinity_stress.prefer }}:
+              - weight: {{ affinity_conf.weight['hlf-fqdn'] }}
+                preference:
+                  matchExpressions:
+                    - key: {{affinity_conf.keyprefix}}.hlf-fqdn/{{node.fullname}}
+                      operator: In
+                      values:
+                        - "ok"
+              - weight: {{affinity_conf.weight['hlf-type']}}
+                preference:
+                  matchExpressions:
+                    - key: {{affinity_conf.keyprefix}}.hlf-type/{{node.type}}
+                      operator: In
+                      values:
+                        - "ok"
+              - weight: {{affinity_conf.weight['hlf-dn']}}
+                preference:
+                  matchExpressions:
+                    - key: {{affinity_conf.keyprefix}}.hlf-dn/{{node.org}}
+                      operator: In
+                      values:
+                        - "ok"
      #volumes:
      #initContainers:
       containers:
@@ -290,7 +390,10 @@ spec:
   selector:
     matchLabels:
       k8s-app: {{ nodename }}
-      type: peer
+      hlf-type: {{ node.type }}
+      hlf-fqdn: {{ node.fullname }}
+      hlf-dn:  {{ node.org }}
+      hlf-mspid: {{ node.mspid }}
   serviceName: {{ nodename }}
   replicas: 1
   volumeClaimTemplates:
@@ -306,8 +409,37 @@ spec:
     metadata:
       labels:
         k8s-app: {{ nodename }}
-        type: peer
+        hlf-type: {{ node.type }}
+        hlf-fqdn: {{ node.fullname }}
+        hlf-dn:  {{ node.org }}
+        hlf-mspid: {{ node.mspid }}
     spec:
+      # cf. https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/
+      # in case of statefulset, affinity location is  template.sepc.affinity
+      affinity:
+          nodeAffinity:
+            {{affinity_stress.prefer }}:
+              - weight: {{ affinity_conf.weight['hlf-fqdn'] }}
+                preference:
+                  matchExpressions:
+                    - key: {{affinity_conf.keyprefix}}.hlf-fqdn/{{node.fullname}}
+                      operator: In
+                      values:
+                        - "ok"
+              - weight: {{affinity_conf.weight['hlf-type']}}
+                preference:
+                  matchExpressions:
+                    - key: {{affinity_conf.keyprefix}}.hlf-type/{{node.type}}
+                      operator: In
+                      values:
+                        - "ok"
+              - weight: {{affinity_conf.weight['hlf-dn']}}
+                preference:
+                  matchExpressions:
+                    - key: {{affinity_conf.keyprefix}}.hlf-dn/{{node.org}}
+                      operator: In
+                      values:
+                        - "ok"
       volumes:
       - name: varlibdocker
         emptyDir: {}

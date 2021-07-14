@@ -104,7 +104,67 @@ Minifabric detectes the presence of the `vars/kubeconfig/config` file, it will f
 the process. In this `spec.yaml` file, you can customize the node just like you do
 normally with Docker environment deployment.
 
-### 6. Deploy Fabric network onto your Kubernetes cluster
+### 6. (optional) Assign labels to nodes for controlling pod and node binding.
+
+first, check the node and labels in your k8s.
+```
+kubectl get node --show-labels
+NAME        STATUS   ROLES    AGE    VERSION   LABELS
+node1       Ready    <none>   3h12m   v1.19.6  ...
+node2       Ready    <none>   3h12m   v1.19.6  ...
+```
+
+assign labels  to node for controlling pod and node binding.
+```
+# this is a sample, play and decide bindings by yourself
+
+# add label to node
+#      all pods in org0 => node1
+kubectl label node node1 dock.hlf-dn/org0.example.com=ok
+#      all pods in org1 => node2
+kubectl label node node2 dock.hlf-dn/org1.example.com=ok
+#      all ordererer  => node2, excepts orderer1 => node1
+kubectl label node node2 dock.hlf-type/orderer=ok
+kubectl label node node1 dock.hlf-fqdn/orderer1.example.com=ok
+:
+
+# delete label from node
+kubectl label node node1 dock.hlf-dn/org0.example.com-
+kubectl label node node2 dock.hlf-dn/org1.example.com-
+kubectl label node node2 dock.hlf-type/orderer-
+kubectl label node node1 dock.hlf-fqdn/orderer1.example.com-
+:
+```
+
+As you see the above, three types of label involved to control the pod's destination node.
+
+* Type A (strongest;  dock.hlf-fqdn/*)
+   - you can fully control, one by one.
+   - the word following 'dock.hlf-fqdn/' is up to your spec.yaml.
+* Type B (second;     dock.hlf-type/*)
+   - you can control type by type.
+   - defined labels are followings:
+       - dock.hlf-type/peer:     all pods listed in 'peers:' of spec.yaml
+       - dock.hlf-type/orderer:  all pods listed in 'orderer:' of spec.yaml
+       - dock.hlf-type/ca:       all pods listed in 'cas:' of spec.yaml
+       - dock.hlf-type/couchdb:  all backend pods for peers only if 'minifab ... -s couchdb' is supecified.
+* Type C (3rd;        dock.hlf-dn/*)
+   - you can control domain by domain
+   - the word following 'dock.hlf-dn/' is up to your spec.yaml.
+
+* note: node labeling for couchdb needs a little care as following example:
+   - dock.hlf-fqdn/peer1.org0.example.com.couchdb=ok   ('.couchdb' appended at the end of the frontend peer's fqdn).
+   - dock.hlf-dn/org0.example.com=ok controls couchdb as well as peer and ca.
+
+* You can assign multiple labels to a node(in mixing also allowed).
+* after pods deployment, you can check binding results by ```kubectl get pod -A -o wide```
+* this feature works ONLY IF you assigned labels BEFORE deploying Fabric network.
+
+* NOTE: k8s deploys a pod by original manner as before, in following cases:
+   - if corresponding label is not assigned in any nodes.
+   - if destination node reached to the max-pods-per-node limitation
+
+### 7. Deploy Fabric network onto your Kubernetes cluster
 
 Once all the above steps are done, you can run the `minifab up` command to get your
 Fabric network running in the Kubernetes cluster.
@@ -116,7 +176,7 @@ Fabric network running in the Kubernetes cluster.
 Notice the `-e` command line flag which is now also required for the same reason as
 the `endpoint_address` configuration in `spec.yaml` file
 
-### 7. Remove Fabric network from your Kubernetes cluster
+### 8. Remove Fabric network from your Kubernetes cluster
 
 To remove everything including the persistent storage created during the deployment,
 you can simply run the good old `minifab cleanup` command:
@@ -125,7 +185,7 @@ you can simply run the good old `minifab cleanup` command:
    minifab cleanup
 ```
 
-### 8. How about other operations?
+### 9. How about other operations?
 
 Minifabric supports all operations in Kubernetes cluster just like it supports
 all Fabric operations like in Docker env. If you like to join a channel, install

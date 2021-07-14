@@ -1,4 +1,4 @@
-{% set defaultPort={'ca': '7054', 'peer':'7051', 'orderer': '7050', 'db':'5984'} %}
+{% set defaultPort={'ca': '7054', 'peer':'7051', 'orderer': '7050', 'couchdb':'5984'} %}
 {% if allorgs is defined and (allorgs|length > 0) %}
 # The TCP service configmap which should include all the ports to be exposed
 ---

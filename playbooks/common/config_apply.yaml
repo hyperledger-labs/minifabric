@@ -62,7 +62,7 @@
         allcouchdbs: |
           {{ allcouchdbs + [{'org':item.split('.')[1:] | join("."), 'portmap':'',
             'url': item+'.couchdb', 'port': '5984', 'mspid': item.split('.')[1:] | join('-'),
-            'name':item.split('.')[0]+'.couchdb', 'fullname': item+'.couchdb', 'type': 'db' }] }}
+            'name':item.split('.')[0]+'.couchdb', 'fullname': item+'.couchdb', 'type': 'couchdb' }] }}
       with_items: "{{ fabric.peers }}"
       when: fabric.peers is defined and (DB_TYPE|lower) == "couchdb"
 
@@ -108,7 +108,7 @@
           {{ allcouchdbs + [{'org':item.split('.')[1:] | join("."),
             'url': ipaddr, 'port': nodeport, 'portmap':'-p '+nodeport+':5984',
             'mspid': item.split('.')[1:] | join('-'),
-            'name':item.split('.')[0]+'.couchdb', 'fullname': item+'.couchdb', 'type': 'db' }] }}
+            'name':item.split('.')[0]+'.couchdb', 'fullname': item+'.couchdb', 'type': 'couchdb' }] }}
         nodeport: "{{ nodeport|int + 1 }}"
       with_items: "{{ fabric.peers }}"
       when: fabric.peers is defined and (DB_TYPE|lower) == "couchdb"
