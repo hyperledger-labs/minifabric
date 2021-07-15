@@ -151,6 +151,22 @@ spec:
   replicas: 1
   volumeClaimTemplates:
   - metadata:
+      name: {{ nodename }}-tmp
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 100Mi
+  - metadata:
+      name: {{ nodename }}-msp
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 100Mi
+  - metadata:
       name: {{ nodename }}-data
     spec:
       accessModes:
@@ -223,14 +239,14 @@ spec:
           cp /idcerts/tls.key msp/keystore/priv_sk
           cp /admincerts/tls.crt msp/admincerts/Admin@{{ node.org }}-cert.pem
           cp /cacerts/tls.crt msp/cacerts/{{caname}}.{{ node.org }}-cert.pem
-          [[ -d data ]] || mkdir data
           ls -lR /dataroot
         volumeMounts:
           - { mountPath: "/admincerts", name: "admin-cert-key" }
           - { mountPath: "/cacerts", name: "ca-cert-key" }
           - { mountPath: "/idcerts", name: "cert-key-id" }
           - { mountPath: "/tlscerts", name: "cert-key-tls" }
-          - { mountPath: "/dataroot", name: "{{ nodename }}-data" }
+          - { mountPath: "/dataroot", name: "{{ nodename }}-tmp" }
+          - { mountPath: "/dataroot/msp", name: "{{ nodename }}-msp" }
       containers:
       - name: {{ nodename }}
         image: hyperledger/fabric-orderer:{{ fabric.release }}
@@ -259,8 +275,8 @@ spec:
           - { mountPath: "/etc/hyperledger/idcerts", name: "cert-key-id" }
           - { mountPath: "/etc/hyperledger/tlscerts", name: "cert-key-tls" }
           - { mountPath: "/etc/hyperledger/genesisfile", name: "genesis-block" }
-          - { mountPath: "/var/hyperledger/production", name: "{{ nodename }}-data", subPath: data }
-          - { mountPath: "/etc/hyperledger/fabric/msp", name: "{{ nodename }}-data", subPath: msp }
+          - { mountPath: "/var/hyperledger/production", name: "{{ nodename }}-data"}
+          - { mountPath: "/etc/hyperledger/fabric/msp", name: "{{ nodename }}-msp" }
         command: ["orderer"]
 {%   endfor %}
 {% endif %}
@@ -398,6 +414,22 @@ spec:
   replicas: 1
   volumeClaimTemplates:
   - metadata:
+      name: {{ nodename }}-tmp
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 100Mi
+  - metadata:
+      name: {{ nodename }}-msp
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 100Mi
+  - metadata:
       name: {{ nodename }}-data
     spec:
       accessModes:
@@ -475,14 +507,14 @@ spec:
           cp /idcerts/tls.key msp/keystore/priv_sk
           cp /admincerts/tls.crt msp/admincerts/Admin@{{ node.org }}-cert.pem
           cp /cacerts/tls.crt msp/cacerts/{{caname}}.{{ node.org }}-cert.pem
-          [[ -d data ]] || mkdir data
           ls -R /dataroot
         volumeMounts:
           - { mountPath: "/admincerts", name: "admin-cert-key" }
           - { mountPath: "/cacerts", name: "ca-cert-key" }
           - { mountPath: "/idcerts", name: "cert-key-id" }
           - { mountPath: "/tlscerts", name: "cert-key-tls" }
-          - { mountPath: "/dataroot", name: "{{ nodename }}-data" }
+          - { mountPath: "/dataroot", name: "{{ nodename }}-tmp" }
+          - { mountPath: "/dataroot/msp", name: "{{ nodename }}-msp" }
       containers:
       - name: dind
         image: docker:20.10.3-dind
@@ -548,8 +580,8 @@ spec:
           - { mountPath: "/cacertstls", name: "ca-cert-key-tls" }
           - { mountPath: "/idcerts", name: "cert-key-id" }
           - { mountPath: "/tlscerts", name: "cert-key-tls" }
-          - { mountPath: "/var/hyperledger/production", name: "{{ nodename }}-data", subPath: data }
-          - { mountPath: "/etc/hyperledger/fabric/msp", name: "{{ nodename }}-data", subPath: msp }
+          - { mountPath: "/var/hyperledger/production", name: "{{ nodename }}-data"}
+          - { mountPath: "/etc/hyperledger/fabric/msp", name: "{{ nodename }}-msp" }
           - { mountPath: "/var/run", name: "rundind" }
         command: ["peer"]
         args: ["node", "start"]
