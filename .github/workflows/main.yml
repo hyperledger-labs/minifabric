@@ -38,3 +38,20 @@ jobs:
 
       - name: 'Tear down the network'
         run: ./minifab cleanup
+
+  dockerhub:
+    name: Docker
+    needs: build
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'push' }}
+
+    steps:
+    - name: Checkout sources
+      uses: actions/checkout@v2
+    - run: docker build . -t hyperledgerlabs/minifab:latest
+    - name: Login to DockerHub
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.DH_USER }}
+        password: ${{ secrets.DH_KEY }}
+    - run: docker push hyperledgerlabs/minifab:latest
