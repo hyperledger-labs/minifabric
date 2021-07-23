@@ -38,11 +38,11 @@
 - name: Create cert extension file
   template:
     src: "{{ pjroot }}/playbooks/ops/certgen/templates/v3.j2"
-    dest: "{{ pjroot }}/playbooks/ops/certgen/v3.ext"
+    dest: "{{orgrootpath+partyroot}}/v3.ext"
 
 - name: Sign the certificate using root ca private key and certificate
   command: >-
-    openssl x509 -req -days 3560 -extfile {{ pjroot }}/playbooks/ops/certgen/v3.ext
+    openssl x509 -req -days 3560 -extfile {{orgrootpath+partyroot}}/v3.ext
     -in {{ orgrootpath }}{{ partyroot}}{{ item.csrpath }}.csr
     -CA {{ orgrootpath }}/{{ item.ca }}
     -CAkey {{ orgrootpath }}/{{ item.cakey }} -CAcreateserial -sha256
