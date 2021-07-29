@@ -47,11 +47,17 @@
     gopath: "{{ (fabric.release is version('2.0', '>='))|ternary('/go', '/opt/gopath') }}"
 
 - name: Start cli container for all fabric operations
-  command: >-
-    docker run -dit --network {{ NETNAME }} --name {{ CLINAME }} --hostname {{ CLINAME }}
-    -v /var/run/docker.sock:/var/run/docker.sock
-    -v {{ hostroot }}/vars:/vars
-    -v {{ hostroot }}/vars/chaincode:{{ gopath }}/src/github.com/chaincode
-    {{ container_options }}
-    hyperledger/fabric-tools:{{ fabric.release }}
-  ignore_errors: yes
+  block:
+  - name: get environment variable from current shell ( https_proxy )
+    include_tasks: "{{ pjroot }}/playbooks/common/inherit_envs_from_localshell.yaml"
+
+  - name: start cli container
+    command: >-
+      docker run -dit --network {{ NETNAME }} --name {{ CLINAME }} --hostname {{ CLINAME }}
+      -v /var/run/docker.sock:/var/run/docker.sock
+      -v {{ hostroot }}/vars:/vars
+      -v {{ hostroot }}/vars/chaincode:{{ gopath }}/src/github.com/chaincode
+      -e https_proxy={{ https_proxy }} -e no_proxy={{ no_proxy }}
+      {{ container_options }}
+      hyperledger/fabric-tools:{{ fabric.release }}
+    ignore_errors: yes

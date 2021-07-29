@@ -1,0 +1,4 @@
+- name: get environment variables from current shell for proxy
+  set_fact:
+    https_proxy: "{{ lookup('env', 'https_proxy') | default('') }}"
+    no_proxy:    "{{ lookup('env', 'no_proxy')    | default('') }}"

@@ -104,7 +104,41 @@ Minifabric detectes the presence of the `vars/kubeconfig/config` file, it will f
 the process. In this `spec.yaml` file, you can customize the node just like you do
 normally with Docker environment deployment.
 
-### 6. (optional) Assign labels to nodes for controlling pod and node binding.
+### 6. (conditional) http proxy consideration
+
+If http proxy exists between your operating machine and kubernetes,
+you need follows this section. otherwise, skip to next section.
+
+more specifically, when your case is:
+- setup fabric from your office, onto cloud managed kubernetes cluster => follow this section
+- setup fabric from your office, onto on-premise kubernetes cluster    => skip to next section.
+- other cases                                                          => maybe skip to next section.
+
+
+at current, it needs to set following envirormnent varibales in terminall shell.
+
+on linux:
+```bash
+#
+export https_proxy=http://yourID:yourPass@yourProxyhost:port/
+# you can use no_proxy environment vairable as usuall.
+export no_proxy=localhost,127.0.0.1/8,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,*.local,*.yourdomain.com
+
+# for kubernetes operation via ansible
+export K8A_AUTH_PROXY=http://yourProxyhost:port/
+export K8S_AUTH_PROXY_HEADERS_PROXY_BASIC_AUTH=yourID:yourPass
+```
+
+on win10:
+```bat
+set https_proxy=http://yourID:yourPass@yourProxyhost:port/
+set no_proxy=localhost,127.0.0.1/8,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,*.local,*.yourdomain.com
+set K8A_AUTH_PROXY=http://yourProxyhost:port/
+set K8S_AUTH_PROXY_HEADERS_PROXY_BASIC_AUTH=yourID:yourPass
+REM you can set above variables as environment variables in win10 OS.
+```
+
+### 7. (optional) Assign labels to nodes for controlling pod and node binding.
 
 first, check the node and labels in your k8s.
 ```
@@ -164,7 +198,8 @@ As you see the above, three types of label involved to control the pod's destina
    - if corresponding label is not assigned in any nodes.
    - if destination node reached to the max-pods-per-node limitation
 
-### 7. Deploy Fabric network onto your Kubernetes cluster
+
+### 8. Deploy Fabric network onto your Kubernetes cluster
 
 Once all the above steps are done, you can run the `minifab up` command to get your
 Fabric network running in the Kubernetes cluster.
@@ -176,7 +211,7 @@ Fabric network running in the Kubernetes cluster.
 Notice the `-e` command line flag which is now also required for the same reason as
 the `endpoint_address` configuration in `spec.yaml` file
 
-### 8. Remove Fabric network from your Kubernetes cluster
+### 9. Remove Fabric network from your Kubernetes cluster
 
 To remove everything including the persistent storage created during the deployment,
 you can simply run the good old `minifab cleanup` command:
@@ -185,7 +220,7 @@ you can simply run the good old `minifab cleanup` command:
    minifab cleanup
 ```
 
-### 9. How about other operations?
+### 10. How about other operations?
 
 Minifabric supports all operations in Kubernetes cluster just like it supports
 all Fabric operations like in Docker env. If you like to join a channel, install
