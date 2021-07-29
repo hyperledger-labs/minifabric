@@ -85,6 +85,9 @@ fabric:
       FABRIC_LOGGING_SPEC: DEBUG
     orderer:
       FABRIC_LOGGING_SPEC: DEBUG
+    fabric-tool:
+     # set https_proxy only if there is proxy between your operating machine and kubernetes. otherwise keep it as comment.
+     #https_proxy: http://yourID:yourPass@yourProxyhost:port/
   ### use go proxy when default go proxy is restricted in some of the regions.
   ### the default goproxy
   # goproxy: "https://proxy.golang.org,direct"
@@ -164,7 +167,46 @@ As you see the above, three types of label involved to control the pod's destina
    - if corresponding label is not assigned in any nodes.
    - if destination node reached to the max-pods-per-node limitation
 
-### 7. Deploy Fabric network onto your Kubernetes cluster
+### 7. (conditional) http proxy consideration
+
+If http proxy exists between your operating machine and kubernetes,
+you need follows this section. otherwise, skip to next section.
+
+more specifically, when your case is:
+- setup from your office,  onto cloud managed kubernetes => follow this section
+- setup from your office,  onto on-premise kubernetes    => skip to next section.
+- other cases                                            => maybe skip to next section.
+
+
+at current, proxy consideration needed in two parts for dependency softwares.
+
+for kubernetes operation, set K8S_AUTH_PROXY in your terminal shell as bellow:
+```bash
+export K8A_AUTH_PROXY=http://yourProxyhost:port/
+export K8S_AUTH_PROXY_HEADERS_PROXY_BASIC_AUTH=yourID:yourPass
+```
+
+for hyperledger/fabric-tools operation, set https_proxy in spec.yaml
+```yaml
+fabric:
+  cas:
+  - ...
+  peers:
+  - ...
+  orderers:
+  - ...
+  settings:
+    ca:
+     ...
+    orderer:
+     ...
+    fabric-tool:
+     # set https_proxy only if there is proxy between your operating machine and kubernetes. otherwise keep it as comment.
+     https_proxy: http://yourID:yourPass@yourProxyhost:port/
+  :
+```
+
+### 8. Deploy Fabric network onto your Kubernetes cluster
 
 Once all the above steps are done, you can run the `minifab up` command to get your
 Fabric network running in the Kubernetes cluster.
@@ -176,7 +218,7 @@ Fabric network running in the Kubernetes cluster.
 Notice the `-e` command line flag which is now also required for the same reason as
 the `endpoint_address` configuration in `spec.yaml` file
 
-### 8. Remove Fabric network from your Kubernetes cluster
+### 9. Remove Fabric network from your Kubernetes cluster
 
 To remove everything including the persistent storage created during the deployment,
 you can simply run the good old `minifab cleanup` command:
@@ -185,7 +227,7 @@ you can simply run the good old `minifab cleanup` command:
    minifab cleanup
 ```
 
-### 9. How about other operations?
+### 10. How about other operations?
 
 Minifabric supports all operations in Kubernetes cluster just like it supports
 all Fabric operations like in Docker env. If you like to join a channel, install

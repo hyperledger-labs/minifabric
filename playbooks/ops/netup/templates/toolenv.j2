@@ -1,0 +1,5 @@
+{% if fabric.settings is defined and fabric.settings['fabric-tool'] is defined and fabric.settings['fabric-tool'] is mapping %}
+{% for setting in (fabric.settings['fabric-tool']|dict2items) %}
+{{ setting.key }}={{ setting.value }}
+{% endfor %}
+{% endif %}
