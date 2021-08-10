@@ -39,7 +39,7 @@ The table of the content
 21. [Run your application quickly](#run-your-application-quickly)
 22. [Run Caliper test](#run-caliper-test)
 23. [Start up portainer web ui](#start-up-portainer-web-ui)
-24. [Use Fabric operation console](Use Fabric operation console)
+24. [Use Fabric operation console](#use-fabric-operation-console)
 
 ### Prerequisites
 This tool requires **docker CE 18.03** or newer, Minifabric supports Linux, OS X and Windows 10
@@ -429,6 +429,10 @@ please follow these two steps:
    minifab up -e true
    minifab consoleup
 ```
+The `consoleup` command will also create an asset file named assets.zip in vars/console
+directory. This file contains admin wallets and various certificates and endpoints of
+your entire fabric network. When you log in to the console, you may use this file to import
+the information to the console to continue on.
 
 To remove the console and all its related resources, please run the following command:
 
