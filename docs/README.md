@@ -39,6 +39,7 @@ The table of the content
 21. [Run your application quickly](#run-your-application-quickly)
 22. [Run Caliper test](#run-caliper-test)
 23. [Start up portainer web ui](#start-up-portainer-web-ui)
+24. [Use Fabric operation console](Use Fabric operation console)
 
 ### Prerequisites
 This tool requires **docker CE 18.03** or newer, Minifabric supports Linux, OS X and Windows 10
@@ -418,3 +419,19 @@ The caliperrun command will run the test for 60 seconds by default. If you wish 
 ### Start up portainer web ui
 While you are running your Fabric network, you can use Portainer web based management to see and interact with your running network.
 To start up Portainer web user interface, simply run `minifab portainerup` command, to shut it down, run `minifab portainerdown` command
+
+### Use Fabric operation console
+If you like to use the Fabric operation console which was recently open sourced by IBM,you
+can setup your fabric network by expose endpoints and then bring up the console. To do that
+please follow these two steps:
+
+```
+   minifab up -e true
+   minifab consoleup
+```
+
+To remove the console and all its related resources, please run the following command:
+
+```
+   minifab consoledown
+```

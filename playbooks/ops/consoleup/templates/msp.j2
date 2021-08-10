@@ -1,0 +1,35 @@
+{% set canodes=allcas|selectattr('org','equalto', item)|list %}
+{% set caname=((canodes|length)>0)|ternary(canodes[0].name, 'ca') %}
+{
+  "display_name": "{{ item }} MSP",
+  "msp_id": "{{ item|replace('.', '-') }}",
+  "name": "{{ item }} MSP",
+  "type": "msp",
+  "admins": [],
+  "root_certs": [
+    "{{ lookup('file', pjroot+'/vars/keyfiles/'+orgattrs[item].certpath+'/'+item+'/ca/'+caname+'.'+item+'-cert.pem')|b64encode }}"
+  ],
+  "tls_root_certs": [
+    "{{ lookup('file', pjroot+'/vars/keyfiles/'+orgattrs[item].certpath+'/'+item+'/tlsca/tls'+caname+'.'+item+'-cert.pem')|b64encode }}"
+  ],
+  "fabric_node_ous": {
+    "admin_ou_identifier": {
+      "certificate": "{{ lookup('file', pjroot+'/vars/keyfiles/'+orgattrs[item].certpath+'/'+item+'/ca/'+caname+'.'+item+'-cert.pem')|b64encode }}",
+      "organizational_unit_identifier": "admin"
+    },
+    "client_ou_identifier": {
+      "certificate": "{{ lookup('file', pjroot+'/vars/keyfiles/'+orgattrs[item].certpath+'/'+item+'/ca/'+caname+'.'+item+'-cert.pem')|b64encode }}",
+      "organizational_unit_identifier": "client"
+    },
+    "enable": true,
+    "orderer_ou_identifier": {
+      "certificate": "{{ lookup('file', pjroot+'/vars/keyfiles/'+orgattrs[item].certpath+'/'+item+'/ca/'+caname+'.'+item+'-cert.pem')|b64encode }}",
+      "organizational_unit_identifier": "orderer"
+    },
+    "peer_ou_identifier": {
+      "certificate": "{{ lookup('file', pjroot+'/vars/keyfiles/'+orgattrs[item].certpath+'/'+item+'/ca/'+caname+'.'+item+'-cert.pem')|b64encode }}",
+      "organizational_unit_identifier": "peer"
+    }
+  },
+  "host_url": "https://localhost:3002"
+}

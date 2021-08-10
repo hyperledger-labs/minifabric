@@ -1,0 +1,32 @@
+{% set canodes=allcas|selectattr('org','equalto', item.org)|list %}
+{% set caname=((canodes|length)>0)|ternary(canodes[0].name, 'ca') %}
+{
+  "display_name": "{{ item.fullname }}",
+  "grpcwp_url": "https://{{ item.url }}:{{ webports[item.fullname] }}",
+  "api_url": "grpcs://{{ item.url }}:{{ item.port }}",
+  "operations_url": "http://{{ item.url }}:{{ item.oport }}",
+  "type": "fabric-orderer",
+  "msp_id": "{{ item.mspid }}",
+  "system_channel_id": "systemchannel",
+  "cluster_id": "{{ NETNAME }}",
+  "cluster_name": "{{ NETNAME }}",
+  "name": "{{ item.fullname }}",
+  "msp": {
+    "component": {
+      "tls_cert": "{{ lookup('file', pjroot+'/vars/keyfiles/ordererOrganizations/'+item.org+'/orderers/'+item.fullname+'/tls/ca.crt')|b64encode }}"
+    },
+    "ca": {
+      "root_certs": [
+        "{{ lookup('file', pjroot+'/vars/keyfiles/'+orgattrs[item.org].certpath+'/'+item.org+'/ca/'+caname+'.'+item.org+'-cert.pem')|b64encode }}"
+      ]
+    },
+    "tlsca": {
+      "root_certs": [
+        "{{ lookup('file', pjroot+'/vars/keyfiles/'+orgattrs[item.org].certpath+'/'+item.org+'/tlsca/tls'+caname+'.'+item.org+'-cert.pem')|b64encode }}"
+      ]
+    }
+  },
+  "pem": "{{ lookup('file', pjroot+'/vars/keyfiles/ordererOrganizations/'+item.org+'/orderers/'+item.fullname+'/msp/signcerts/'+item.fullname+'-cert.pem')|b64encode }}",
+  "tls_cert": "{{ lookup('file', pjroot+'/vars/keyfiles/ordererOrganizations/'+item.org+'/orderers/'+item.fullname+'/tls/server.crt')|b64encode }}",
+  "tls_ca_root_cert": "{{ lookup('file', pjroot+'/vars/keyfiles/'+orgattrs[item.org].certpath+'/'+item.org+'/tlsca/tls'+caname+'.'+item.org+'-cert.pem')|b64encode }}"
+}

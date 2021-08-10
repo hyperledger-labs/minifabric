@@ -1,0 +1,154 @@
+---
+- name: Query Fabric docker network
+  command: >-
+    docker network ls -f name={{ NETNAME }} -q
+  register: netstat
+
+- name: Create fabric docker network if it does not exist
+  command: "docker network create {{ NETNAME }}"
+  when: netstat.stdout == ""
+
+- name: "Ensure console directory exists"
+  file:
+    path: "{{ pjroot }}/vars/console/env"
+    state: "directory"
+
+- name: "Process keys"
+  include_tasks: "{{ pjroot }}/playbooks/common/processkeys.yaml"
+
+- name: Create config file for the console
+  template:
+    src: "{{ pjroot }}/playbooks/ops/consoleup/templates/config.j2"
+    dest: "{{ pjroot }}/vars/console/env/config.yaml"
+
+- name: Create volumes for console and its db
+  command: >-
+    docker volume create consoledb.{{ NETNAME }}
+
+- name: Start console database container
+  command: >-
+    docker run -d --network {{ NETNAME }} --name consoledb.{{ NETNAME }} --hostname consoledb.{{ NETNAME }}
+    -e "COUCHDB_USER=admin" -e "COUCHDB_PASSWORD=password"
+    -v consoledb.{{ NETNAME }}:/opt/couchdb/data
+    couchdb:3.1.1
+
+- name: Start configtxlator
+  command: >-
+    docker run -d --network {{ NETNAME }} --name configtxlator.{{ NETNAME }} --hostname configtxlator.{{ NETNAME }}
+    hyperledger/fabric-tools:{{ IMAGETAG }}
+    /bin/bash -c "/usr/local/bin/configtxlator start --CORS=*"
+
+- name: Get current org ca name
+  set_fact:
+    currentorg: "{{ allcas|selectattr('org','equalto', CURRENT_ORG)|list }}"
+- name: Get ca name
+  set_fact:
+    caname: "{{ ((currentorg|length)>0)|ternary(currentorg[0].name, 'ca') }}"
+
+- name: Setup tls cert and key for the console
+  copy:
+    src: "{{ pjroot }}/vars/keyfiles/{{ orgattrs[CURRENT_ORG].certpath }}/{{CURRENT_ORG}}/tlsca/{{ item.src }}"
+    dest: "{{ pjroot }}/vars/console/env/{{ item.target }}"
+  with_items:
+  - "{{ {'src': 'tls'+caname+'.'+CURRENT_ORG+'-cert.pem', 'target': 'cert.pem'} }}"
+  - "{{ {'src': 'priv_sk', 'target':'cert.key'} }}"
+
+- name: Start console container
+  command: >-
+    docker run -d --network {{ NETNAME }} --name console.{{ NETNAME }} --hostname console.{{ NETNAME }}
+      -e "CONFIGURE_FILE=./env/config.yaml"
+      -e "DB_CONNECTION_STRING=http://admin:password@consoledb.{{NETNAME}}:5984"
+      -e "DB_SYSTEM=athena_system"
+      -e "PEM_FILE_PATH=/home/athena/env/cert.pem"
+      -e "KEY_FILE_PATH=/home/athena/env/cert.key"
+      -p {{ console_port }}:3000
+      -v {{hostroot}}/vars/console/env:/home/athena/env
+      ghcr.io/hyperledger-labs/fabric-console:latest
+
+- name: "Ensure console asset directory exists"
+  file:
+    path: "{{ pjroot }}/vars/console/{{ item.dir }}"
+    state: "{{ item.state }}"
+  with_items:
+  - "{{ {'dir':'assets', 'state':'absent'} }}"
+  - "{{ {'dir':'assets/Certificate_Authorities', 'state':'directory'} }}"
+  - "{{ {'dir':'assets/Ordering_Services', 'state':'directory'} }}"
+  - "{{ {'dir':'assets/Organizations', 'state':'directory'} }}"
+  - "{{ {'dir':'assets/Peers', 'state':'directory'} }}"
+  - "{{ {'dir':'assets/Wallets', 'state':'directory'} }}"
+
+- name: Setup the starting web port
+  set_fact:
+    starting: 7500
+
+- name: setup grpcweb proxy ports
+  set_fact:
+    webports: |
+      {{ webports | default({}) | combine({ item.fullname: starting }) }}
+    starting: "{{ starting|int + 1 }}"
+  with_items: "{{ allorderers + allpeers }}"
+
+- name: Setup grpcweb proxy for each node
+  command: >-
+    docker run -d --network {{ NETNAME }} --name proxy.{{ item.fullname }}.{{ NETNAME }}
+    --hostname proxy.{{ item.fullname }}.{{ NETNAME }}
+    -e "LICENSE=accept"
+    -e "BACKEND_ADDRESS={{ item.url}}:{{ item.port }}"
+    -e "SERVER_TLS_CERT_FILE=/certs/tls/server.crt"
+    -e "SERVER_TLS_KEY_FILE=/certs/tls/server.key"
+    -e "BACKEND_TLS_CA_FILES=/certs/tls/ca.crt"
+    -e "SERVER_BIND_ADDRESS=0.0.0.0"
+    -e "SERVER_HTTP_DEBUG_PORT=8081"
+    -e "SERVER_HTTP_TLS_PORT=8443"
+    -e "BACKEND_TLS=true"
+    -e "SERVER_HTTP_MAX_WRITE_TIMEOUT=5m"
+    -e "SERVER_HTTP_MAX_READ_TIMEOUT=5m"
+    -e "USE_WEBSOCKETS=true"
+    -p {{ webports[item.fullname] }}:8443
+    -v {{hostroot}}/vars/keyfiles/{{ orgattrs[item.org].certpath}}/{{ item.org }}/{{ item.type }}s/{{ item.fullname }}/tls:/certs/tls
+    ghcr.io/hyperledger-labs/grpc-web:latest
+  with_items: "{{ allorderers + allpeers }}"  
+
+- name: Generate asset files for CA
+  template:
+    src: "{{ pjroot }}/playbooks/ops/consoleup/templates/ca.j2"
+    dest: "{{ pjroot }}/vars/console/assets/Certificate_Authorities/{{ item.fullname }}.json"
+  with_items: "{{ allcas }}"
+
+- name: Generate asset files for orderers
+  template:
+    src: "{{ pjroot }}/playbooks/ops/consoleup/templates/orderer.j2"
+    dest: "{{ pjroot }}/vars/console/assets/Ordering_Services/{{ item.fullname }}.json"
+  with_items: "{{ allorderers }}"
+
+- name: Generate asset files for peers
+  template:
+    src: "{{ pjroot }}/playbooks/ops/consoleup/templates/peer.j2"
+    dest: "{{ pjroot }}/vars/console/assets/Peers/{{ item.fullname }}.json"
+  with_items: "{{ allpeers }}"
+
+- name: Generate asset files for msp
+  template:
+    src: "{{ pjroot }}/playbooks/ops/consoleup/templates/msp.j2"
+    dest: "{{ pjroot }}/vars/console/assets/Organizations/{{ item }}.json"
+  with_items: "{{ allorgs }}"
+
+- name: Generate wallets for each Admin
+  template:
+    src: "{{ pjroot }}/playbooks/ops/consoleup/templates/wallet.j2"
+    dest: "{{ pjroot }}/vars/console/assets/Wallets/Admin-{{ item }}.json"
+  with_items: "{{ allorgs }}"
+
+- name: Package all the assets to one file
+  archive:
+    path: "{{ pjroot }}/vars/console/assets"
+    dest: "{{ pjroot }}/vars/console/assets.zip"
+    format: zip
+
+- name: "console endpoint for {{ NETNAME }} "
+  debug:
+    msg: |
+      "Default username: admin"
+      "Default password: password"
+      "Website address:  https://{{ endpoint_address }}:{{ console_port }}"
+  tags: [print_action]
