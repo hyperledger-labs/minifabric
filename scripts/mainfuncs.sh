@@ -22,6 +22,7 @@ OPNAMES=([up]="$LINE0$LINE1" [netup]='imageget,certgen,netup,netstats' \
   [channelsign]='channelsign' [channelupdate]='channelupdate' \
   [portainerup]='portainerup' [portainerdown]='portainerdown' \
   [anchorupdate]='anchorupdate' [explorerup]='explorerup' [explorerdown]='explorerdown' \
+  [consoleup]='consoleup' [consoledown]='consoledown' \
   [nodeimport]='nodeimport' [discover]='discover' [imageget]='imageget' [update]='update')
 
 # Print the usage message

@@ -1,0 +1,11 @@
+{
+  "display_name": "{{ item.fullname }}",
+  "api_url": "https://{{ item.url }}:{{ item.port }}",
+  "operations_url": "http://{{ item.url }}:{{ item.oport }}",
+  "ca_url": "https://{{ item.url }}:{{ item.port }}",
+  "type": "fabric-ca",
+  "ca_name": "{{ item.name }}",
+  "tlsca_name": "{{ item.name }}",
+  "tls_cert": "{{ lookup('file', pjroot+'/vars/keyfiles/'+orgattrs[item.org].certpath+'/'+item.org+'/ca/'+item.fullname+'-cert.pem')| b64encode }}",
+  "name": "{{ item.fullname }}"
+}

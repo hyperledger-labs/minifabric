@@ -1,0 +1,21 @@
+---
+- name: Shutdown explorer container
+  command: >-
+    docker rm -f console.{{ NETNAME }} consoledb.{{ NETNAME }} configtxlator.{{ NETNAME }}
+  ignore_errors: yes
+
+- name: Shutdown web proxy containers
+  command: >-
+    docker rm -f proxy.{{ item.fullname }}.{{ NETNAME }}
+  with_items: "{{ allorderers + allpeers }}"
+  ignore_errors: yes
+
+- name: Remove volumes for explorer and its db
+  command: >-
+    docker volume rm consoledb.{{ NETNAME }}
+  ignore_errors: yes
+
+- name: "Ensure explorer directory is removed"
+  file:
+    path: "{{ pjroot }}/vars/console"
+    state: "absent"

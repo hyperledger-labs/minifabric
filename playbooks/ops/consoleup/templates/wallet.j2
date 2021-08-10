@@ -1,0 +1,7 @@
+{% set filepath=pjroot+'/vars/keyfiles/'+orgattrs[item].certpath+'/'+item+'/users/Admin@'+item+'/msp/' %}
+{
+    "name": "Admin@{{ item }}",
+    "type": "identity",
+    "private_key": "{{ lookup('file', filepath+'keystore/priv_sk')|b64encode }}",
+    "cert": "{{ lookup('file', filepath+'signcerts/Admin@'+item+'-cert.pem')|b64encode }}"
+}

@@ -83,7 +83,7 @@
         allcas: |
           {{ allcas + [{ 'org':item.split('.')[1:] | join("."),
             'url': ipaddr, 'port': nodeport, 'oport': (nodeport|int+1000)|string,
-            'portmap':'-p '+nodeport+':7054',
+            'portmap':'-p '+nodeport+':7054'+' -p '+((nodeport|int+1000)|string)+':9443',
             'mspid': item.split('.')[1:] | join('-'),
             'name':item.split('.')[0], 'fullname': item, 'type': 'ca' }] }}
         nodeport: "{{ nodeport|int + 1 }}"
@@ -153,10 +153,11 @@
       nodeport: "7200"
     when: (EXPOSE_ENDPOINTS|lower) == 'false'
 
-  - name: Set explorer port
+  - name: Set special ports
     set_fact:
       explorer_port: "{{ nodeport|int + 1 }}"
-      portainer_port: "{{ nodeport|int +2 }}"
+      portainer_port: "{{ nodeport|int + 2 }}"
+      console_port: "{{ nodeport|int + 3 }}"
 
   - name: Produce the node env file
     copy:
@@ -164,5 +165,6 @@
       content: >-
         {{ {'allcas': allcas, 'allpeers': allpeers, 'allorderers': allorderers, 'explorer_port': explorer_port,
             'portainer_port': portainer_port, 'allcouchdbs': allcouchdbs|default([]),
+            'console_port': console_port,
             'caorgs': caorgs, 'peerorgs': peerorgs, 'ordererorgs': ordererorgs, 'allorgs': allorgs,
             'orgattrs': orgattrs } | to_nice_json(indent=2) }}
