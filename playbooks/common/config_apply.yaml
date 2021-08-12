@@ -44,7 +44,9 @@
         allcas: |
           {{ allcas + [{ 'org':item.split('.')[1:] | join("."), 'portmap':'',
             'url': item, 'port': '7054', 'mspid': item.split('.')[1:] | join('-'),
-            'name':item.split('.')[0], 'fullname': item, 'type': 'ca' }] }}
+            'name':item.split('.')[0], 'fullname': item, 'type': 'ca',
+            'adminPassword': 'adminpw',
+            'command': 'fabric-ca-server start -b admin:adminpw --cfg.affiliations.allowremove --cfg.identities.allowremove'  }] }}
       with_items: "{{ fabric.cas }}"
       when: fabric.cas is defined
 
@@ -53,7 +55,8 @@
         allpeers: |
           {{ allpeers + [{'org':item.split('.')[1:] | join("."), 'portmap':'',
             'url': item, 'port': '7051', 'mspid': item.split('.')[1:] | join('-'),
-            'name':item.split('.')[0], 'fullname': item, 'type': 'peer' }] }}
+            'name':item.split('.')[0], 'fullname': item, 'type': 'peer',
+            'adminPassword': 'adminpw' }] }}
       with_items: "{{ fabric.peers }}"
       when: fabric.peers is defined
 
@@ -62,7 +65,8 @@
         allcouchdbs: |
           {{ allcouchdbs + [{'org':item.split('.')[1:] | join("."), 'portmap':'',
             'url': item+'.couchdb', 'port': '5984', 'mspid': item.split('.')[1:] | join('-'),
-            'name':item.split('.')[0]+'.couchdb', 'fullname': item+'.couchdb', 'type': 'couchdb' }] }}
+            'name':item.split('.')[0]+'.couchdb', 'fullname': item+'.couchdb', 'type': 'couchdb',
+            'adminPassword': 'adminpw' }] }}
       with_items: "{{ fabric.peers }}"
       when: fabric.peers is defined and (DB_TYPE|lower) == "couchdb"
 
@@ -85,7 +89,9 @@
             'url': ipaddr, 'port': nodeport, 'oport': (nodeport|int+1000)|string,
             'portmap':'-p '+nodeport+':7054'+' -p '+((nodeport|int+1000)|string)+':9443',
             'mspid': item.split('.')[1:] | join('-'),
-            'name':item.split('.')[0], 'fullname': item, 'type': 'ca' }] }}
+            'name':item.split('.')[0], 'fullname': item, 'type': 'ca',
+            'adminPassword': 'adminpw',
+            'command': 'fabric-ca-server start -b admin:adminpw --cfg.affiliations.allowremove --cfg.identities.allowremove'  }] }}
         nodeport: "{{ nodeport|int + 1 }}"
       with_items: "{{ fabric.cas }}"
       when: fabric.cas is defined
@@ -97,7 +103,8 @@
             'url': ipaddr, 'port': nodeport, 'oport': (nodeport|int+1000)|string,
             'portmap':'-p '+nodeport+':7051 -p '+((nodeport|int+1000)|string)+':7061',
             'mspid': item.split('.')[1:] | join('-'),
-            'name':item.split('.')[0], 'fullname': item, 'type': 'peer' }] }}
+            'name':item.split('.')[0], 'fullname': item, 'type': 'peer',
+            'adminPassword': 'adminpw' }] }}
         nodeport: "{{ nodeport|int + 1 }}"
       with_items: "{{ fabric.peers }}"
       when: fabric.peers is defined
@@ -108,7 +115,8 @@
           {{ allcouchdbs + [{'org':item.split('.')[1:] | join("."),
             'url': ipaddr, 'port': nodeport, 'portmap':'-p '+nodeport+':5984',
             'mspid': item.split('.')[1:] | join('-'),
-            'name':item.split('.')[0]+'.couchdb', 'fullname': item+'.couchdb', 'type': 'couchdb' }] }}
+            'name':item.split('.')[0]+'.couchdb', 'fullname': item+'.couchdb', 'type': 'couchdb',
+            'adminPassword': 'adminpw' }] }}
         nodeport: "{{ nodeport|int + 1 }}"
       with_items: "{{ fabric.peers }}"
       when: fabric.peers is defined and (DB_TYPE|lower) == "couchdb"

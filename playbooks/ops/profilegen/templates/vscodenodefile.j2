@@ -25,7 +25,7 @@
     "pem": "{{lookup('file', pjroot+'/vars/keyfiles/'+orgtype+'Organizations/'+ca.org+'/ca/'+ca.fullname+'-cert.pem')|b64encode}}",
     "ssl_target_name_override": "{{ ca.fullname }}",
     "enroll_id": "admin",
-    "enroll_secret": "adminpw"
+    "enroll_secret": "{{ ca.adminPassword }}"
   }{{ '' if loop.last else ',' }}
 {% endfor %}
 {% endif %}

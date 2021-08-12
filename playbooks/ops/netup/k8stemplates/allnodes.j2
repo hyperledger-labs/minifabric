@@ -107,8 +107,11 @@ spec:
         volumeMounts:
           - { mountPath: "/etc/hyperledger/fabric-ca/idcerts", name: "cert-key-id" }
           - { mountPath: "/etc/hyperledger/fabric-ca-server", name: "{{ nodename }}-data" }
-        command: ["fabric-ca-server"]
-        args:  ["start", "-b", "admin:adminpw", "-d"]
+        command:
+          - sh
+          - "-c"
+          - |
+            {{ node.command }}
 {%   endfor %}
 {% endif %}
 
@@ -358,15 +361,13 @@ spec:
                       operator: In
                       values:
                         - "ok"
-     #volumes:
-     #initContainers:
       containers:
       - name: couchdb
         image: couchdb:3
         imagePullPolicy: IfNotPresent
         env:
         - { name: "COUCHDB_USER",     value: "admin"   }
-        - { name: "COUCHDB_PASSWORD", value: "adminpw" }
+        - { name: "COUCHDB_PASSWORD", value: "{{ node.adminPassword }}" }
         volumeMounts:
         - { mountPath: "/opt/couchdb/data", name: "{{ nodename }}-data" }
 {%   endfor %}
@@ -573,7 +574,7 @@ spec:
         - { name: "CORE_LEDGER_STATE_STATEDATABASE",                  value: "CouchDB" }
         - { name: "CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS",   value: "{{ node.fullname | replace('.','-') }}-couchdb:5984" }
         - { name: "CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME",         value: "admin" }
-        - { name: "CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD",         value: "adminpw" }
+        - { name: "CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD",         value: "{{ node.adminPassword }}" }
 {%      endif %}
         volumeMounts:
           - { mountPath: "/cacerts", name: "ca-cert-key" }

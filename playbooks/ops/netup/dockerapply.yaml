@@ -30,7 +30,7 @@
 - name: Start couchdb nodes if db type is set to couchdb
   command: >-
     docker run -d --network {{ NETNAME }} --name {{ item.fullname }} {{ item.portmap }}
-    -e COUCHDB_USER=admin -e COUCHDB_PASSWORD=adminpw
+    -e COUCHDB_USER=admin -e COUCHDB_PASSWORD={{ item.adminPassword }}
     -v {{ item.fullname }}:/opt/couchdb/data
     {{ container_options }}
     --hostname {{ item.fullname }} couchdb:3
@@ -102,7 +102,7 @@
     -v {{ hostroot }}/vars/keyfiles/{{ orgattrs[item.org].certpath }}/{{item.org}}:/certs
     -v {{ item.fullname }}:/etc/hyperledger/fabric-ca-server
     {{ container_options }}
-    hyperledger/fabric-ca:{{ desiredrelease }}
+    hyperledger/fabric-ca:{{ desiredrelease }} {{ item.command }}
   with_items: "{{ allcas }}"
   register: castat
   ignore_errors: yes
