@@ -1,0 +1,31 @@
+---
+- name: "Ensure portainer directory exists"
+  file:
+    path: "{{ pjroot }}/vars/portainer"
+    state: "directory"
+
+- name: templating
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest}}"
+  with_items:
+   - { 'src': "{{ pjroot }}/playbooks/ops/portainerup/k8stemplates/pods.j2", 'dest': "{{ pjroot }}/vars/portainer/pods.yaml" }
+   - { 'src': "{{ pjroot }}/playbooks/ops/portainerup/k8stemplates/service.j2", 'dest': "{{ pjroot }}/vars/portainer/service.yaml" }
+
+- name: Deploy pods
+  k8s:
+    kubeconfig: "{{ pjroot }}/vars/kubeconfig/config"
+    state: present
+    src: "{{ pjroot }}/vars/portainer/pods.yaml"
+
+- name: add service entries into ingress
+  k8s:
+    kubeconfig: "{{ pjroot }}/vars/kubeconfig/config"
+    merge_type: strategic-merge
+    src: "{{ pjroot }}/vars/portainer/service.yaml"
+
+- name: "Portainer endpoint for {{ NETNAME }} "
+  debug:
+    msg: |
+      "Portainer web UI address:  http://{{ endpoint_address }}:{{ portainer_port }}"
+  tags: [print_action]

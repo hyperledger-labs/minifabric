@@ -1,0 +1,10 @@
+---
+- name: Shutdown portainer container
+  command: >-
+    docker rm -f portainer.{{ NETNAME }}
+  ignore_errors: yes
+
+- name: Remove volumes for explorer
+  command: >-
+    docker volume rm portainer.{{ NETNAME }}
+  ignore_errors: yes

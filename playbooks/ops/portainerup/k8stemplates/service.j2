@@ -1,0 +1,21 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tcp-services
+  namespace: ingress-nginx
+data:
+  {{ portainer_port }}: "{{ NETNAME }}/portainer-{{ NETNAME }}:9000"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ingress-nginx-controller
+  namespace: ingress-nginx
+spec:
+  ports:
+  - name: {{ portainer_port }}-tcp
+    port: {{ portainer_port }}
+    protocol: TCP
+    targetPort: {{ portainer_port }}

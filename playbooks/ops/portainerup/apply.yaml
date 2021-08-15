@@ -1,19 +1,9 @@
 ---
 
-- name: Create volume for portainer
-  command: >-
-    docker volume create portainer.{{ NETNAME }}
+- name: portainer up for docker
+  include_tasks: "dockerapply.yaml"
+  when: ISK8S == false
 
-- name: Start portainer container
-  command: >-
-    docker run -d --network {{ NETNAME }} --name portainer.{{ NETNAME }} --hostname portainer.{{ NETNAME }}
-      -p {{ portainer_port }}:9000
-      -v /var/run/docker.sock:/var/run/docker.sock
-      -v portainer.{{ NETNAME }}:/data
-      portainer/portainer-ce:2.0.0-alpine
-
-- name: "Explorer endpoint for {{ NETNAME }} "
-  debug:
-    msg: |
-      "Portainer web UI address:  http://{{ endpoint_address }}:{{ portainer_port }}"
-  tags: [print_action]
+- name: portainer up for k8s
+  include_tasks: "k8sapply.yaml"
+  when: ISK8S == true
