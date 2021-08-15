@@ -1,0 +1,13 @@
+---
+- name: Shutdown explorer container
+  command: >-
+    docker rm -f explorer.{{ NETNAME }} explorerdb.{{ NETNAME }}
+  ignore_errors: yes
+
+- name: Remove volumes for explorer and its db
+  command: >-
+    docker volume rm {{ item }}.{{ NETNAME }}
+  with_items:
+    - "explorerdb"
+    - "explorerwallet"
+  ignore_errors: yes
