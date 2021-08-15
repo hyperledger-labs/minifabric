@@ -1,0 +1,19 @@
+---
+
+- name: Create volume for portainer
+  command: >-
+    docker volume create portainer.{{ NETNAME }}
+
+- name: Start portainer container
+  command: >-
+    docker run -d --network {{ NETNAME }} --name portainer.{{ NETNAME }} --hostname portainer.{{ NETNAME }}
+      -p {{ portainer_port }}:9000
+      -v /var/run/docker.sock:/var/run/docker.sock
+      -v portainer.{{ NETNAME }}:/data
+      portainer/portainer-ce:2.6.2-alpine
+
+- name: "Portainer endpoint for {{ NETNAME }} "
+  debug:
+    msg: |
+      "Portainer web UI address:  http://{{ endpoint_address }}:{{ portainer_port }}"
+  tags: [print_action]

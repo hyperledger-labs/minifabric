@@ -1,0 +1,27 @@
+---
+- name: "Ensure portainer directory exists"
+  file:
+    path: "{{ pjroot }}/vars/portainer"
+    state: "directory"
+
+- name: Clean services in k8s
+  include_tasks: "{{ pjroot }}/playbooks/common/k8s-rm-ingress-entry.yaml"
+  vars:
+     ours: "{{ [ portainer_port ] }}"
+
+- name: Create deployment spec and service file
+  template:
+    src: "{{ pjroot }}/playbooks/ops/portainerup/k8stemplates/pods.j2"
+    dest: "{{ pjroot }}/vars/portainer/pods.yaml"
+
+- name: remove all nodes
+  k8s:
+    kubeconfig: "{{ pjroot }}/vars/kubeconfig/config"
+    state: absent
+    src: "{{ pjroot }}/vars/portainer/pods.yaml"
+  ignore_errors: yes
+
+- name: "remove portainer directory"
+  file:
+    path: "{{ pjroot }}/vars/portainer"
+    state: "absent"

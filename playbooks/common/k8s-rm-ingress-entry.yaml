@@ -1,0 +1,76 @@
+---
+- name: initialize vars
+  block:
+  - name: initialize vars
+    set_fact:
+       jsonpaths: "{{[]}}"
+#      ours: list of external ports, like bellow
+#      ours: "{{ ( allcas+allorderers+allpeers+(allcouchdbs|default([])) ) | map(attribute='port') | list  }}"
+  - name: ensure ours is list. if null, initialize as empty list.
+    set_fact:
+       ours: "{{[]}}"
+    when: ours is not defined
+  - name: Removing ingress entries from k8s
+    debug:
+      msg: "removing ingress entries from k8s: {{ ours }} "
+    tags: [print_action]
+
+- name: get service entries from live k8s
+  block:
+  - name: get entries from k8s ingress service
+    k8s_info:
+      kubeconfig: "{{ pjroot }}/vars/kubeconfig/config"
+      kind: Service
+      namespace: ingress-nginx
+      name: ingress-nginx-controller
+    register: ingressvc
+  - name: pickup ports in ingress
+    set_fact:
+      lives: "{{ ingressvc.resources[0].spec.ports | default([])  }}"
+  - name: build the list of items to remove from ingress services
+    set_fact:
+      jsonpaths: "{{ jsonpaths + [ '/spec/ports/' + (idx|string) ]  }}"
+    when: ((item.port|string) in ours ) and ( item.name == ((item.port|string) + "-tcp"))
+    loop: "{{lives}}"
+    loop_control:
+      index_var: idx
+
+- name: get tcp-service entries from live k8s
+  block:
+  - name: get entries from k8s ingress configmap
+    k8s_info:
+      kubeconfig: "{{ pjroot }}/vars/kubeconfig/config"
+      kind: ConfigMap
+      namespace: ingress-nginx
+      name: tcp-services
+    register: ingresstcp
+  - name: pickup tcp-services data in ingress
+    set_fact:
+      cmtcps: "{{ ingresstcp.resources[0].data | default({}) }}"
+
+- name: remove entries from live k8s
+  block:
+  - name: clean service entries in ingress
+    kubernetes.core.k8s_json_patch:
+      kubeconfig: "{{ pjroot }}/vars/kubeconfig/config"
+      kind: Service
+      namespace: ingress-nginx
+      name: ingress-nginx-controller
+      patch:
+        - op: remove
+          path: "{{ item }}"
+    # removing entries from array by reverse order to keep indexes while processing
+    loop: "{{jsonpaths | reverse | list }}"
+
+  - name: clean configmap entries in ingress
+    kubernetes.core.k8s_json_patch:
+      kubeconfig: "{{ pjroot }}/vars/kubeconfig/config"
+      kind: ConfigMap
+      namespace: ingress-nginx
+      name: tcp-services
+      patch:
+        - op: remove
+          path: "/data/{{item}}"
+    when: (item in ours)
+    # removing entries from dict
+    loop: "{{ cmtcps.keys() | list }}"

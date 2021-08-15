@@ -1,10 +1,18 @@
 ---
-- name: Shutdown portainer container
-  command: >-
-    docker rm -f portainer.{{ NETNAME }}
-  ignore_errors: yes
+- name: "Ensure portainer directory exists"
+  file:
+    path: "{{ pjroot }}/vars/portainer"
+    state: "directory"
 
-- name: Remove volumes for explorer
-  command: >-
-    docker volume rm portainer.{{ NETNAME }}
-  ignore_errors: yes
+- name: Shutdown portainer container from docker
+  include_tasks: "dockerapply.yaml"
+  when: ISK8S == false
+
+- name: Shutdown portainer container from k8s
+  include_tasks: "k8sapply.yaml"
+  when: ISK8S == true
+
+- name: "remove explorer directory"
+  file:
+    path: "{{ pjroot }}/vars/portainer"
+    state: "absent"

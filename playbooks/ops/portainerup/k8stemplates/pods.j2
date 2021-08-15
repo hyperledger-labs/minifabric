@@ -1,0 +1,94 @@
+---
+# cf. https://github.com/portainer/k8s/blob/master/deploy/manifests/portainer/portainer-lb.yaml
+# Source: portainer/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    k8s-app: portainer-{{ NETNAME }}
+  name: portainer-{{ NETNAME }}
+  namespace: "{{ NETNAME }}"
+spec:
+  selector:
+    k8s-app: portainer-{{ NETNAME }}
+  ports:
+    - name: http
+      port: 9000
+      targetPort: 9000
+    - name: edge
+      port: 8000
+      targetPort: 8000
+---
+# Source: portainer/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    k8s-app: portainer-{{ NETNAME }}
+  name: portainer-sa-clusteradmin
+  namespace: "{{ NETNAME }}"
+---
+# Source: portainer/templates/rbac.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    k8s-app: portainer-{{ NETNAME }}
+  name: portainer-{{ NETNAME }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+- kind: ServiceAccount
+  namespace: "{{ NETNAME }}"
+  name: portainer-sa-clusteradmin
+---
+# Source: portainer/templates/deployment.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: portainer-{{ NETNAME }}
+  namespace: "{{ NETNAME }}"
+spec:
+  selector:
+    matchLabels:
+      k8s-app: portainer-{{ NETNAME }}
+  serviceName: portainer-{{ NETNAME }}
+  replicas: 1
+  volumeClaimTemplates:
+  - metadata:
+      name: portainer-data
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 5Gi
+  template:
+    metadata:
+      labels:
+        k8s-app: portainer-{{ NETNAME }}
+    spec:
+      serviceAccountName: portainer-sa-clusteradmin
+      containers:
+        - name: portainer-{{ NETNAME }}
+          image: "portainer/portainer-ce:2.6.2-alpine"
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - { mountPath: "/data", name: "portainer-data" }
+          ports:
+            - name: http
+              containerPort: 9000
+              protocol: TCP
+            - name: tcp-edge
+              containerPort: 8000
+              protocol: TCP              
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 9000
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 9000
