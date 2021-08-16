@@ -77,7 +77,7 @@
       },
       "httpOptions": { "verify": "false" },
       "caName": "{{ ca.name }}",
-      "registrar": { "enrollId": "admin", "enrollSecret": "adminpw"}
+      "registrar": { "enrollId": "admin", "enrollSecret": "{{ ca.adminPassword }}" }
     }{{ '' if loop.last else ',' }}
 {% endfor %}
   },
