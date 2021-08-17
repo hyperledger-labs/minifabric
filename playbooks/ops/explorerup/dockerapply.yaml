@@ -1,0 +1,57 @@
+---
+- name: Create volumes for explorer and its db
+  command: >-
+    docker volume create {{ item }}.{{ NETNAME }}
+  with_items:
+    - "explorerdb"
+    - "explorerwallet"
+
+- name: Start explorer database container
+  command: >-
+    docker run -d --network {{ NETNAME }} --name explorerdb.{{ NETNAME }} --hostname explorerdb.{{ NETNAME }}
+    -e "DATABASE_DATABASE=fabricexplorer" -e "DATABASE_USERNAME=hppoc" -e "DATABASE_PASSWORD=password"
+    -v explorerdb.{{ NETNAME }}:/var/lib/postgresql/data
+    --health-cmd "pg_isready -h localhost -p 5432 -q -U postgres"
+    --health-interval "30s" --health-timeout "10s" --health-retries 5
+    hyperledger/explorer-db:1.1.7
+
+- name: set two values
+  set_fact:
+    LB: "{"
+    RB: "}"
+
+- name: Wait for explorer db container to be ready
+  command: >-
+    docker inspect --format "{{LB}}{{LB}} .State.Health.Status {{RB}}{{RB}}" explorerdb.{{ NETNAME }}
+  register: dbstatus
+  ignore_errors: yes
+  until: dbstatus.stdout.find("healthy") >= 0
+  delay: 2
+  retries: 3
+
+- name: Start explorer container
+  command: >-
+    docker run -d --network {{ NETNAME }} --name explorer.{{ NETNAME }} --hostname explorer.{{ NETNAME }}
+      -e "DATABASE_HOST=explorerdb.{{ NETNAME }}"
+      -e "DATABASE_DATABASE=fabricexplorer"
+      -e "DATABASE_USERNAME=hppoc"
+      -e "DATABASE_PASSWD=password"
+      -e "LOG_LEVEL_APP=debug"
+      -e "LOG_LEVEL_DB=debug"
+      -e "LOG_LEVEL_CONSOLE=debug"
+      -e "LOG_CONSOLE_STDOUT=true"
+      -e "DISCOVERY_AS_LOCALHOST=false"
+      -p {{ explorer_port }}:8080
+      -v explorerwallet.{{ NETNAME }}:/opt/wallet
+      -v {{hostroot}}/vars/explorer/config.json:/opt/explorer/app/platform/fabric/config.json
+      -v {{hostroot}}/vars/explorer:/opt/explorer/app/platform/fabric/connection-profile
+      -v {{hostroot}}/vars/keyfiles:/keyfiles
+      hyperledger/explorer:1.1.7
+
+- name: "Explorer endpoint for {{ NETNAME }} "
+  debug:
+    msg: |
+      "Default username: exploreradmin"
+      "Default password: exploreradminpw"
+      "Website address:  http://{{ endpoint_address }}:{{ explorer_port }}"
+  tags: [print_action]

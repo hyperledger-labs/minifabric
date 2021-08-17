@@ -1,0 +1,61 @@
+---
+- name: pack and deploy config and keyfiles
+  block:
+   - name: pack configs into tar ball
+     command: >-
+       tar czf {{ pjroot }}/vars/explorer.tgz . -C {{ pjroot }}/vars/explorer
+   - name: upload explorer config to k8s
+     k8s:
+       kubeconfig: "{{ pjroot }}/vars/kubeconfig/config"
+       state: present
+       definition:
+         apiVersion: v1
+         kind: ConfigMap
+         metadata:
+           name: "explorer-configs"
+           namespace: "{{ NETNAME }}"
+         binaryData:
+           explorer.tgz : >-
+             {{ lookup('file', pjroot+'/vars/explorer.tgz', errors='ignore') | b64encode }}
+
+   - name: upload keyfiles to k8s
+     k8s:
+       kubeconfig: "{{ pjroot }}/vars/kubeconfig/config"
+       state: present
+       definition:
+         apiVersion: v1
+         kind: ConfigMap
+         metadata:
+           name: "keyfiles"
+           namespace: "{{ NETNAME }}"
+         binaryData:
+           certs.tgz: >-
+             {{ lookup('file', pjroot+'/vars/certs.tgz', errors='ignore') | b64encode }}
+
+- name: Create deployment and service file
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  with_items:
+   - { 'src': "{{ pjroot }}/playbooks/ops/explorerup/k8stemplates/pods.j2",    'dest': "{{ pjroot }}/vars/explorer/pods.yaml" }
+   - { 'src': "{{ pjroot }}/playbooks/ops/explorerup/k8stemplates/service.j2", 'dest': "{{ pjroot }}/vars/explorer/service.yaml" }
+
+- name: Deploy pods
+  k8s:
+    kubeconfig: "{{ pjroot }}/vars/kubeconfig/config"
+    state: present
+    src: "{{ pjroot }}/vars/explorer/pods.yaml"
+
+- name: add service entries into ingress
+  k8s:
+    kubeconfig: "{{ pjroot }}/vars/kubeconfig/config"
+    merge_type: strategic-merge
+    src: "{{ pjroot }}/vars/explorer/service.yaml"
+
+- name: "Explorer endpoint for {{ NETNAME }} "
+  debug:
+    msg: |
+      "Default username: exploreradmin"
+      "Default password: exploreradminpw"
+      "Website address:  http://{{ endpoint_address }}:{{ explorer_port }}"
+  tags: [print_action]

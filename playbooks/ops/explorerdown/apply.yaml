@@ -4,15 +4,15 @@
     path: "{{ pjroot }}/vars/explorer"
     state: "directory"
 
-- name: Shutdown explorer container
-  command: >-
-    docker rm -f explorer.{{ NETNAME }} explorerdb.{{ NETNAME }}
-  ignore_errors: yes
+- name: Shutdown explorer container from docker
+  include_tasks: "dockerapply.yaml"
+  when: ISK8S == false
 
-- name: Remove volumes for explorer and its db
-  command: >-
-    docker volume rm {{ item }}.{{ NETNAME }}
-  with_items:
-    - "explorerdb"
-    - "explorerwallet"
-  ignore_errors: yes
+- name: Shutdown explorer container from k8s
+  include_tasks: "k8sapply.yaml"
+  when: ISK8S == true
+
+- name: "remove explorer directory"
+  file:
+    path: "{{ pjroot }}/vars/explorer"
+    state: "absent"

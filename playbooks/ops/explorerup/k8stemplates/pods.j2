@@ -1,0 +1,110 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    k8s-app: explorer-{{ NETNAME }}
+  name: explorer-{{ NETNAME }}
+  namespace: "{{ NETNAME }}"
+spec:
+  selector:
+    k8s-app: explorer-{{ NETNAME }}
+  ports:
+  - name: explorerport
+    port: 8080
+    targetPort: 8080
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: explorer-{{ NETNAME }}
+  namespace: "{{ NETNAME }}"
+spec:
+  selector:
+    matchLabels:
+      k8s-app: explorer-{{ NETNAME }}
+  serviceName: explorer-{{ NETNAME }}
+  replicas: 1
+  volumeClaimTemplates:
+  - metadata:
+      name: explorerdb-{{ NETNAME }}
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 1Gi
+  - metadata:
+      name: explorerwallet-{{ NETNAME }}
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 100Mi
+  template:
+    metadata:
+      labels:
+        k8s-app: explorer-{{ NETNAME }}
+    spec:
+      volumes:
+      - name: keyfiles
+        configMap:
+          name: "keyfiles"
+      - name: explorer-configs
+        configMap:
+          name: "explorer-configs"
+      initContainers:
+      - name: setup
+        image: busybox
+        command:
+        - sh
+        - "-c"
+        - |
+          set -ex
+          rm -rf /var/lib/postgresql/data/lost+found
+        volumeMounts:
+          - { mountPath: "/var/lib/postgresql/data", name: "explorerdb-{{ NETNAME }}" }
+      containers:
+      - name: explorerdb-{{ NETNAME }}
+        image: hyperledger/explorer-db:1.1.7
+        imagePullPolicy: IfNotPresent
+        env:
+        - { name: "DATABASE_DATABASE",            value: "fabricexplorer" }
+        - { name: "DATABASE_USERNAME",            value: "hppoc" }
+        - { name: "DATABASE_PASSWORD",            value: "password" }
+        volumeMounts:
+          - { mountPath: "/var/lib/postgresql/data", name: "explorerdb-{{ NETNAME }}" }
+      - name: explorer-{{ NETNAME }}
+        image: hyperledger/explorer:1.1.7
+        imagePullPolicy: IfNotPresent
+        env:
+        - { name: "DATABASE_DATABASE",            value: "fabricexplorer" }
+        - { name: "DATABASE_USERNAME",            value: "hppoc" }
+        - { name: "DATABASE_PASSWORD",            value: "password" }
+        - { name: "DATABASE_HOST",                value: "localhost" }
+        - { name: "LOG_LEVEL_APP",                value: "debug" }
+        - { name: "LOG_LEVEL_DB",                 value: "debug" }
+        - { name: "LOG_LEVEL_CONSOLE",            value: "debug" }
+        - { name: "LOG_CONSOLE_STDOUT",           value: "true" }
+        - { name: "DISCOVERY_AS_LOCALHOST",       value: "false" }
+        volumeMounts:
+          - { mountPath: "/mnt/explorer-configs", name: "explorer-configs" }
+          - { mountPath: "/mnt/keyfiles",         name: "keyfiles" }
+          - { mountPath: "/opt/wallet",           name: "explorerwallet-{{ NETNAME }}" }
+        command:
+        - sh
+        - "-c"
+        - |
+          set -ex
+          # untar keyfiles into /keyfiles
+          mkdir -p /keyfiles
+          tar xzvf /mnt/keyfiles/certs.tgz -C /keyfiles --strip=1
+          #
+          # merge explorer configs into reserved folder.
+          mkdir -p /opt/explorer/app/platform/fabric/connection-profile
+          tar xzvf /mnt/explorer-configs/explorer.tgz -C /opt/explorer/app/platform/fabric/connection-profile
+          mv /opt/explorer/app/platform/fabric/connection-profile/config.json /opt/explorer/app/platform/fabric/config.json
+          #
+          # start CMD of https://github.com/hyperledger/blockchain-explorer/blob/main/Dockerfile
+          npm run app-start && tail -f /dev/null

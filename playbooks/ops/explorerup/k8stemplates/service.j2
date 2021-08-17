@@ -1,0 +1,21 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tcp-services
+  namespace: ingress-nginx
+data:
+  {{ explorer_port }}: "{{ NETNAME }}/explorer-{{ NETNAME }}:8080"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ingress-nginx-controller
+  namespace: ingress-nginx
+spec:
+  ports:
+  - name: {{ explorer_port }}-tcp
+    port: {{ explorer_port }}
+    protocol: TCP
+    targetPort: {{ explorer_port }}
