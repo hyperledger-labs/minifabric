@@ -1,6 +1,8 @@
 ---
 - name: Clean services in k8s
-  include_tasks: "k8s-clean-service.yaml"
+  include_tasks: "{{ pjroot }}/playbooks/common/k8s-rm-ingress-entry.yaml"
+  vars:
+     ours: "{{ [ explorer_port ] }}"
 
 - name: Create deployment spec and service file
   template:
