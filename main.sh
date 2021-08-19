@@ -89,7 +89,7 @@ echo "    HOST_ADDRESSES=$ADDRS"
 
 getRealRootDir
 echo "    WORKING_DIRECTORY: $hostroot"
-if [ ! -d "$(pwd)/vars/chaincode" ]; then
+if [ ! -d "$(pwd)/vars/chaincode/${CC_NAME}/${CC_LANGUAGE}" ]; then
   cp -r $(pwd)/chaincode $(pwd)/vars/
 fi
 if [ ! -d "$(pwd)/vars/app" ]; then

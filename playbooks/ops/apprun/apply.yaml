@@ -11,6 +11,7 @@
     -v /var/run/docker.sock:/var/run/docker.sock
     -v {{ hostroot }}/vars:/vars
     -v {{ hostroot }}/vars/app/{{CC_LANGUAGE}}:/go/src/github.com/app
+    -e https_proxy={{ localenv.https_proxy }} -e no_proxy={{ localenv.no_proxy }}
     --entrypoint /vars/run/apprun.sh
     {{ LANGUAGEENVS[CC_LANGUAGE] }}
   register: runstates

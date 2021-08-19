@@ -15,7 +15,7 @@
 
 - name: Run the chaincode install script on cli container
   command: >-
-    docker exec {{ CLINAME }} /vars/run/ccinstall.{{ actingpeer.fullname }}.sh
+    docker exec -e https_proxy={{ localenv.https_proxy }} -e no_proxy={{ localenv.no_proxy }} {{ CLINAME }} /vars/run/ccinstall.{{ actingpeer.fullname }}.sh
   register: result
 
 - name: Set the status flag based on the return value

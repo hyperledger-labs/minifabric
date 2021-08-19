@@ -43,7 +43,41 @@ referencing it here is for you to verify that you can certainly login to the clu
 you should be able to directly copy that file to Minifabric's `vars/kubeconfig/` directory
 since that file contains access token.
 
-### 4. Prepare Nginx ingress controller
+### 4. (conditional) http proxy consideration
+
+If http proxy exists between your operating machine and kubernetes,
+you need follows this section. otherwise, skip to next section.
+
+more specifically, when your case is:
+- setup fabric from your office, onto cloud managed kubernetes cluster => follow this section
+- setup fabric from your office, onto on-premise kubernetes cluster    => skip to next section.
+- other cases                                                          => maybe skip to next section.
+
+
+at current, it needs to set following envirormnent varibales in terminall shell.
+
+on linux:
+```bash
+#
+export https_proxy=http://yourID:yourPass@yourProxyhost:port/
+# you can use no_proxy environment vairable as usuall.
+export no_proxy=localhost,127.0.0.1/8,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,*.local,*.yourdomain.com
+
+# for kubernetes operation via ansible
+export K8A_AUTH_PROXY=http://yourProxyhost:port/
+export K8S_AUTH_PROXY_HEADERS_PROXY_BASIC_AUTH=yourID:yourPass
+```
+
+on win10:
+```bat
+set https_proxy=http://yourID:yourPass@yourProxyhost:port/
+set no_proxy=localhost,127.0.0.1/8,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,*.local,*.yourdomain.com
+set K8A_AUTH_PROXY=http://yourProxyhost:port/
+set K8S_AUTH_PROXY_HEADERS_PROXY_BASIC_AUTH=yourID:yourPass
+REM you can set above variables as environment variables in win10 OS.
+```
+
+### 5. Prepare Nginx ingress controller
 
 Minifabric uses kubernetes ingress services to expose Fabric node endpoints. Without
 ingress to expose Fabric node endpoints, Fabric will be only available inside a kubernetes
@@ -60,7 +94,7 @@ on Nginx ingress controller
 Once it is deployed and running, you should get a public IP address which is needed to
 config your Minifabric spec.yaml file.
 
-### 5. Prepare your Minifabric spec file
+### 6. Prepare your Minifabric spec file
 
 Create a yaml file named `spec.yaml` in Minifabric's working directory. The following is an example
 
@@ -103,40 +137,6 @@ it is now mandatory for Kubernetes deployment. Without configuring this entry, w
 Minifabric detectes the presence of the `vars/kubeconfig/config` file, it will fail
 the process. In this `spec.yaml` file, you can customize the node just like you do
 normally with Docker environment deployment.
-
-### 6. (conditional) http proxy consideration
-
-If http proxy exists between your operating machine and kubernetes,
-you need follows this section. otherwise, skip to next section.
-
-more specifically, when your case is:
-- setup fabric from your office, onto cloud managed kubernetes cluster => follow this section
-- setup fabric from your office, onto on-premise kubernetes cluster    => skip to next section.
-- other cases                                                          => maybe skip to next section.
-
-
-at current, it needs to set following envirormnent varibales in terminall shell.
-
-on linux:
-```bash
-#
-export https_proxy=http://yourID:yourPass@yourProxyhost:port/
-# you can use no_proxy environment vairable as usuall.
-export no_proxy=localhost,127.0.0.1/8,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,*.local,*.yourdomain.com
-
-# for kubernetes operation via ansible
-export K8A_AUTH_PROXY=http://yourProxyhost:port/
-export K8S_AUTH_PROXY_HEADERS_PROXY_BASIC_AUTH=yourID:yourPass
-```
-
-on win10:
-```bat
-set https_proxy=http://yourID:yourPass@yourProxyhost:port/
-set no_proxy=localhost,127.0.0.1/8,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,*.local,*.yourdomain.com
-set K8A_AUTH_PROXY=http://yourProxyhost:port/
-set K8S_AUTH_PROXY_HEADERS_PROXY_BASIC_AUTH=yourID:yourPass
-REM you can set above variables as environment variables in win10 OS.
-```
 
 ### 7. (optional) Assign labels to nodes for controlling pod and node binding.
 

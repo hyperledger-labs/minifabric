@@ -3,6 +3,9 @@
   set_fact:
     fabric: "{{ fabric | combine({'release': (IMAGETAG|default('2.0')) + ''}) }}"
 
+- name: "load environment variables from localshell"
+  include_tasks: "{{ pjroot}}/playbooks/common/inherit_envs_from_localshell.yaml"
+
 - name: Make sure that working directory exists
   file:
     path: "{{ pjroot }}/vars/run"

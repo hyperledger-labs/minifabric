@@ -44,6 +44,22 @@ The table of the content
 ### Prerequisites
 This tool requires **docker CE 18.03** or newer, Minifabric supports Linux, OS X and Windows 10
 
+you need to set proxy environment variables if proxy exists between your operating machine and internet repositories.
+
+on linux:
+```bash
+export https_proxy=yourID:yourPass@yourProxyhost:port/
+export no_proxy=localhost,127.0.0.1/8,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,*.local,*.yourdomain.com
+```
+on win10:
+```bat
+set https_proxy=http://yourID:yourPass@yourProxyhost:port/
+set no_proxy=localhost,127.0.0.1/8,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,*.local,*.yourdomain.com
+set K8A_AUTH_PROXY=http://yourProxyhost:port/
+set K8S_AUTH_PROXY_HEADERS_PROXY_BASIC_AUTH=yourID:yourPass
+REM you can set above variables as environment variables in win10 OS.
+```
+
 ### Get the script and make it available system wide
 ##### Run the following command for Linux or OS X
 ```

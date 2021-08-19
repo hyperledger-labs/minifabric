@@ -1,4 +1,7 @@
-- name: get environment variables from current shell for proxy
+---
+- name: "get proxy env from current local shell"
   set_fact:
-    https_proxy: "{{ lookup('env', 'https_proxy') | default('') }}"
-    no_proxy:    "{{ lookup('env', 'no_proxy')    | default('') }}"
+    localenv:   "{{ localenv | default({}) | combine ({ item: (lookup( 'env', item )|default('')) }) }}"
+  with_items:
+   - "https_proxy"
+   - "no_proxy"
