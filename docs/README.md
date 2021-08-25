@@ -161,23 +161,23 @@ Note that the value specified by container_options will be added when minifabric
 ### Install your own chaincode
 To install your own chaincode, create the following subdirectory in your working directory:
 ```
-mkdir -p $(pwd)/vars/chaincode/<chaincodename>/go
+mkdir -p $(pwd)/vars/chaincode/<chaincodename>/<lang>
 ```
-where `<chaincodename>` should be the name you give to your chaincode
-
-Place your code in that directory, then do the following
+where `<chaincodename>` should be the name you give to your chaincode, and `<lang>` should be language of your chaincode, either one of go, node or java.
+Your code should be in the following directories respectively according to your chaincodename and its language.
 ```
-minifab install -n <chaincodename> -v 1.0
-```
-If your chaincode is written in node or java, your code should be in the following directories respectively
-```
+$(pwd)/vars/chaincode/<chaincodename>/go
 $(pwd)/vars/chaincode/<chaincodename>/node
 $(pwd)/vars/chaincode/<chaincodename>/java
+```
+Place your code in that directory, then do the following
+```
+minifab ccup -n <chaincodename> -l <lang> -v 1.0
 ```
 
 When you develop your own chaincode for 1.4.x, it is important to place all your code in one package because Fabric 1.4.x uses go 1.12.12 which does not fully support modules and code in subdirectories cannot be picked up. For Fabric 2.0 or greater, go modules are supported and you can have some local modules with your own chaincode. If you are in a location with no access to golang related public repositories (like Google's hosted sites), you can package your chaincode with a vendor directory which includes all necessary dependencies. During the install, Minifabric will not try to get the dependencies again.
 
-If you do not have any chaincode, you can still run `minifab install -n simple` command, Minifabric will install that sample chaincode. The command `minifab up` installs that chaincode if you do not specify another chaincode.
+If you do not have any chaincode, you can still run `minifab ccup -n simple` command, Minifabric will install that sample chaincode. The command `minifab up` installs that chaincode if you do not specify another chaincode.
 
 In some areas, when you install a golang written chaincode, the dependencies cannot be pulled directly from Google's hosted sites. In that case, you
 will most likely need to use goproxy to bypass these restrictions. You can do so by specifying an accessible goproxy in the spec.yaml file. The default spec.yaml
@@ -186,7 +186,7 @@ file has an example commented out, you can uncomment that line and use your own 
 In the case of chaincode that uses private data, the install command should include the flag -r or
 --chaincode-private set to true. 
 ```
-minifab install  -n <chaincodename> -v 1.0 -r true
+minifab ccup -n <chaincodename> -l <lang> -v 1.0 -r true
 ```
 Then minifab will generate a private data collection configuration file in the vars directory with
 the format `<chaincodename>_collection_config.json`.  This file needs to be modified for the specific
@@ -195,28 +195,28 @@ Alternatively, a pre-configured collection config file can be placed in the vars
 name format before the install, and minifab will use it instead of creating the default file.
 
 ### Upgrade your chaincode
-If you have changed your chaincode and would like to upgrade the chaincode installed to your Minifabric network, you can simply install the chaincode with a higher version number, for example:
+you can simply install the chaincode with a higher version number, as below in following cases:
+ - when you have changed your chaincode and would like to upgrade the chaincode installed to your Minifabric network
+ - when chaincode installation procedure failed in some reason and you would like to try install the same chaincode again.
+
 ```
-minifab install -n simple -v 2.0
-```
-Once it is installed successfully, for Fabric release 1.4.x you can skip to the next section to instantiate your upgraded chaincode. For Fabric release 2.x.x, you need to prepare the channel to start using the new version of the chaincode with the following command:
-```
-minifab approve,commit,initialize,discover
+minifab ccup -v 2.0 [ -n simple ] [ -l go ]
+minifab ccup -v 3.0 [ -n simple ] [ -l go ]
+:
 ```
 
-Since you specified the chaincode name and version during the install, you do not have to specify it again, Minifabric remembers what action was taken last time. Minifabric accomplishes this by using its Execution Context which will be explained later in this document.
-
-### Instantiate/Initialize newly installed/upgraded chaincode
-**IMPORTANT:** *This step is chaincode dependent. Only applicable when **init** method is required by the chaincode.*
-
-Before you can perform an invoke or a query to a newly installed/upgraded chaincode, it needs to be instantiated or initialized as follows:
-**Fabric < 2.0**
+`minifab ccup` is actually the alias of the following commands. you can execute below separate commands in step by step
 ```
-minifab instantiate
+minifab install -v version [ -n <chaincodename> ] [ -l <lang> ] [ -r true ]
+minifab approve
+minifab commit
+minifab initialize [ -p '"methodname","p1","p2",...' ]
+minifab discover
+minifab channelquery
 ```
-**Fabric >= 2.0**
+instead of:
 ```
-minifab initialize
+minifab ccup -v version [ -n <chaicnodename> ] [ -l <lang> ] [ -r true ] [ -p '"methodname","p1","p2",...' ]
 ```
 
 ### Invoke chaincode methods

@@ -23,6 +23,7 @@ OPNAMES=([up]="$LINE0$LINE1" [netup]='imageget,certgen,netup,netstats' \
   [portainerup]='portainerup' [portainerdown]='portainerdown' \
   [anchorupdate]='anchorupdate' [explorerup]='explorerup' [explorerdown]='explorerdown' \
   [consoleup]='consoleup' [consoledown]='consoledown' \
+  [ccup]='ccinstall,ccapprove,cccommit,ccinstantiate,discover,channelquery' \
   [nodeimport]='nodeimport' [discover]='discover' [imageget]='imageget' [update]='update')
 
 # Print the usage message
@@ -59,6 +60,7 @@ function printHelp() {
   echo "      - 'explorerdown'  - shutdown Hyperledger explorer"
   echo "      - 'portainerup'  - start up portainer web management"
   echo "      - 'portainerdown'  - shutdown portainer web management"
+  echo "      - 'ccup'  - update or force re-install chaincode as specified version (alias to install,approve,commit,instantiate/initialize)."
   echo "      - 'apprun'  - (experimental) run chaincode app if there is any"
   echo "      - 'caliperrun'  - (experimental) run caliper test"
   echo "      - 'orgjoin'  - (experimental) join an org to the current channel"
