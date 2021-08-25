@@ -363,7 +363,7 @@ spec:
                         - "ok"
       containers:
       - name: couchdb
-        image: couchdb:3
+        image: hyperledger/fabric-couchdb:latest
         imagePullPolicy: IfNotPresent
         env:
         - { name: "COUCHDB_USER",     value: "admin"   }

@@ -33,7 +33,7 @@
     -e COUCHDB_USER=admin -e COUCHDB_PASSWORD={{ item.adminPassword }}
     -v {{ item.fullname }}:/opt/couchdb/data
     {{ container_options }}
-    --hostname {{ item.fullname }} couchdb:3
+    --hostname {{ item.fullname }} hyperledger/fabric-couchdb:latest
   with_items: "{{ allcouchdbs }}"
   when: (DB_TYPE|lower) == "couchdb"
 
