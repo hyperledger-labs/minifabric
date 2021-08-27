@@ -48,6 +48,14 @@ spec:
       resources:
         requests:
           storage: 1Gi
+  - metadata:
+      name: {{ nodename }}-certs
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 20Mi
   template:
     metadata:
       labels:
@@ -84,9 +92,23 @@ spec:
                       values:
                         - "ok"
       volumes:
-      - name: cert-key-id
-        secret:
-          secretName: "{{ nodename }}-secret"
+      - name: keyfiles
+        configMap:
+          name: "keyfiles"
+      initContainers:
+      - name: setup
+        image: busybox
+        command:
+        - sh
+        - "-c"
+        - |
+          set -ex
+          echo "/certs mapping: keyfiles/{{ orgattrs[node.org].certpath }}/{{node.org}}/"
+          tar xzf /keyfiles/certs.tgz -C /certs --strip=3 `tar tzf /keyfiles/certs.tgz | grep /{{ orgattrs[node.org].certpath }}/{{node.org}}/`
+          find /certs
+        volumeMounts:
+          - { mountPath: "/keyfiles", name: "keyfiles" }
+          - { mountPath: "/certs",    name: "{{ nodename }}-certs" }
       containers:
       - name: {{ nodename }}
         image: hyperledger/fabric-ca:1.4
@@ -94,19 +116,19 @@ spec:
         env:
         - { name: "FABRIC_CA_HOME", value: "/etc/hyperledger/fabric-ca-server" }
         - { name: "FABRIC_CA_SERVER_CA_NAME", value: "{{ node.fullname}}" }
-        - { name: "FABRIC_CA_SERVER_CA_KEYFILE", value: "/etc/hyperledger/fabric-ca/idcerts/tls.key" }
-        - { name: "FABRIC_CA_SERVER_CA_CERTFILE", value: "/etc/hyperledger/fabric-ca/idcerts/tls.crt" }
+        - { name: "FABRIC_CA_SERVER_CA_KEYFILE", value: "/certs/ca/{{ allkeys[node.org].pkey.split('/')[-1] }}" }
+        - { name: "FABRIC_CA_SERVER_CA_CERTFILE", value: "/certs/ca/{{ node.fullname }}-cert.pem"}
         - { name: "FABRIC_CA_SERVER_TLS_ENABLED", value: "true" }
-        - { name: "FABRIC_CA_SERVER_TLS_KEYFILE", value: "/etc/hyperledger/fabric-ca/idcerts/tls.key" }
-        - { name: "FABRIC_CA_SERVER_TLS_CERTFILE", value: "/etc/hyperledger/fabric-ca/idcerts/tls.crt" }
+        - { name: "FABRIC_CA_SERVER_TLS_KEYFILE", value: "/certs/ca/{{ allkeys[node.org].pkey.split('/')[-1] }}" }
+        - { name: "FABRIC_CA_SERVER_TLS_CERTFILE", value: "/certs/ca/{{ node.fullname }}-cert.pem"}
 {%      if fabric.settings is defined and fabric.settings.ca is defined %}
 {%        for setting in (fabric.settings.ca|dict2items) %}
         - { name: "{{ setting.key }}",                      value: "{{ setting.value }}" }
 {%        endfor %}
 {%      endif %}
         volumeMounts:
-          - { mountPath: "/etc/hyperledger/fabric-ca/idcerts", name: "cert-key-id" }
           - { mountPath: "/etc/hyperledger/fabric-ca-server", name: "{{ nodename }}-data" }
+          - { mountPath: "/certs",                        name: "{{ nodename }}-certs" }
         command:
           - sh
           - "-c"
@@ -154,22 +176,6 @@ spec:
   replicas: 1
   volumeClaimTemplates:
   - metadata:
-      name: {{ nodename }}-tmp
-    spec:
-      accessModes:
-      - ReadWriteOnce
-      resources:
-        requests:
-          storage: 100Mi
-  - metadata:
-      name: {{ nodename }}-msp
-    spec:
-      accessModes:
-      - ReadWriteOnce
-      resources:
-        requests:
-          storage: 100Mi
-  - metadata:
       name: {{ nodename }}-data
     spec:
       accessModes:
@@ -177,6 +183,14 @@ spec:
       resources:
         requests:
           storage: 5Gi
+  - metadata:
+      name: {{ nodename }}-certs
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 20Mi
   template:
     metadata:
       labels:
@@ -186,8 +200,6 @@ spec:
         hlf-dn:  {{ node.org }}
         hlf-mspid: {{ node.mspid }}
     spec:
-      # cf. https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/
-      # in case of statefulset, affinity location is  template.sepc.affinity
       affinity:
           nodeAffinity:
             {{affinity_stress.prefer }}:
@@ -213,73 +225,57 @@ spec:
                       values:
                         - "ok"
       volumes:
-      - name: cert-key-id
-        secret:
-          secretName: "{{ nodename }}-secret"
-      - name: cert-key-tls
-        secret:
-          secretName: "{{ nodename }}-tls-secret"
-      - name: admin-cert-key
-        secret:
-          secretName: "admin-{{ node.mspid }}-secret"
-      - name: ca-cert-key
-        secret:
-          secretName: "{{ caname }}-{{ node.mspid }}-secret"
       - name: genesis-block
         configMap:
           name: genesis-blocks
+      - name: keyfiles
+        configMap:
+          name: "keyfiles"
       initContainers:
-      - name: setupmsp
+      - name: setup
         image: busybox
         command:
         - sh
         - "-c"
         - |
           set -ex
-          cd /dataroot
-          mkdir -p msp/admincerts msp/cacerts msp/keystore msp/signcerts msp/tlscacerts
-          cp /idcerts/tls.crt msp/signcerts/{{ node.fullname }}-cert.pem
-          cp /idcerts/tls.key msp/keystore/priv_sk
-          cp /admincerts/tls.crt msp/admincerts/Admin@{{ node.org }}-cert.pem
-          cp /cacerts/tls.crt msp/cacerts/{{caname}}.{{ node.org }}-cert.pem
-          ls -lR /dataroot
+          echo "/certs mapping: keyfiles/ordererOrganizations/{{node.org}}/orderers/{{node.fullname}}/"
+          tar xzf /keyfiles/certs.tgz -C /certs --strip=5 `tar tzf  /keyfiles/certs.tgz | grep /ordererOrganizations/{{node.org}}/orderers/{{node.fullname}}/`
+          find /certs
         volumeMounts:
-          - { mountPath: "/admincerts", name: "admin-cert-key" }
-          - { mountPath: "/cacerts", name: "ca-cert-key" }
-          - { mountPath: "/idcerts", name: "cert-key-id" }
-          - { mountPath: "/tlscerts", name: "cert-key-tls" }
-          - { mountPath: "/dataroot", name: "{{ nodename }}-tmp" }
-          - { mountPath: "/dataroot/msp", name: "{{ nodename }}-msp" }
+          - { mountPath: "/keyfiles", name: "keyfiles" }
+          - { mountPath: "/certs",    name: "{{ nodename }}-certs" }
       containers:
       - name: {{ nodename }}
         image: hyperledger/fabric-orderer:{{ fabric.release }}
         imagePullPolicy: IfNotPresent
         env:
         - { name: "ORDERER_GENERAL_LISTENADDRESS",             value: "0.0.0.0" }
+        - { name: "ORDERER_GENERAL_BOOTSTRAPMETHOD",           value: "file" }
         - { name: "ORDERER_GENERAL_GENESISMETHOD",             value: "file" }
+        - { name: "ORDERER_GENERAL_BOOTSTRAPFILE",             value: "/etc/hyperledger/genesisfile/genesis.block" }
         - { name: "ORDERER_GENERAL_GENESISFILE",               value: "/etc/hyperledger/genesisfile/genesis.block" }
         - { name: "ORDERER_GENERAL_LOCALMSPID",                value: "{{ node.mspid }}" }
-        - { name: "ORDERER_GENERAL_LOCALMSPDIR",               value: "/etc/hyperledger/fabric/msp" }
+        - { name: "ORDERER_GENERAL_LOCALMSPDIR",               value: "/certs/msp" }
         - { name: "ORDERER_GENERAL_TLS_ENABLED",               value: "true" }
         - { name: "ORDERER_GENERAL_TLS_SERVERHOSTOVERRIDE",    value: "{{ node.name }}" }
-        - { name: "ORDERER_GENERAL_TLS_PRIVATEKEY",            value: "/etc/hyperledger/tlscerts/tls.key" }
-        - { name: "ORDERER_GENERAL_TLS_CERTIFICATE",           value: "/etc/hyperledger/tlscerts/tls.crt" }
-        - { name: "ORDERER_GENERAL_TLS_ROOTCAS",               value: "[/etc/hyperledger/tlscerts/ca.crt]" }
-        - { name: "ORDERER_GENERAL_CLUSTER_CLIENTPRIVATEKEY",  value: "/etc/hyperledger/tlscerts/tls.key" }
-        - { name: "ORDERER_GENERAL_CLUSTER_CLIENTCERTIFICATE", value: "/etc/hyperledger/tlscerts/tls.crt" }
-        - { name: "ORDERER_GENERAL_CLUSTER_ROOTCAS",           value: "[/etc/hyperledger/tlscerts/ca.crt]" }
+        - { name: "ORDERER_GENERAL_TLS_PRIVATEKEY",            value: "/certs/tls/server.key" }
+        - { name: "ORDERER_GENERAL_TLS_CERTIFICATE",           value: "/certs/tls/server.crt" }
+        - { name: "ORDERER_GENERAL_TLS_ROOTCAS",               value: "[/certs/tls/ca.crt]" }
+        - { name: "ORDERER_GENERAL_CLUSTER_CLIENTCERTIFICATE", value: "/certs/tls/server.crt" }
+        - { name: "ORDERER_GENERAL_CLUSTER_CLIENTPRIVATEKEY",  value: "/certs/tls/server.key" }
+        - { name: "ORDERER_GENERAL_CLUSTER_ROOTCAS",           value: "[/certs/tls/ca.crt]" }
         - { name: "ORDERER_GENERAL_FILELEDGER_LOCATION",       value: "/var/hyperledger/production" }
 {%      if fabric.settings is defined and fabric.settings.orderer is defined %}
 {%        for setting in (fabric.settings.orderer|dict2items) %}
         - { name: "{{ setting.key }}",                      value: "{{ setting.value }}" }
 {%        endfor %}
 {%      endif %}
+
         volumeMounts:
-          - { mountPath: "/etc/hyperledger/idcerts", name: "cert-key-id" }
-          - { mountPath: "/etc/hyperledger/tlscerts", name: "cert-key-tls" }
           - { mountPath: "/etc/hyperledger/genesisfile", name: "genesis-block" }
           - { mountPath: "/var/hyperledger/production", name: "{{ nodename }}-data"}
-          - { mountPath: "/etc/hyperledger/fabric/msp", name: "{{ nodename }}-msp" }
+          - { mountPath: "/certs",                  name: "{{ nodename }}-certs" }
         command: ["orderer"]
 {%   endfor %}
 {% endif %}
@@ -415,22 +411,6 @@ spec:
   replicas: 1
   volumeClaimTemplates:
   - metadata:
-      name: {{ nodename }}-tmp
-    spec:
-      accessModes:
-      - ReadWriteOnce
-      resources:
-        requests:
-          storage: 100Mi
-  - metadata:
-      name: {{ nodename }}-msp
-    spec:
-      accessModes:
-      - ReadWriteOnce
-      resources:
-        requests:
-          storage: 100Mi
-  - metadata:
       name: {{ nodename }}-data
     spec:
       accessModes:
@@ -438,6 +418,14 @@ spec:
       resources:
         requests:
           storage: 5Gi
+  - metadata:
+      name: {{ nodename }}-certs
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 20Mi
   template:
     metadata:
       labels:
@@ -447,8 +435,6 @@ spec:
         hlf-dn:  {{ node.org }}
         hlf-mspid: {{ node.mspid }}
     spec:
-      # cf. https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/
-      # in case of statefulset, affinity location is  template.sepc.affinity
       affinity:
           nodeAffinity:
             {{affinity_stress.prefer }}:
@@ -479,43 +465,23 @@ spec:
       - name: rundind
         emptyDir:
           medium: Memory
-      - name: cert-key-id
-        secret:
-          secretName: "{{ nodename }}-secret"
-      - name: cert-key-tls
-        secret:
-          secretName: "{{ nodename }}-tls-secret"
-      - name: admin-cert-key
-        secret:
-          secretName: "admin-{{ node.mspid }}-secret"
-      - name: ca-cert-key
-        secret:
-          secretName: "{{ caname }}-{{ node.mspid }}-secret"
-      - name: ca-cert-key-tls
-        secret:
-          secretName: "{{ caname }}-{{ node.mspid }}-tls-secret"
+      - name: keyfiles
+        configMap:
+          name: "keyfiles"
       initContainers:
-      - name: setupmsp
+      - name: setup
         image: busybox
         command:
         - sh
         - "-c"
         - |
           set -ex
-          cd /dataroot
-          mkdir -p msp/admincerts msp/cacerts msp/keystore msp/signcerts msp/tlscacerts
-          cp /idcerts/tls.crt msp/signcerts/{{ node.fullname }}-cert.pem
-          cp /idcerts/tls.key msp/keystore/priv_sk
-          cp /admincerts/tls.crt msp/admincerts/Admin@{{ node.org }}-cert.pem
-          cp /cacerts/tls.crt msp/cacerts/{{caname}}.{{ node.org }}-cert.pem
-          ls -R /dataroot
+          echo "/certs mapping: keyfiles/peerOrganizations/{{ node.org }}/peers/{{ node.fullname }}"
+          tar xzf  /keyfiles/certs.tgz -C /certs --strip=5 `tar tzf /keyfiles/certs.tgz | grep /peerOrganizations/{{ node.org }}/peers/{{ node.fullname }}`
+          find /certs
         volumeMounts:
-          - { mountPath: "/admincerts", name: "admin-cert-key" }
-          - { mountPath: "/cacerts", name: "ca-cert-key" }
-          - { mountPath: "/idcerts", name: "cert-key-id" }
-          - { mountPath: "/tlscerts", name: "cert-key-tls" }
-          - { mountPath: "/dataroot", name: "{{ nodename }}-tmp" }
-          - { mountPath: "/dataroot/msp", name: "{{ nodename }}-msp" }
+          - { mountPath: "/keyfiles", name: "keyfiles" }
+          - { mountPath: "/certs",    name: "{{ nodename }}-certs" }
       containers:
       - name: dind
         image: docker:20.10.3-dind
@@ -541,16 +507,16 @@ spec:
           privileged: true        
         env:
         - { name: "CORE_VM_ENDPOINT",                   value: "unix:///var/run/docker.sock" }
+        - { name: "CORE_PEER_TLS_ENABLED",              value: "true" }
         - { name: "CORE_PEER_GOSSIP_USELEADERELECTION", value: "true" }
         - { name: "CORE_PEER_GOSSIP_ORGLEADER",         value: "false" }
         - { name: "CORE_PEER_PROFILE_ENABLED",          value: "false" }
-        - { name: "CORE_PEER_TLS_ENABLED",              value: "true" }
-        - { name: "CORE_PEER_TLS_CERT_FILE",            value: "/tlscerts/tls.crt" }
-        - { name: "CORE_PEER_TLS_KEY_FILE",             value: "/tlscerts/tls.key" }
-        - { name: "CORE_PEER_TLS_ROOTCERT_FILE",        value: "/cacertstls/tls.crt" }
+        - { name: "CORE_PEER_TLS_CERT_FILE",            value: "/certs/tls/server.crt" }
+        - { name: "CORE_PEER_TLS_KEY_FILE",             value: "/certs/tls/server.key" }
+        - { name: "CORE_PEER_TLS_ROOTCERT_FILE",        value: "/certs/tls/ca.crt" }
         - { name: "CORE_CHAINCODE_EXECUTETIMEOUT",      value: "300s" }
         - { name: "CORE_PEER_ID",                       value: "{{ node.fullname }}" }
-        - { name: "CORE_PEER_MSPCONFIGPATH",            value: "/etc/hyperledger/fabric/msp" }
+        - { name: "CORE_PEER_MSPCONFIGPATH",            value: "/certs/msp" }
         - { name: "CORE_PEER_ADDRESS",                  value: "{{ node.fullname | replace('.','-') }}:7051" }
         - { name: "CORE_PEER_LISTENADDRESS",            value: "0.0.0.0:7051" }
         - { name: "CORE_PEER_CHAINCODEADDRESS",         value: "{{ node.fullname | replace('.','-') }}:7052" }
@@ -577,13 +543,9 @@ spec:
         - { name: "CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD",         value: "{{ node.adminPassword }}" }
 {%      endif %}
         volumeMounts:
-          - { mountPath: "/cacerts", name: "ca-cert-key" }
-          - { mountPath: "/cacertstls", name: "ca-cert-key-tls" }
-          - { mountPath: "/idcerts", name: "cert-key-id" }
-          - { mountPath: "/tlscerts", name: "cert-key-tls" }
           - { mountPath: "/var/hyperledger/production", name: "{{ nodename }}-data"}
-          - { mountPath: "/etc/hyperledger/fabric/msp", name: "{{ nodename }}-msp" }
           - { mountPath: "/var/run", name: "rundind" }
+          - { mountPath: "/certs",    name: "{{ nodename }}-certs" }
         command: ["peer"]
         args: ["node", "start"]
 {%   endfor %}

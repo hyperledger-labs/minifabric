@@ -4,6 +4,9 @@
   vars:
      ours: "{{ ( allcas+allorderers+allpeers+(allcouchdbs|default([])) ) | map(attribute='port') | list  }}"
 
+- name: "Process keys"
+  include_tasks: "{{ pjroot }}/playbooks/common/processkeys.yaml"
+
 - name: Create deployment spec and service file
   template:
     src: "{{ pjroot }}/playbooks/ops/netup/k8stemplates/allnodes.j2"

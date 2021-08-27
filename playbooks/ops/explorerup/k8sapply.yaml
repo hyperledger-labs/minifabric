@@ -1,5 +1,5 @@
 ---
-- name: pack and deploy config and keyfiles
+- name: pack and deploy config to k8s
   block:
    - name: pack configs into tar ball
      command: >-
@@ -17,20 +17,6 @@
          binaryData:
            explorer.tgz : >-
              {{ lookup('file', pjroot+'/vars/explorer.tgz', errors='ignore') | b64encode }}
-
-   - name: upload keyfiles to k8s
-     k8s:
-       kubeconfig: "{{ pjroot }}/vars/kubeconfig/config"
-       state: present
-       definition:
-         apiVersion: v1
-         kind: ConfigMap
-         metadata:
-           name: "keyfiles"
-           namespace: "{{ NETNAME }}"
-         binaryData:
-           certs.tgz: >-
-             {{ lookup('file', pjroot+'/vars/certs.tgz', errors='ignore') | b64encode }}
 
 - name: Create deployment and service file
   template:

@@ -65,22 +65,49 @@
     -v {{ hostroot}}/vars:/etc/hyperledger/fabric
     hyperledger/fabric-tools:{{ fabric.release }} /etc/hyperledger/fabric/run/certtxgen.sh
 
-- name: Upload gensis block for orderers
-  when: ISK8S == true and (ordererorgs|length > 0)
-  k8s:
-    kubeconfig: "{{ pjroot }}/vars/kubeconfig/config"
-    state: present
-    definition:
-      apiVersion: v1
-      kind: ConfigMap
-      metadata:
-        name: "genesis-blocks"
-        namespace: "{{ NETNAME }}"
-      binaryData:
-        genesis.block: >-
-          {{ lookup('file', pjroot+'/vars/genesis.block', errors='ignore') | b64encode }}
-
 - name: Package all the certs to one file
   archive:
     path: "{{ pjroot }}/vars/keyfiles"
     dest: "{{ pjroot }}/vars/certs.tgz"
+
+- name: k8s consideration
+  when: ISK8S == true
+  block:
+  - name: create namespace in k8s
+    k8s:
+      kubeconfig: "{{ pjroot }}/vars/kubeconfig/config"
+      state: present
+      definition:
+        apiVersion: v1
+        kind: Namespace
+        metadata:
+          name: "{{ NETNAME }}"
+
+  - name: upload certs
+    k8s:
+      kubeconfig: "{{ pjroot }}/vars/kubeconfig/config"
+      state: present
+      definition:
+        apiVersion: v1
+        kind: ConfigMap
+        metadata:
+          name: "keyfiles"
+          namespace: "{{ NETNAME }}"
+        binaryData:
+          certs.tgz: >-
+            {{ lookup('file', pjroot+'/vars/certs.tgz', errors='ignore') | b64encode }}
+
+  - name: upload gensis block
+    when: ISK8S == true and (ordererorgs|length > 0)
+    k8s:
+      kubeconfig: "{{ pjroot }}/vars/kubeconfig/config"
+      state: present
+      definition:
+        apiVersion: v1
+        kind: ConfigMap
+        metadata:
+          name: "genesis-blocks"
+          namespace: "{{ NETNAME }}"
+        binaryData:
+          genesis.block: >-
+            {{ lookup('file', pjroot+'/vars/genesis.block', errors='ignore') | b64encode }}
