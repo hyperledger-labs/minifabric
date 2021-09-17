@@ -64,7 +64,7 @@ export https_proxy=http://yourID:yourPass@yourProxyhost:port/
 export no_proxy=localhost,127.0.0.1/8,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,*.local,*.yourdomain.com
 
 # for kubernetes operation via ansible
-export K8A_AUTH_PROXY=http://yourProxyhost:port/
+export K8S_AUTH_PROXY=http://yourProxyhost:port/
 export K8S_AUTH_PROXY_HEADERS_PROXY_BASIC_AUTH=yourID:yourPass
 ```
 
@@ -72,7 +72,7 @@ on win10:
 ```bat
 set https_proxy=http://yourID:yourPass@yourProxyhost:port/
 set no_proxy=localhost,127.0.0.1/8,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,*.local,*.yourdomain.com
-set K8A_AUTH_PROXY=http://yourProxyhost:port/
+set K8S_AUTH_PROXY=http://yourProxyhost:port/
 set K8S_AUTH_PROXY_HEADERS_PROXY_BASIC_AUTH=yourID:yourPass
 REM you can set above variables as environment variables in win10 OS.
 ```
