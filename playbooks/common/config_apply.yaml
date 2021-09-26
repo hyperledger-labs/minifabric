@@ -38,13 +38,7 @@
 
   - name: Set up default adminPassword if not define in spec.yaml
     set_fact:
-      adminPassword: "adminpw"
-    when: fabric.settings.ca.adminPassword is undefined 
-
-  - name: Set up adminpw defined in spec.yaml
-    set_fact:
-      adminPassword: "{{ fabric.settings.ca.adminPassword }}"      
-    when: fabric.settings.ca.adminPassword is defined 
+      adminPassword: "{{ fabric.settings.ca.adminPassword | default('adminpw') }}"
 
   - name: When not expose endpoints
     when: nodeport == '0'
