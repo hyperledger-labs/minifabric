@@ -36,6 +36,10 @@
       ipaddr: "{{ endpoint_address }}"
     when: (EXPOSE_ENDPOINTS|lower) != 'false'
 
+  - name: Set up default adminPassword if not define in spec.yaml
+    set_fact:
+      adminPassword: "{{ fabric.settings.ca.adminPassword | default('adminpw') }}"
+
   - name: When not expose endpoints
     when: nodeport == '0'
     block:
@@ -45,8 +49,8 @@
           {{ allcas + [{ 'org':item.split('.')[1:] | join("."), 'portmap':'',
             'url': item, 'port': '7054', 'mspid': item.split('.')[1:] | join('-'),
             'name':item.split('.')[0], 'fullname': item, 'type': 'ca',
-            'adminPassword': 'adminpw',
-            'command': 'fabric-ca-server start -b admin:adminpw --cfg.affiliations.allowremove --cfg.identities.allowremove'  }] }}
+            'adminPassword': adminPassword,
+            'command': 'fabric-ca-server start -b admin:' + adminPassword + ' --cfg.affiliations.allowremove --cfg.identities.allowremove'  }] }}
       with_items: "{{ fabric.cas }}"
       when: fabric.cas is defined
 
@@ -90,8 +94,8 @@
             'portmap':'-p '+nodeport+':7054'+' -p '+((nodeport|int+1000)|string)+':9443',
             'mspid': item.split('.')[1:] | join('-'),
             'name':item.split('.')[0], 'fullname': item, 'type': 'ca',
-            'adminPassword': 'adminpw',
-            'command': 'fabric-ca-server start -b admin:adminpw --cfg.affiliations.allowremove --cfg.identities.allowremove'  }] }}
+            'adminPassword': adminPassword ,
+            'command': 'fabric-ca-server start -b admin:' + adminPassword + ' --cfg.affiliations.allowremove --cfg.identities.allowremove'  }] }}
         nodeport: "{{ nodeport|int + 1 }}"
       with_items: "{{ fabric.cas }}"
       when: fabric.cas is defined

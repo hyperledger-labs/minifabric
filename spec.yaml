@@ -24,6 +24,7 @@ fabric:
   ### the goproxy in China area
   # goproxy: "https://goproxy.cn,direct"
   ### set the endpoint address to override the automatically detected IP address
+  ### could be a public IP address or a dns name
   # endpoint_address: 104.196.45.144
   ### set the docker network name to override the automatically generated name.
   netname: "mysite"

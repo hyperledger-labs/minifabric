@@ -37,13 +37,18 @@
   - "ca/priv_sk"
   - "tlsca/priv_sk"
 
+- name: check ip
+  set_fact:
+    isip: >-
+      {{ endpoint_address is regex('((25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])$') }}
+
 - name: "Create ca self signed certificate"
   command: >-
     openssl req -new -days 3650 -nodes -x509 -extensions v3_req -extensions v3_ca
     -subj "/C=US/ST=North Carolina/L=Raleigh/O={{ org }}/CN={{ item.cn }}.{{ org }}"
     -addext "keyUsage=critical,digitalSignature,keyEncipherment,keyCertSign,cRLSign"
     -addext "extendedKeyUsage=serverAuth,clientAuth"
-    -addext "subjectAltName=IP:{{ endpoint_address }},DNS:{{ item.cn }}.{{ org }},DNS:{{ item.cn }}-{{ org | replace('.','-') }},DNS:localhost,IP:127.0.0.1"
+    -addext "subjectAltName={{ isip|ternary('IP: ', 'DNS: ') }}{{ endpoint_address }},DNS:{{ item.cn }}.{{ org }},DNS:{{ item.cn }}-{{ org | replace('.','-') }},DNS:localhost,IP:127.0.0.1"
     -key {{ orgrootpath }}/{{ item.pkey }}
     -out {{ orgrootpath }}/{{ item.cert}}{{ caname }}.{{ org }}-cert.pem
   with_items:

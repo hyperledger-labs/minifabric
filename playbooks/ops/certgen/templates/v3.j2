@@ -1,4 +1,4 @@
 keyUsage = critical,digitalSignature
 basicConstraints = critical,CA:FALSE
-subjectAltName=IP:{{ endpoint_address }},DNS:{{partycn}},DNS:{{ partycn|replace('.','-') }},DNS:localhost,IP:127.0.0.1
+subjectAltName={{ isip|ternary('IP: ', 'DNS: ') }}{{ endpoint_address }},DNS:{{partycn}},DNS:{{ partycn|replace('.','-') }},DNS:localhost,IP:127.0.0.1
 authorityKeyIdentifier = keyid,issuer
