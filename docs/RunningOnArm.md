@@ -1,5 +1,6 @@
 # Running minifabric on ARM64
 
+Related issue(s): [#293](https://github.com/hyperledger-labs/minifabric/issues/293)
 Text...
 
 ## General considerations
