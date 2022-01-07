@@ -16,21 +16,20 @@ github.com/hyperledger/fabric/gossip/identity.(*storedIdentity).fetchIdentity(0x
 ```
 
 The segmentation fault occurs when calling the function "atomic.storeInt64()"
-(https://github.com/hyperledger/fabric/blob/v2.2.0/gossip/identity/identity.go#L261) and is related to the 64-bit alignment of 64-bit words accessed atomically, as described here (golang/go#23345 (comment)). Since Hyperledger Fabric holds numerous unaligned structs, there is no quick fix for this issue. Therefore, 64-bit architecture is recommended (e.g. raspios-bullseye-arm64).
-
-With this configuration and some small adjustments (like a missing jq installation in the cli container) we had success and were able to run minifabric.
-
-
-Run the following commands
-```
-Terminal
-```
+(https://github.com/hyperledger/fabric/blob/v2.2.0/gossip/identity/identity.go#L261) and is related to the 64-bit alignment of 64-bit words accessed atomically, as described here (golang/go#23345 (comment)). Since Hyperledger Fabric holds numerous unaligned structs, there is no quick fix for this issue. Therefore, using a 64-bit architecture is recommended (e.g. raspios-bullseye-arm64).
 
 ## Considerations for ARM64
-Text... (jq installieren, chaincode images)
-```
-Terminal
-```
+
+To run ARM64 docker images compatible with minifabric, make sure your images are fullfilling the following requirements.
+
+###Cli container image
+
+Make sure jq is installed inside the minifabric cli container, the command <code>minifab stats</code> uses jq to retrieve the HTTP status code from the response message of the running containers. <code>minifab stats</code> is also invoked by <code>minifab up</code> and without a OK feedback, the process exits.
+
+###Chaincode containers
+
+Beschreibung wie wir welchen chaincode cotainer zum laufen bekommen.
+
 
 Compatible sample images can be found on dockerhub LINK
 and to simply build your own images, refer to the following sources LINK.
