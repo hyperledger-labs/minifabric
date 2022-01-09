@@ -28,8 +28,20 @@ Make sure jq is installed inside the minifabric cli container, the command <code
 
 ###Chaincode containers
 
-Beschreibung wie wir welchen chaincode cotainer zum laufen bekommen.
+Before installing the chaincode (your own or the simpleCC) with <code>minifab install</code> it is necessary to set the core chaincode builder in the spec.yaml as described here (https://github.com/hyperledger-labs/minifabric/blob/main/docs/README.md#working-with-customised-chaincode-builders).
+	
+```
+fabric:
+  settings:
+    peer:
+      CORE_CHAINCODE_BUILDER: hyperledger/fabric-ccenv:my2.2
+```
 
+Depending on your chaincode language it may be required to set the <code>CORE_CHAINCODE_NODE_RUNTIME</code> parameter as well.
+Currently we are only able to run java based chaincode on ARM64.
+
+## Troubleshooting
+evtl. hier mal noch sammeln was sonst noch so für Probleme auftreten können
 
 Compatible sample images can be found on dockerhub LINK
 and to simply build your own images, refer to the following sources LINK.
