@@ -3,7 +3,11 @@
 This document lists the known issues that you may experience trying to operate minifabric on ARM hardware. 
 Related issue(s): [#293](https://github.com/hyperledger-labs/minifabric/issues/293)
 
-## General considerations
+## General Approach
+
+Minifabric acts as an deployment tool, using given docker images of Hyperledger Fabric. Therefore, we manipulated all references to docker images inside the source code of minifabric. You can either replace the entries by static references to ARM images of Fabric or manipulate the entries on runtime. The following repository contains a fork of minifabric with a experimental CLI flag for assiging custom images (LINK). In general, this approach requires building dedicated docker images for ARM and following we list further considerations.
+
+## Considerations for ARMHF
 
 Running minifabric on armhf you may experience segmentation faults caused by code written in go.
 
