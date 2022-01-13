@@ -28,7 +28,7 @@ To build your own arm64 compatible images, refer to https://github.com/chinyati/
 
 Running arm64 docker images compatible with minifabric, make sure your images are fullfilling the following requirements.
 
-### Cli Container Image
+### CLI Container
 
 Make sure jq (https://stedolan.github.io/jq/) is installed inside the minifabric cli container, the command <code>minifab stats</code> uses jq to retrieve the HTTP status code from the JSON response of the running containers. <code>minifab stats</code> is also invoked by <code>minifab up</code> and without the JSON repsonse with a OK feedback, the process exits.
 
