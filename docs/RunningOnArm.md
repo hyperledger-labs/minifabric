@@ -5,7 +5,7 @@ Related issue(s): [#293](https://github.com/hyperledger-labs/minifabric/issues/2
 
 ## General Approach
 
-Minifabric acts as an deployment tool, using given docker images of Hyperledger Fabric. Therefore, we manipulated all references to docker images inside the source code of minifabric. You can either replace the entries by static references to ARM images of Fabric or manipulate the entries on runtime. The following repository contains a fork of minifabric with a experimental CLI flag for assiging custom images (LINK). In general, this approach requires building dedicated docker images for ARM and following we list further considerations.
+Minifabric acts as an deployment tool, using given docker images of Hyperledger Fabric. Therefore, we manipulated all references to docker images inside the source code of minifabric. You can search and replace the entries by static references to ARM images of Fabric. In general, this approach requires building dedicated docker images for ARM and following we list further considerations.
 
 ## Considerations for ARMHF
 
@@ -19,8 +19,8 @@ github.com/hyperledger/fabric/gossip/identity.(*storedIdentity).fetchIdentity(0x
 	/go/src/github.com/hyperledger/fabric/gossip/identity/identity.go:261 +0xa0,
 ```
 
-The segmentation fault occurs when calling the function "atomic.storeInt64()"
-(https://github.com/hyperledger/fabric/blob/v2.2.0/gossip/identity/identity.go#L261) and is related to the 64-bit alignment of 64-bit words accessed atomically, as described here (golang/go#23345 (comment)). Since Hyperledger Fabric holds numerous unaligned structs, there is no quick fix for this issue. Therefore, using a 64-bit architecture is recommended (e.g. raspios-bullseye-arm64).
+Function calls such as, "atomic.storeInt64()"
+(https://github.com/hyperledger/fabric/blob/v2.2.0/gossip/identity/identity.go#L261) are causing this segmentation fault. The problem is related to the 64-bit alignment of 64-bit words accessed atomically, as described here https://github.com/golang/go/issues/23345. Since Hyperledger Fabric holds numerous unaligned structs, there is no quick fix for this issue. Therefore, using a 64-bit architecture instead is recommended (e.g. raspios-bullseye-arm64).
 
 ## Considerations for ARM64
 
@@ -32,7 +32,7 @@ Make sure jq is installed inside the minifabric cli container, the command <code
 
 ###Chaincode containers
 
-Before installing the chaincode (your own or the simpleCC) with <code>minifab install</code> it is necessary to set the core chaincode builder in the spec.yaml as described here (https://github.com/hyperledger-labs/minifabric/blob/main/docs/README.md#working-with-customised-chaincode-builders).
+Before installing the chaincode (your own or the simpleCC) with <code>minifab install</code> it is necessary to set the core chaincode builder in the spec.yaml as described here https://github.com/hyperledger-labs/minifabric/blob/main/docs/README.md#working-with-customised-chaincode-builders.
 	
 ```
 fabric:
