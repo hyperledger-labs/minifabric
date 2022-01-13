@@ -1,4 +1,4 @@
-# Running minifabric on ARM
+# Running Minifabric on ARM
 
 This document lists the known issues that you may experience trying to operate minifabric on ARM hardware. 
 Related issue(s): [#293](https://github.com/hyperledger-labs/minifabric/issues/293)
@@ -22,15 +22,17 @@ github.com/hyperledger/fabric/gossip/identity.(*storedIdentity).fetchIdentity(0x
 Function calls such as, "atomic.storeInt64()"
 (https://github.com/hyperledger/fabric/blob/v2.2.0/gossip/identity/identity.go#L261) are causing this segmentation fault. The problem is related to the 64-bit alignment of 64-bit words accessed atomically, as described here https://github.com/golang/go/issues/23345. Since Hyperledger Fabric holds numerous unaligned structs, there is no quick fix for this issue. Therefore, using a 64-bit architecture instead is recommended (e.g. raspios-bullseye-arm64).
 
-## Considerations for ARM64
+## Fabric Images for ARM64
 
-To run ARM64 docker images compatible with minifabric, make sure your images are fullfilling the following requirements.
+To build your own arm64 compatible images, refer to https://github.com/chinyati/Hyperledger-Fabric-ARM64-images.
 
-###Cli container image
+Running arm64 docker images compatible with minifabric, make sure your images are fullfilling the following requirements.
 
-Make sure jq is installed inside the minifabric cli container, the command <code>minifab stats</code> uses jq to retrieve the HTTP status code from the response message of the running containers. <code>minifab stats</code> is also invoked by <code>minifab up</code> and without a OK feedback, the process exits.
+### Cli Container Image
 
-###Chaincode containers
+Make sure jq (https://stedolan.github.io/jq/) is installed inside the minifabric cli container, the command <code>minifab stats</code> uses jq to retrieve the HTTP status code from the JSON response of the running containers. <code>minifab stats</code> is also invoked by <code>minifab up</code> and without the JSON repsonse with a OK feedback, the process exits.
+
+### Chaincode Containers
 
 Before installing the chaincode (your own or the simpleCC) with <code>minifab install</code> it is necessary to set the core chaincode builder in the spec.yaml as described here https://github.com/hyperledger-labs/minifabric/blob/main/docs/README.md#working-with-customised-chaincode-builders.
 	
@@ -42,10 +44,3 @@ fabric:
 ```
 
 Depending on your chaincode language it may be required to set the <code>CORE_CHAINCODE_NODE_RUNTIME</code> parameter as well.
-Currently we are only able to run java based chaincode on ARM64.
-
-## Troubleshooting
-evtl. hier mal noch sammeln was sonst noch so für Probleme auftreten können
-
-Compatible sample images can be found on dockerhub LINK
-and to simply build your own images, refer to the following sources LINK.
