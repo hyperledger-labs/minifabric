@@ -19,8 +19,8 @@ github.com/hyperledger/fabric/gossip/identity.(*storedIdentity).fetchIdentity(0x
 	/go/src/github.com/hyperledger/fabric/gossip/identity/identity.go:261 +0xa0,
 ```
 
-Function calls such as, "atomic.storeInt64()"
-(https://github.com/hyperledger/fabric/blob/v2.2.0/gossip/identity/identity.go#L261) are causing this segmentation fault. The problem is related to the 64-bit alignment of 64-bit words accessed atomically, as described here https://github.com/golang/go/issues/23345. Since Hyperledger Fabric holds numerous unaligned structs, there is no quick fix for this issue. Therefore, using a 64-bit architecture instead is recommended (e.g. raspios-bullseye-arm64).
+Function calls such as, <code>atomic.storeInt64();</code>
+(https://github.com/hyperledger/fabric/blob/v2.2.0/gossip/identity/identity.go#L261) are causing this segmentation fault. The problem is related to the 64-bit alignment of 64-bit words accessed atomically, as described here [#23345](https://github.com/golang/go/issues/23345). Since Hyperledger Fabric holds numerous unaligned structs, there is no quick fix for this issue. Therefore, using a 64-bit architecture instead is recommended (e.g. raspios-bullseye-arm64).
 
 ## Fabric Images for ARM64
 
