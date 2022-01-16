@@ -7,14 +7,12 @@ Related issue(s): [#293](https://github.com/hyperledger-labs/minifabric/issues/2
 
 Minifabric acts as an deployment tool, using given docker images of Hyperledger Fabric. Therefore, we manipulated all references to docker images inside the source code of minifabric and build it locally (see [build minifabric locally](https://github.com/hyperledger-labs/minifabric/blob/main/docs/README.md#build-minifabric-locally)). You can search and replace the entries by static references to ARM images of Fabric. In general, this approach requires building dedicated docker images for ARM and following we list further considerations.
 
-For a quick start with Fabric version 2.2, please refer to the following experimental samples:
+For a quick start with Fabric version 2.2, please refer to the following experimental samples (be carefull, no warranty):
 - minifabric compatible ARM64 images LINK
-- fabric samples to build own images LINK
-- fork of minifabric as a sample with the proposed static references, see branch "static-arm-references" LINK
+- fabric samples to build own images LINK or refer to https://github.com/chinyati/Hyperledger-Fabric-ARM64-images.
+- sample of minifabric with the proposed static references, see branch "static-arm-references" LINK
 
 ## Fabric Images for ARM64
-
-To build your own ARM64 compatible images, refer to https://github.com/chinyati/Hyperledger-Fabric-ARM64-images.
 
 Running ARM64 docker images compatible with minifabric, make sure your images are fullfilling the following requirements.
 
