@@ -33,7 +33,7 @@ Depending on your chaincode language it may be required to set the <code>CORE_CH
 For a quick start with Fabric version 2.2, please refer to the following samples:
 - minifabric compatible ARM64 images LINK
 - fabric samples to build own images LINK
-- fork of minifabric with the proposed static references LINK
+- fork of minifabric with the proposed static references, see branch "static-arm-references" LINK
 
 ## Considerations for ARMHF
 
