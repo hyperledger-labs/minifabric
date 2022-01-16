@@ -30,7 +30,7 @@ Running arm64 docker images compatible with minifabric, make sure your images ar
 
 ### CLI Container
 
-Make sure jq (https://stedolan.github.io/jq/) is installed inside the minifabric cli container, the command <code>minifab stats</code> uses jq to retrieve the HTTP status code from the JSON response of the running containers. <code>minifab stats</code> is also invoked by <code>minifab up</code> and without the JSON repsonse with a OK feedback, the process exits.
+Make sure jq (https://stedolan.github.io/jq/) is installed inside the minifabric cli container, the command <code>minifab stats</code> uses jq to retrieve the HTTP status code from the JSON response of the running containers. <code>minifab stats</code> is also invoked by <code>minifab up</code> and without the JSON response containing the OK feedback, the process exits.
 
 ### Chaincode Containers
 
@@ -44,3 +44,8 @@ fabric:
 ```
 
 Depending on your chaincode language it may be required to set the <code>CORE_CHAINCODE_NODE_RUNTIME</code> parameter as well.
+
+For a quick start with Fabric version 2.2, please refer to the following samples:
+- minifabric compatible ARM64 images LINK
+- fabric samples to build own images LINK
+- fork of minifabric with the proposed static references LINK
