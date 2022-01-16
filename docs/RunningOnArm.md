@@ -10,7 +10,7 @@ Minifabric acts as an deployment tool, using given docker images of Hyperledger 
 For a quick start with Fabric version 2.2, please refer to the following experimental samples (be carefull, no warranty):
 - minifabric compatible ARM64 images LINK
 - fabric samples to build own images LINK or refer to https://github.com/chinyati/Hyperledger-Fabric-ARM64-images.
-- minifabric sample of how to set the relevant static references, see the commit on [static-arm64-references](https://github.com/LIONS-DLT/minifabric/commit/810fc1177c9d4cf4ef1adf678ee3cf42f1325ea8)
+- minifabric sample of where to set the relevant static references, see the commit [static-arm64-references](https://github.com/LIONS-DLT/minifabric/commit/810fc1177c9d4cf4ef1adf678ee3cf42f1325ea8)
 
 ## Fabric Images for ARM64
 
