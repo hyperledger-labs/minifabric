@@ -5,9 +5,9 @@ Related issue(s): [#293](https://github.com/hyperledger-labs/minifabric/issues/2
 
 ## General Approach
 
-Minifabric acts as an deployment tool, using given docker images of Hyperledger Fabric. Therefore, we manipulated all references to docker images inside the source code of minifabric and build it locally (see [build minifabric locally](https://github.com/hyperledger-labs/minifabric/blob/main/docs/README.md#build-minifabric-locally)). You can search and replace the entries by static references to ARM images of Fabric. In general, this approach requires building dedicated docker images for ARM and following we list further considerations.
+Minifabric acts as an deployment tool, using given docker images of Hyperledger Fabric. Therefore, we manipulated all references to docker images inside the source code of minifabric and build it locally (see [build minifabric locally](https://github.com/hyperledger-labs/minifabric/blob/main/docs/README.md#build-minifabric-locally)). You can search and replace the entries in the source code files for the cloned minifabric repo by static references to ARM images of Fabric. In general, this approach requires building dedicated docker images for ARM and following we list further considerations.
 
-For a quick start with Fabric version 2.2, please refer to the following experimental samples (be carefull, no warranty):
+For a quick start with Fabric version 2.2, please refer to the following experimental samples (be careful, no warranty):
 - minifabric compatible ARM64 images LINK
 - fabric samples to build own images LINK or refer to https://github.com/chinyati/Hyperledger-Fabric-ARM64-images.
 - minifabric sample of where to set the relevant static references, see the commit [static-arm64-references](https://github.com/LIONS-DLT/minifabric/commit/810fc1177c9d4cf4ef1adf678ee3cf42f1325ea8)
@@ -35,7 +35,7 @@ Depending on your chaincode language it may be required to set the <code>CORE_CH
 
 ## Considerations for ARMHF
 
-TLDR consider to use ARM64, running minifabric on ARMHF you may experience segmentation faults caused by code written in go.
+TLDR consider using the ARM64 architecture. When running minifabric on ARMHF you may experience segmentation faults caused by code written in go.
 
 ```
 panic: runtime error: invalid memory address or nil pointer dereference,
