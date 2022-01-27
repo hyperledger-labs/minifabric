@@ -5,16 +5,15 @@ Related issue(s): [#293](https://github.com/hyperledger-labs/minifabric/issues/2
 
 ## General Approach
 
-Minifabric acts as an deployment tool, using given docker images of Hyperledger Fabric. Therefore, we manipulated all references to docker images inside the source code of minifabric and build it locally (see [build minifabric locally](https://github.com/hyperledger-labs/minifabric/blob/main/docs/README.md#build-minifabric-locally)). You can search and replace the entries in the source code files for the cloned minifabric repo by static references to ARM images of Fabric. In general, this approach requires building dedicated docker images for ARM and following we list further considerations.
+Minifabric acts as a deployment tool, using given docker images of Hyperledger Fabric. Therefore, we manipulated all references to docker images inside the source code of minifabric and built it locally (see [build minifabric locally](https://github.com/hyperledger-labs/minifabric/blob/main/docs/README.md#build-minifabric-locally)). You can search and replace the entries in the source code files for the cloned minifabric repo by static references to ARM images of Fabric. In general, this approach requires building dedicated docker images for ARM and following we list further considerations.
 
-For a quick start with Fabric version 2.2, please refer to the following experimental samples (be careful, no warranty):
-- minifabric compatible ARM64 images LINK
-- fabric samples to build own images LINK or refer to https://github.com/chinyati/Hyperledger-Fabric-ARM64-images.
+For a quick start with Fabric version 2.1, please refer to the following samples (be careful, no warranty):
+- fabric sources and docs to build ARM64 images https://github.com/chinyati/Hyperledger-Fabric-ARM64-images.
 - minifabric sample of where to set the relevant static references, see the commit [static-arm64-references](https://github.com/LIONS-DLT/minifabric/commit/810fc1177c9d4cf4ef1adf678ee3cf42f1325ea8)
 
 ## Fabric Images for ARM64
 
-Running ARM64 docker images compatible with minifabric, make sure your images are fullfilling the following requirements.
+Running ARM64 docker images compatible with minifabric, make sure your images are fulfilling the following requirements.
 
 ### CLI Container
 
