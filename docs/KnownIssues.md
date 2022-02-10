@@ -47,3 +47,23 @@ When connecting to the fabric network deployed in Kubernetes/K8S cluster using t
 }
 ```
 ### Related issue(s): [#215](https://github.com/hyperledger-labs/minifabric/issues/215)
+
+****
+
+### ISSUE:
+
+<a name="2"></a>The file contains an identity that already exists.
+### ENVIRONMENT:
+
+fabric-operations-console - Docker or K8S
+Any Platform - Linux or Mac or Windows
+
+### SOLUTION:
+
+When trying to import assets.zip file as part of fabric operations console deployment in Minifabric, a non-first time, you may encounter this error message and fail to perform importing of zip file successfully.
+
+The work-around is to navigate to Wallet option on the same console, delete identities already stored in the browser web storage and performing the re-import of assets.zip file.
+
+The reason this error appears is due to the identities remaining in browser web storage and conflicting/name clashing with same artifacts already in web storage.
+
+### Related issue(s): 
