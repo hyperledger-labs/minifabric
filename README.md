@@ -1,7 +1,7 @@
 # Minifabric 
 
 ![MiniFab CI](https://github.com/hyperledger-labs/minifabric/workflows/MiniFab%20CI/badge.svg)
-[![Chat](https://raw.githubusercontent.com/hyperledger/chat-assets/main/fabric-mini.svg)](https://chat.hyperledger.org/channel/fabric-mini)
+[![Discord](https://img.shields.io/discord/905194001349627914?logo=Hyperledger&style=plastic)](https://discord.gg/hyperledger)
 
 [中文](https://github.com/hyperledger-labs/minifabric/blob/main/README.zh.md)
 
