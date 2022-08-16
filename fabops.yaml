@@ -18,6 +18,12 @@
       set_fact:
         ISK8S: "{{ k8sflag.stat.exists }}"
 
+    - name: "Target environment"
+      debug: 
+        msg: "{{ TARGET_ENV }}"
+      tags: [print_action]
+      when: TARGET_ENV|length > 0
+
     - set_fact:
         allops: "{{ mode.split(',')|list }}"
         status_flag: "Success"

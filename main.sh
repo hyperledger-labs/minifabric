@@ -59,6 +59,8 @@ case $optkey in
     CC_INIT_REQUIRED="$2";shift;shift;;
   -f|--run-output)
     RUN_OUTPUT="$2";shift;shift;;
+  -a|--target-environment)
+    TARGET_ENV="$2";shift;shift;;
   *) # unknown option
     echo "$1 is a not supported option"; exit 1;;
 esac
