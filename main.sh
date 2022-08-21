@@ -88,6 +88,7 @@ echo "    BLOCK_NUMBER=$BLOCK_NUMBER"
 echo "    EXPOSE_ENDPOINTS=$EXPOSE_ENDPOINTS"
 echo "    CURRENT_ORG=$CURRENT_ORG"
 echo "    HOST_ADDRESSES=$ADDRS"
+echo "    TARGET_ENV=$TARGET_ENV"
 
 getRealRootDir
 echo "    WORKING_DIRECTORY: $hostroot"

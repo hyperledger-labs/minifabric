@@ -1,7 +1,7 @@
 - name: "Docker network start up"
   include_tasks: "dockerapply.yaml"
-  when: ISK8S == false
+  when: TARGET_ENV == 'DOCKER'
 
 - name: "K8S network start up"
   include_tasks: "k8sapply.yaml"
-  when: ISK8S == true
+  when: TARGET_ENV == 'K8SCLASSIC'

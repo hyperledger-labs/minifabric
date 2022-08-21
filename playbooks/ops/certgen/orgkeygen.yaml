@@ -56,7 +56,7 @@
   - "{{ {'pkey': 'tlsca/priv_sk','cert': 'tlsca/tls', 'cn': 'tls'+caname } }}"
 
 - name: Upload ca certificates to k8s
-  when: ISK8S == true
+  when: TARGET_ENV == 'K8SCLASSIC'
   block:
   - name: Create the namespace
     k8s:
