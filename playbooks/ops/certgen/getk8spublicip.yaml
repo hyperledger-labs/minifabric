@@ -1,5 +1,5 @@
 - name: Deploy gninx ingress controller if not already exists
-  when: ISK8S == true
+  when: TARGET_ENV == 'K8SCLASSIC'
   block:
   - name: Check status of nginx ingress controller
     k8s_info:

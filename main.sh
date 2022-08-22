@@ -59,6 +59,8 @@ case $optkey in
     CC_INIT_REQUIRED="$2";shift;shift;;
   -f|--run-output)
     RUN_OUTPUT="$2";shift;shift;;
+  -a|--target-environment)
+    TARGET_ENV="$2";shift;shift;;
   *) # unknown option
     echo "$1 is a not supported option"; exit 1;;
 esac
@@ -86,6 +88,7 @@ echo "    BLOCK_NUMBER=$BLOCK_NUMBER"
 echo "    EXPOSE_ENDPOINTS=$EXPOSE_ENDPOINTS"
 echo "    CURRENT_ORG=$CURRENT_ORG"
 echo "    HOST_ADDRESSES=$ADDRS"
+echo "    TARGET_ENV=$TARGET_ENV"
 
 getRealRootDir
 echo "    WORKING_DIRECTORY: $hostroot"

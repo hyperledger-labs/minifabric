@@ -19,8 +19,8 @@
 
 - name: setup volume and containers for docker
   include_tasks: "dockerapply.yaml"
-  when: ISK8S == false
+  when: TARGET_ENV == 'DOCKER'
 
 - name: setup volume and containers for k8s
   include_tasks: "k8sapply.yaml"
-  when: ISK8S == true
+  when: TARGET_ENV == 'K8SCLASSIC'

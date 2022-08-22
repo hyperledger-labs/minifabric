@@ -95,7 +95,7 @@
     loop_var: privatekey
 
 - name: Upload certificates to k8s
-  when: ISK8S == true
+  when: TARGET_ENV == 'K8SCLASSIC'
   block:
   - name: Upload party certificate and key
     k8s:

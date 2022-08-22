@@ -89,7 +89,7 @@ function printHelp() {
 function doDefaults() {
   declare -a params=("CHANNEL_NAME" "CC_LANGUAGE" "IMAGETAG" "BLOCK_NUMBER" "CC_VERSION" \
     "CC_NAME" "DB_TYPE" "CC_PARAMETERS" "EXPOSE_ENDPOINTS" "CURRENT_ORG" "TRANSIENT_DATA" \
-    "CC_PRIVATE" "CC_POLICY" "CC_INIT_REQUIRED" "RUN_OUTPUT")
+    "CC_PRIVATE" "CC_POLICY" "CC_INIT_REQUIRED" "RUN_OUTPUT" "TARGET_ENV")
   if [ ! -f "./vars/envsettings" ]; then
     cp envsettings vars/envsettings
   fi
@@ -114,7 +114,8 @@ function doOp() {
   -e "CC_PARAMETERS=$CC_PARAMETERS"  -e "EXPOSE_ENDPOINTS=$EXPOSE_ENDPOINTS"          \
   -e "ADDRS=$ADDRS" -e "CURRENT_ORG=$CURRENT_ORG" -e "BLOCK_NUMBER=$BLOCK_NUMBER"     \
   -e "TRANSIENT_DATA=$TRANSIENT_DATA" -e "CC_PRIVATE=$CC_PRIVATE"                     \
-  -e "CC_POLICY=$CC_POLICY" -e "CC_INIT_REQUIRED=$CC_INIT_REQUIRED" fabops.yaml
+  -e "CC_POLICY=$CC_POLICY" -e "CC_INIT_REQUIRED=$CC_INIT_REQUIRED"                   \
+  -e "TARGET_ENV=$TARGET_ENV" fabops.yaml
 }
 
 funcparams='optionverify'

@@ -5,14 +5,31 @@
   when: CURRENT_ORG not in allorgs
   tags: [print_action]
 
+- name: Verify TARGET_ENV is valid input
+  fail:
+    msg: "The target environment must be set to either DOCKER, K8SCLASSIC, OR K8SOPERATOR. Currently is '{{ TARGET_ENV }}'"
+  when: TARGET_ENV not in ['DOCKER', 'K8SCLASSIC', 'K8SOPERATOR']
+  tags: [print_action]
+
+- name: Check if kubeconfig file exists
+  stat: 
+    path: "{{ pjroot }}/vars/kubeconfig/config"
+  register: k8sflag
+
+- name: Verify k8sflag exists when target environment is k8s
+  fail: 
+    msg: "Missing kubeconfig file. Name the file 'config' and place within 'vars/kubeconfig/'"
+  when: TARGET_ENV is in ['K8SCLASSIC', 'K8SOPERATOR'] and k8sflag.stat.exists == false
+  tags: [print_action]
+
 - name: Verify expose-endpoints flag is true or a starting port for k8s deployment
   fail:
     msg: "The flag is set to {{ EXPOSE_ENDPOINTS }}, it has to be true or a port number for K8S deployment, use -e to set a value"
-  when: (EXPOSE_ENDPOINTS|lower) == 'false' and ISK8S
+  when: (EXPOSE_ENDPOINTS|lower) == 'false' and TARGET_ENV is in ['K8SCLASSIC', 'K8SOPERATOR']
   tags: [print_action]
 
 - name: Verify the endpoint address is set for k8s deployment
   fail:
     msg: "The endpoint address has to be set, please set it in your spec.yaml file!"
-  when: ISK8S and fabric.endpoint_address is not defined
+  when: TARGET_ENV == 'K8SCLASSIC' and fabric.endpoint_address is not defined
   tags: [print_action]
