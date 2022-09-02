@@ -35,6 +35,7 @@ OPNAMES:
   caliperrun: "run caliper test"
   update: "update Minifabric"
   configmerge: "merge configuration"
+  deployoperator: "deploy operator controller"
 PRECONDITIONS:
   ccinstall: ['PEER']
   ccapprove: ['PEER', 'ORDERER']
@@ -72,6 +73,7 @@ PRECONDITIONS:
   caliperrun: ['PEER', 'ORDERER']
   update: []
   configmerge: []
+  deployoperator: []
 LANGUAGEENVS:
   java: 'java:latest'
   go: 'golang:latest'

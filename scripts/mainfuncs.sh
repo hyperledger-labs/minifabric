@@ -24,7 +24,8 @@ OPNAMES=([up]="$LINE0$LINE1" [netup]='imageget,certgen,netup,netstats' \
   [anchorupdate]='anchorupdate' [explorerup]='explorerup' [explorerdown]='explorerdown' \
   [consoleup]='consoleup' [consoledown]='consoledown' \
   [ccup]='ccinstall,ccapprove,cccommit,ccinstantiate,discover,channelquery' \
-  [nodeimport]='nodeimport' [discover]='discover' [imageget]='imageget' [update]='update')
+  [nodeimport]='nodeimport' [discover]='discover' [imageget]='imageget' [update]='update' \
+  [deployoperator]='deployoperator')
 
 # Print the usage message
 function printHelp() {
