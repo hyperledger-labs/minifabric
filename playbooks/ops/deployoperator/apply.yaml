@@ -1,0 +1,17 @@
+---
+- name: "Ensure operator directory exists"
+  file:
+    path: "{{ pjroot }}/vars/operator"
+    state: "directory"
+
+- name: Download fabric operator manifest
+  get_url: 
+    url: "https://raw.githubusercontent.com/litong01/fabric-operator/main/deploy/fabric_operator.yaml"
+    dest: "{{ pjroot }}/vars/operator/fabric_operator.yaml"
+    mode: u+rwx
+
+- name: Apply fabric operator manifest 
+  k8s:
+    kubeconfig: "{{ pjroot }}/vars/kubeconfig/config"
+    state: present
+    src: "{{ pjroot }}/vars/operator/fabric_operator.yaml"
