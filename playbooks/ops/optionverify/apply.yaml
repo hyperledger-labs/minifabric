@@ -5,6 +5,11 @@
   when: CURRENT_ORG not in allorgs
   tags: [print_action]
 
+- name: Set TARGET_ENV to docker when empty
+  set_fact:
+    TARGET_ENV: "DOCKER"
+  when: TARGET_ENV == ''
+
 - name: Verify TARGET_ENV is valid input
   fail:
     msg: "The target environment must be set to either DOCKER, K8SCLASSIC, OR K8SOPERATOR. Currently is '{{ TARGET_ENV }}'"

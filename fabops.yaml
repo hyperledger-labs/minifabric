@@ -10,7 +10,7 @@
     - "./playbooks/ops/opnames.yaml"
   tasks:
     - set_fact:
-        TARGET_ENV: "{{ TARGET_ENV }}"
+        TARGET_ENV: "{{ TARGET_ENVIRONMENT }}"
         allops: "{{ mode.split(',')|list }}"
         status_flag: "Success"
         current_location_hash: "{{ hostroot | hash('sha256') }}"
