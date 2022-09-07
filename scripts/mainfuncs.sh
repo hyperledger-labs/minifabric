@@ -116,7 +116,7 @@ function doOp() {
   -e "ADDRS=$ADDRS" -e "CURRENT_ORG=$CURRENT_ORG" -e "BLOCK_NUMBER=$BLOCK_NUMBER"     \
   -e "TRANSIENT_DATA=$TRANSIENT_DATA" -e "CC_PRIVATE=$CC_PRIVATE"                     \
   -e "CC_POLICY=$CC_POLICY" -e "CC_INIT_REQUIRED=$CC_INIT_REQUIRED"                   \
-  -e "TARGET_ENV=$TARGET_ENV" fabops.yaml
+  -e "TARGET_ENVIRONMENT=$TARGET_ENV" fabops.yaml
 }
 
 funcparams='optionverify'
