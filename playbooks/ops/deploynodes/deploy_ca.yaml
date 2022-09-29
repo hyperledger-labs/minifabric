@@ -1,0 +1,12 @@
+---
+- name: extract node info
+  include_vars:
+    file: "{{ node_path }}"
+    name: node_info
+
+- name: deploy if node is ca
+  k8s:
+    kubeconfig: "{{ pjroot }}/vars/kubeconfig/config"
+    state: present
+    src: "{{ node_path }}"
+  when: node_info.kind == 'CA'
