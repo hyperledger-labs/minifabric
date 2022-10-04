@@ -2,21 +2,30 @@
 - name: check if /nodespecs is empty
   find:
     paths: "{{ pjroot }}/vars/nodespecs/"
+    patterns: '*.yaml'
   register: nodespecs
 
 - fail:
     msg: "vars/nodespecs is empty. Please place manifest files within nodespecs directory before deploying nodes."
   when: nodespecs.matched == 0
 
-- name: deploy ca nodes from /nodespecs first
-  include_tasks: deploy_ca.yaml
-  loop: "{{ lookup('fileglob', '{{ pjroot }}/vars/nodespecs/*', wantlist=True) }}"
+- name: deploy nodes in order of priority
+  include_tasks: nodespecs.yaml
+  loop: ['Nodecert','CA','Orderer','Peer','Agent']
   loop_control:
-    loop_var: node_path
+    loop_var: kind
 
-- name: deploy the rest of the nodes
-  k8s:
-    kubeconfig: "{{ pjroot }}/vars/kubeconfig/config"
-    state: present
-    src: "{{ item }}"
-  loop: "{{ lookup('fileglob', '{{ pjroot }}/vars/nodespecs/*', wantlist=True) }}"
+
+
+# - name: deploy ca nodes from /nodespecs first
+#   include_tasks: deploy_ca.yaml
+#   loop: "{{ lookup('fileglob', '{{ pjroot }}/vars/nodespecs/*', wantlist=True) }}"
+#   loop_control:
+#     loop_var: node_path
+
+# - name: deploy the rest of the nodes
+#   k8s:
+#     kubeconfig: "{{ pjroot }}/vars/kubeconfig/config"
+#     state: present
+#     src: "{{ item }}"
+#   loop: "{{ lookup('fileglob', '{{ pjroot }}/vars/nodespecs/*', wantlist=True) }}"

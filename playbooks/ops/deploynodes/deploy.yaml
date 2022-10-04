@@ -1,0 +1,32 @@
+---
+- name: extract node info
+  include_vars:
+    file: "{{ node_path }}"
+    name: node_info
+
+- name: Deploying
+  debug:
+    msg: "{{ node_info.kind }}"
+  when: node_info.kind == kind
+  tags: [print_action]
+
+- name: deploy if node is {{ kind }}
+  k8s:
+    kubeconfig: "{{ pjroot }}/vars/kubeconfig/config"
+    state: present
+    src: "{{ node_path }}"
+  when: node_info.kind == kind
+
+- name: Wait for {{ kind }} node to be ready
+  k8s_info:
+    kubeconfig: "{{ pjroot }}/vars/kubeconfig/config"
+    namespace: "{{ node_info.metadata.namespace }}"
+    name: "{{ node_info.metadata.name + '-0' }}"
+    kind: Pod
+    wait: yes
+    wait_condition:
+      type: "Ready"
+      status: "True"
+    wait_sleep: 3
+    wait_timeout: 90
+  when: node_info.kind == kind
