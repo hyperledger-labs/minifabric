@@ -1,5 +1,5 @@
 ---
-- name: extract node info
+- name: Extract node info
   include_vars:
     file: "{{ node_path }}"
     name: node_info
@@ -10,7 +10,7 @@
   when: node_info.kind == kind
   tags: [print_action]
 
-- name: deploy if node is {{ kind }}
+- name: Deploy if node is {{ kind }}
   k8s:
     kubeconfig: "{{ pjroot }}/vars/kubeconfig/config"
     state: present
@@ -21,7 +21,8 @@
   k8s_info:
     kubeconfig: "{{ pjroot }}/vars/kubeconfig/config"
     namespace: "{{ node_info.metadata.namespace }}"
-    name: "{{ node_info.metadata.name + '-0' }}"
+    label_selectors:
+      - "k8s-app = {{ node_info.metadata.name }}-{{ node_info.spec.organization | replace('.', '-')}}"
     kind: Pod
     wait: yes
     wait_condition:

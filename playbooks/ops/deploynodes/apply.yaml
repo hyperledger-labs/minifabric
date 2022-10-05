@@ -14,18 +14,3 @@
   loop: ['Nodecert','CA','Orderer','Peer','Agent']
   loop_control:
     loop_var: kind
-
-
-
-# - name: deploy ca nodes from /nodespecs first
-#   include_tasks: deploy_ca.yaml
-#   loop: "{{ lookup('fileglob', '{{ pjroot }}/vars/nodespecs/*', wantlist=True) }}"
-#   loop_control:
-#     loop_var: node_path
-
-# - name: deploy the rest of the nodes
-#   k8s:
-#     kubeconfig: "{{ pjroot }}/vars/kubeconfig/config"
-#     state: present
-#     src: "{{ item }}"
-#   loop: "{{ lookup('fileglob', '{{ pjroot }}/vars/nodespecs/*', wantlist=True) }}"
