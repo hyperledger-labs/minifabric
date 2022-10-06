@@ -1,0 +1,31 @@
+---
+- name: Extract node info
+  include_vars:
+    file: "{{ node_path }}"
+    name: node_info
+
+- name: Add node to appropriate kind list
+  set_fact:
+    nodecert_path: "{{ nodecert_path + [ node_path ] }}"
+    nodecert_info: "{{ nodecert_info + [ node_info ] }}"
+  when: node_info.kind == 'Nodecert'
+
+- set_fact:
+    ca_path: "{{ ca_path + [ node_path ] }}"
+    ca_info: "{{ ca_info + [ node_info ] }}"
+  when: node_info.kind == 'CA'
+
+- set_fact:
+    orderer_path: "{{ orderer_path + [ node_path ] }}"
+    orderer_info: "{{ orderer_info + [ node_info ] }}"
+  when: node_info.kind == 'Orderer'
+
+- set_fact:
+    peer_path: "{{ peer_path + [ node_path ] }}"
+    peer_info: "{{ peer_info + [ node_info ] }}"
+  when: node_info.kind == 'Peer'
+
+- set_fact:
+    agent_path: "{{ agent_path + [ node_path ] }}"
+    agent_info: "{{ agent_info + [ node_info ] }}"
+  when: node_info.kind == 'Agent'

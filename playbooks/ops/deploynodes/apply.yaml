@@ -9,8 +9,30 @@
     msg: "vars/nodespecs is empty. Please place manifest files within nodespecs directory before deploying nodes."
   when: nodespecs.matched == 0
 
-- name: deploy nodes in order of priority
-  include_tasks: nodespecs.yaml
-  loop: ['Nodecert','CA','Orderer','Peer','Agent']
+- name: Initialize kind lists
+  set_fact:
+    nodecert_path: []
+    nodecert_info: []
+    ca_path: []
+    ca_info: []
+    orderer_path: []
+    orderer_info: []
+    peer_path: []
+    peer_info: []
+    agent_path: []
+    agent_info: []
+
+- name: Loop through files in nodespecs
+  include_tasks: order.yaml
+  loop: "{{ lookup('fileglob', '{{ pjroot }}/vars/nodespecs/*', wantlist=True) }}"
   loop_control:
-    loop_var: kind
+    loop_var: node_path
+
+- name: Combine kind lists
+  set_fact:
+    ordered_paths: "{{ nodecert_path + ca_path + orderer_path + peer_path + agent_path }}"
+    ordered_info: "{{ nodecert_info + ca_info + orderer_info + peer_info + agent_info }}"
+
+- name: deploy nodes
+  include_tasks: deploy.yaml
+  loop: "{{ ordered_paths|zip(ordered_info)|list }}"

@@ -1,28 +1,24 @@
 ---
-- name: Extract node info
-  include_vars:
-    file: "{{ node_path }}"
-    name: node_info
+# item.0 == node_path
+# item.1 == node_info
 
 - name: Deploying
   debug:
-    msg: "{{ node_info.kind }}"
-  when: node_info.kind == kind
+    msg: "{{ item.1.kind }}"
   tags: [print_action]
 
-- name: Deploy if node is {{ kind }}
+- name: deploy node
   k8s:
     kubeconfig: "{{ pjroot }}/vars/kubeconfig/config"
     state: present
-    src: "{{ node_path }}"
-  when: node_info.kind == kind
+    src: "{{ item.0 }}"
 
-- name: Wait for {{ kind }} node to be ready
+- name: Wait for node to be ready
   k8s_info:
     kubeconfig: "{{ pjroot }}/vars/kubeconfig/config"
-    namespace: "{{ node_info.metadata.namespace }}"
+    namespace: item.1.metadata.namespace
     label_selectors:
-      - "k8s-app = {{ node_info.metadata.name }}-{{ node_info.spec.organization | replace('.', '-')}}"
+      - "k8s-app = {{ item.1.metadata.name }}-{{ item.1.spec.organization | replace('.', '-')}}"
     kind: Pod
     wait: yes
     wait_condition:
@@ -30,4 +26,3 @@
       status: "True"
     wait_sleep: 3
     wait_timeout: 90
-  when: node_info.kind == kind

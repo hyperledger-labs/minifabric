@@ -1,6 +1,0 @@
----
-- name: loop through files in /nodespecs
-  include_tasks: deploy.yaml
-  loop: "{{ lookup('fileglob', '{{ pjroot }}/vars/nodespecs/*', wantlist=True) }}"
-  loop_control:
-    loop_var: node_path
