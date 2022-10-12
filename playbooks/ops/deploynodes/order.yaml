@@ -1,0 +1,12 @@
+---
+- name: Extract node info
+  include_vars:
+    file: "{{ nodespec.path }}"
+    name: specinfo
+
+- name: Add the spec to the allspecs
+  set_fact:
+    allspecs: |
+      {{ allspecs + [{'key': kindkeys[specinfo.kind]+nodespec.path,
+                      'path': nodespec.path, 'actualspec': specinfo }] }}
+  when: specinfo.kind is defined

@@ -1,0 +1,32 @@
+--- 
+- name: check if /nodespecs is empty
+  find:
+    paths: "{{ pjroot }}/vars/nodespecs/"
+    patterns: '*.yaml'
+  register: nodespecs
+
+- fail:
+    msg: "vars/nodespecs is empty. Please place manifest files within nodespecs directory before deploying nodes."
+  when: nodespecs.matched == 0
+
+- name: Initialize kind lists
+  set_fact:
+    allspecs: []
+    kindkeys: {"Nodecert": "000_", "CA": "010_", "Orderer": "020_", "Peer": "030_", 
+               "Chaincode": "040_", "Agent": "050_", "Console": "060_"}
+
+- name: Loop through files in nodespecs
+  include_tasks: order.yaml
+  loop: "{{ nodespecs.files }}"
+  loop_control:
+    loop_var: nodespec
+
+- name: Sort the allspecs based on key
+  set_fact:
+    sortedspecs: "{{ allspecs | sort(attribute='key') }}"
+
+- name: deploy nodes
+  include_tasks: deploy.yaml
+  loop: "{{ sortedspecs }}"
+  loop_control:
+    loop_var: spec

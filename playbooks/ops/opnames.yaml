@@ -36,6 +36,7 @@ OPNAMES:
   update: "update Minifabric"
   configmerge: "merge configuration"
   deployoperator: "deploy operator controller"
+  deploynodes: "deploy nodes"
 PRECONDITIONS:
   ccinstall: ['PEER']
   ccapprove: ['PEER', 'ORDERER']
@@ -74,6 +75,7 @@ PRECONDITIONS:
   update: []
   configmerge: []
   deployoperator: []
+  deploynodes: []
 LANGUAGEENVS:
   java: 'java:latest'
   go: 'golang:latest'

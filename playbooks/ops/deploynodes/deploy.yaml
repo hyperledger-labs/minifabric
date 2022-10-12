@@ -1,0 +1,25 @@
+---
+- name: Deploying
+  debug:
+    msg: "{{ spec.actualspec.metadata.name }} from {{ spec.path }}"
+  tags: [print_action]
+
+- name: deploy node
+  k8s:
+    kubeconfig: "{{ pjroot }}/vars/kubeconfig/config"
+    state: present
+    src: "{{ spec.path }}"
+
+- name: Wait for node to be ready
+  k8s_info:
+    kubeconfig: "{{ pjroot }}/vars/kubeconfig/config"
+    namespace: spec.actualspec.metadata.namespace
+    label_selectors:
+      - "k8s-app = {{ spec.actualspec.metadata.name }}-{{ spec.actualspec.spec.organization | replace('.', '-')}}"
+    kind: Pod
+    wait: yes
+    wait_condition:
+      type: "Ready"
+      status: "True"
+    wait_sleep: 3
+    wait_timeout: 90

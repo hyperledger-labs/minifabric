@@ -25,7 +25,7 @@ OPNAMES=([up]="$LINE0$LINE1" [netup]='imageget,certgen,netup,netstats' \
   [consoleup]='consoleup' [consoledown]='consoledown' \
   [ccup]='ccinstall,ccapprove,cccommit,ccinstantiate,discover,channelquery' \
   [nodeimport]='nodeimport' [discover]='discover' [imageget]='imageget' [update]='update' \
-  [deployoperator]='deployoperator')
+  [deployoperator]='deployoperator' [deploynodes]='deploynodes')
 
 # Print the usage message
 function printHelp() {
@@ -62,12 +62,15 @@ function printHelp() {
   echo "      - 'portainerup'  - start up portainer web management"
   echo "      - 'portainerdown'  - shutdown portainer web management"
   echo "      - 'ccup'  - update or force re-install chaincode as specified version (alias to install,approve,commit,instantiate/initialize)."
+  echo "      - 'deployoperator'  - deploy fabric-operator to k8s environment"
+  echo "      - 'deploynodes'  - deploy nodes from vars/nodespecs"
   echo "      - 'apprun'  - (experimental) run chaincode app if there is any"
   echo "      - 'caliperrun'  - (experimental) run caliper test"
   echo "      - 'orgjoin'  - (experimental) join an org to the current channel"
   echo "      - 'update'  - (experimental) update minifabric to the latest version"
   echo ""
   echo "    options:"
+  echo "    -a|--target-environment   - set desired network environment, options are: DOCKER, K8SCLASSIC, K8SOPERATOR"
   echo "    -c|--channel-name         - channel name to use (defaults to \"mychannel\")"
   echo "    -s|--database-type        - the database backend to use: goleveldb (default) or couchdb"
   echo "    -l|--chaincode-language   - the language of the chaincode: go (default), node, or java"
