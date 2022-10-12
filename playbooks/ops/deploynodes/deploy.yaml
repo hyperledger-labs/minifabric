@@ -1,24 +1,21 @@
 ---
-# item.0 == node_path
-# item.1 == node_info
-
 - name: Deploying
   debug:
-    msg: "{{ item.1.kind }}"
+    msg: "{{ spec.actualspec.metadata.name }} from {{ spec.path }}"
   tags: [print_action]
 
 - name: deploy node
   k8s:
     kubeconfig: "{{ pjroot }}/vars/kubeconfig/config"
     state: present
-    src: "{{ item.0 }}"
+    src: "{{ spec.path }}"
 
 - name: Wait for node to be ready
   k8s_info:
     kubeconfig: "{{ pjroot }}/vars/kubeconfig/config"
-    namespace: item.1.metadata.namespace
+    namespace: spec.actualspec.metadata.namespace
     label_selectors:
-      - "k8s-app = {{ item.1.metadata.name }}-{{ item.1.spec.organization | replace('.', '-')}}"
+      - "k8s-app = {{ spec.actualspec.metadata.name }}-{{ spec.actualspec.spec.organization | replace('.', '-')}}"
     kind: Pod
     wait: yes
     wait_condition:

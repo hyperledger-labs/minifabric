@@ -11,28 +11,22 @@
 
 - name: Initialize kind lists
   set_fact:
-    nodecert_path: []
-    nodecert_info: []
-    ca_path: []
-    ca_info: []
-    orderer_path: []
-    orderer_info: []
-    peer_path: []
-    peer_info: []
-    agent_path: []
-    agent_info: []
+    allspecs: []
+    kindkeys: {"Nodecert": "000_", "CA": "010_", "Orderer": "020_", "Peer": "030_", 
+               "Chaincode": "040_", "Agent": "050_", "Console": "060_"}
 
 - name: Loop through files in nodespecs
   include_tasks: order.yaml
-  loop: "{{ lookup('fileglob', '{{ pjroot }}/vars/nodespecs/*', wantlist=True) }}"
+  loop: "{{ nodespecs.files }}"
   loop_control:
-    loop_var: node_path
+    loop_var: nodespec
 
-- name: Combine kind lists
+- name: Sort the allspecs based on key
   set_fact:
-    ordered_paths: "{{ nodecert_path + ca_path + orderer_path + peer_path + agent_path }}"
-    ordered_info: "{{ nodecert_info + ca_info + orderer_info + peer_info + agent_info }}"
+    sortedspecs: "{{ allspecs | sort(attribute='key') }}"
 
 - name: deploy nodes
   include_tasks: deploy.yaml
-  loop: "{{ ordered_paths|zip(ordered_info)|list }}"
+  loop: "{{ sortedspecs }}"
+  loop_control:
+    loop_var: spec
