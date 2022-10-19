@@ -10,6 +10,3 @@ spec:
   release: 2.3.2
   storage: 1Gi
   logLevel: DEBUG
-
-
-

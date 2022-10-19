@@ -10,3 +10,4 @@ spec:
   release: 1.5.0
   storage: 1Gi
   logLevel: DEBUG
+  
