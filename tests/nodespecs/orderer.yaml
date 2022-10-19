@@ -1,0 +1,12 @@
+apiVersion: operator.fabric.hyperledger.org/v1alpha1
+kind: Console
+metadata:
+  name: console-sample
+  namespace: testing
+spec:
+  # Add fields here
+  organization: example.com
+  nodeCert:
+  release: 2.3.2
+  storage: 1Gi
+  logLevel: ERROR
