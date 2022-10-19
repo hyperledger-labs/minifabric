@@ -13,7 +13,7 @@
 - name: Wait for node to be ready
   k8s_info:
     kubeconfig: "{{ pjroot }}/vars/kubeconfig/config"
-    namespace: spec.actualspec.metadata.namespace
+    namespace: "{{ spec.actualspec.metadata.namespace }}"
     label_selectors:
       - "k8s-app = {{ spec.actualspec.metadata.name }}-{{ spec.actualspec.spec.organization | replace('.', '-')}}"
     kind: Pod
