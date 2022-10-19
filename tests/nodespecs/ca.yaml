@@ -1,0 +1,12 @@
+apiVersion: operator.fabric.hyperledger.org/v1alpha1
+kind: CA
+metadata:
+  name: ca-sample
+  namespace: testing
+spec:
+  # Add fields here
+  organization: example.com
+  nodeCert:
+  release: 1.5.0
+  storage: 1Gi
+  logLevel: DEBUG

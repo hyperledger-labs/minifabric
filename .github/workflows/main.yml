@@ -29,7 +29,7 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: 'Build up the minifabric container'
         run: docker build -t hyperledgerlabs/minifab:latest .
@@ -39,6 +39,96 @@ jobs:
 
       - name: 'Tear down the network'
         run: ./minifab cleanup
+
+  operator:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Start up kind k8s cluster
+        uses: helm/kind-action@v1.4.0
+        with:
+          cluster_name: kind
+
+      - name: Label node and deploy metallb
+        run: |
+          kubectl label nodes kind-control-plane ingress-ready="true"
+          kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.5/config/manifests/metallb-native.yaml
+
+      - name: Wait for the metallb to be ready
+        run: |
+          while : ; do
+            res=$(kubectl wait --context "kind-kind" -n metallb-system pod \
+            -l component=controller,app=metallb --for=condition=Ready --timeout=120s 2>/dev/null ||true)
+            if [[ "${res}" == *"condition met"* ]]; then
+              break
+            fi
+            echo 'Waiting for metallb to be ready...'
+            sleep 15
+          done
+      
+      - name: Setup metallb public ip range
+        run: |
+          PREFIX=$(docker network inspect -f '{{range .IPAM.Config }}{{ .Gateway }}{{end}}' kind | cut -d '.' -f1,2)
+          cat <<EOF | kubectl apply -f -
+          apiVersion: metallb.io/v1beta1
+          kind: IPAddressPool
+          metadata:
+            namespace: metallb-system
+            name: address-pool
+          spec:
+            addresses:
+            - $PREFIX.255.230-$PREFIX.255.240
+          EOF
+
+      - name: Ensure the kube configuration for the cluster is not using loopback ip as part of the api server endpoint
+        run: |
+          while : ; do
+            ip=$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' kind-control-plane)
+            if [[ -n "${ip}" ]]; then
+              #Change the kubeconfig file not to use the loopback IP
+              kubectl config set clusters.kind-kind.server https://"${ip}":6443
+              break
+            fi
+            echo 'Waiting for public IP address to be available...'
+            sleep 3
+          done
+      
+      - name: Deploy the nginx ingress controller
+        run: kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.4.0/deploy/static/provider/cloud/deploy.yaml
+
+      - name: Wait for the controller to have the external IP
+        run: |
+          for ((x=0;x<30;x++)); do
+            ENDPOINT=$(kubectl get -n ingress-nginx service/ingress-nginx-controller -o jsonpath='{.status.loadBalancer.ingress}')
+            if [[ ! -z $ENDPOINT ]]; then
+              break
+            fi
+            echo -e ${Green}Waiting${ColorOff} for Nginx Ingress Controller to be ready...
+            sleep 5
+          done
+
+      - name: copy kubeconfig to vars/kubeconfig and copy minifab script with "--network kind"
+        run: |
+          mkdir vars
+          mkdir vars/kubeconfig
+          cp ~/.kube/config vars/kubeconfig/
+          cp tests/minifab .
+      
+      - name: Up minifabric network
+        run: ./minifab netup -e true -a K8SOPERATOR
+
+      - name: Deploy fabric operator
+        run: ./minifab deployoperator
+
+      - name: Copy sample nodes and create testing namespace
+        run: |
+          cp -r tests/nodespecs vars
+          kubectl create namespace testing
+
+      - name: Deploy nodes
+        run: ./minifab deploynodes
 
   dockerhub:
     name: Docker

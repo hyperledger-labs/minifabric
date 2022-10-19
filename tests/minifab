@@ -1,0 +1,23 @@
+#!/bin/bash
+
+[ ! -d "$(pwd)/vars" ] && mkdir vars
+if type ip > /dev/null 2>&1; then
+  ADDRS=$(ip addr|grep 'inet '|grep -v '\.1/'|tr -s ' '|awk '{$1=$1};1'|cut -d ' ' -f 2|cut -d '/' -f 1|paste -sd "," -|sed s/addr://g)
+else 
+  ADDRS=$(ifconfig|grep 'inet '|grep -v '\.1 '|tr -s ' '|awk '{$1=$1};1'|cut -d ' ' -f 2|cut -d '/' -f 1|paste -sd "," -|sed s/addr://g)
+fi
+if [ -f "$(pwd)/spec.yaml" ]; then
+  echo "Using spec file: $(pwd)/spec.yaml"
+  minifab_opt="${minifab_opt} -v $(pwd)/spec.yaml:/home/spec.yaml"
+else
+  echo "Using default spec file"
+fi
+
+# inherit proxy environment variables from terminal shell, to support fabric setup onto cloud managed k8s behind proxy
+#   for ansible x k8s ops
+minifab_opt="${minifab_opt} -e K8S_AUTH_PROXY=${K8S_AUTH_PROXY} -e K8S_AUTH_PROXY_HEADERS_PROXY_BASIC_AUTH=${K8S_AUTH_PROXY_HEADERS_PROXY_BASIC_AUTH}"
+#   for fabric-tools ops
+minifab_opt="${minifab_opt} -e https_proxy=${https_proxy} -e no_proxy=${no_proxy}"
+
+docker run --rm --name minifab --network kind -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd)/vars:/home/vars \
+            -e "ADDRS=$ADDRS" ${minifab_opt} hyperledgerlabs/minifab:latest /home/main.sh "$@"
