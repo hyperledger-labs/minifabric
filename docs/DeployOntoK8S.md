@@ -211,7 +211,24 @@ Fabric network running in the Kubernetes cluster.
 Notice the `-e` command line flag which is now also required for the same reason as
 the `endpoint_address` configuration in `spec.yaml` file
 
-### 9. Remove Fabric network from your Kubernetes cluster
+### 9. (optional) Deploy Fabric network onto Kubernetes with Fabric Operator
+
+To deploy with the Fabric Operator, include the target environment `-a` flag and specify `K8SOPERATOR`.
+
+```
+   minifab up -e true -a K8SOPERATOR
+```
+With the Fabric Operator running, it is easy to deploy nodes to the network. First, create a nodespecs directory within the vars directory `vars/nodespecs`, and then add the spec files of the nodes you wish to deploy into nodespecs. 
+
+Now simply run the `deploynodes` operation: 
+
+```
+   minifab deploynodes
+```
+
+This operation will sort and deploy the specs in order based on their kind. Deploynodes will prioritize the nodes by the order of `nodecert`, `ca`, `orderer`, `peer`, `chaincode`, `agent`, and `console`.
+
+### 10. Remove Fabric network from your Kubernetes cluster
 
 To remove everything including the persistent storage created during the deployment,
 you can simply run the good old `minifab cleanup` command:
@@ -220,7 +237,7 @@ you can simply run the good old `minifab cleanup` command:
    minifab cleanup
 ```
 
-### 10. How about other operations?
+### 11. How about other operations?
 
 Minifabric supports all operations in Kubernetes cluster just like it supports
 all Fabric operations like in Docker env. If you like to join a channel, install
