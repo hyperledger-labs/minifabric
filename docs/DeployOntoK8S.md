@@ -226,7 +226,7 @@ Now simply run the `deploynodes` operation:
    minifab deploynodes
 ```
 
-This operation will sort and deploy the specs in order based on their kind. Deploynodes will prioritize the nodes by the order of `nodecert`, `ca`, `orderer`, `peer`, `chaincode`, `agent`, and `console`.
+This operation will sort and deploy the specs in order based on their kind. Deploynodes will prioritize the nodes by the order of `nodecert`, `ca`, `orderer`, `peer`, `chaincode`, `agent`, and lastly, `console`.
 
 ### 10. Remove Fabric network from your Kubernetes cluster
 
