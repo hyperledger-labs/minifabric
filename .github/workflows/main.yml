@@ -130,6 +130,18 @@ jobs:
       - name: Deploy nodes
         run: ./minifab deploynodes
 
+      - name: Check node status
+        run: |
+          for POD in `kubectl get pods --namespace testing --no-headers -o custom-columns=":metadata.name"`; do
+            STATUS=$(kubectl get --namespace testing -o template pod/${POD} --template={{.status.phase}})
+            if [[ "$STATUS" != "Running" ]]; then 
+              echo "::error ::${POD} is not running, it is currently ${STATUS}"
+              exit 1
+            else 
+              echo "${POD} is running."
+            fi
+          done
+
   dockerhub:
     name: Docker
     needs: build
