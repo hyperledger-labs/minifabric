@@ -1,0 +1,25 @@
+name: MiniFab Docker
+
+on:
+  workflow_dispatch:
+
+jobs:
+  container-multiarch:
+    name: Multiarch Container Image
+    runs-on: ubuntu-latest
+    if: ${{ github.repository_owner == 'hyperledger-labs' }}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Build push GHCR
+      run: |
+        echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
+        echo ${{ secrets.DH_KEY }} | docker login -u ${{ secrets.DH_USER }} --password-stdin
+        docker buildx create --use
+        docker buildx build . \
+          --push \
+          --provenance=false \
+          --tag ghcr.io/hyperledger-labs/minifabric:latest \
+          --tag hyperledgerlabs/minifab:latest \
+          --platform linux/arm64,linux/amd64 \
+          --label org.opencontainers.image.description="Minifabric from Hyperledger Labs"
