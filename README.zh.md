@@ -1,15 +1,11 @@
 # 迷你Fabric
 
-如果您想学习Hyperledger Fabric或开发智能合约，或者只是想了解
-Hyperledger Fabric，迷你Fabric是让您快速开始的良好工具。迷
-你Fabric可以用来在配置很低的电脑像VirtualBox上的一个虚机上为
-您搭建Fabric网络，但也可以在多个大型机器上部署多节点Fabric网络。
+如果您想学习Hyperledger Fabric或开发智能合约，或者只是想了解Hyperledger Fabric，迷你Fabric是让您快速开始的良好工具。迷你Fabric可以用来在配置很低的电脑像VirtualBox上的一个虚拟机上为您搭建Fabric网络，但也可以在多个大型机器上部署多节点Fabric网络。
 
 
 ## 功能特性
 
-迷你Fabric虽然轻量，但它可以让您体验Hyperledger Fabric的全部
-功能
+迷你Fabric虽然轻量，但它可以让您体验Hyperledger Fabric的全部功能
 
 - 通道创建和更新
 - 节点加入通道
