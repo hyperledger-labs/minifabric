@@ -9,6 +9,9 @@ fi
 if [ -f "$(pwd)/spec.yaml" ]; then
   echo "Using spec file: $(pwd)/spec.yaml"
   minifab_opt="${minifab_opt} -v $(pwd)/spec.yaml:/home/spec.yaml"
+elif [ -f "$(pwd)/spec.yml" ]; then
+  echo "Using spec file: $(pwd)/spec.yml"
+  minifab_opt="${minifab_opt} -v $(pwd)/spec.yml:/home/spec.yaml"
 else
   echo "Using default spec file"
 fi
