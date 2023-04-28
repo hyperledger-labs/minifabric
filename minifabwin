@@ -21,6 +21,9 @@ for /f "usebackq tokens=2 delims=:" %%a in (`ipconfig ^| findstr /r "[0-9][0-9]*
 IF EXIST "%CD%/spec.yaml" (
   echo Using spec file: %CD%\spec.yaml
   set minifab_opt=%minifab_opt% -v %CD%/spec.yaml:/home/spec.yaml
+) ELSE IF EXIST "%CD%/spec.yml" (
+  echo Using spec file: %CD%\spec.yml
+  set minifab_opt=%minifab_opt% -v %CD%/spec.yml:/home/spec.yaml
 ) ELSE (
   echo Using default spec file
 )
