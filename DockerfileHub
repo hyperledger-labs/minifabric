@@ -1,11 +1,11 @@
 # Dockerfile for hyperledger minifabric
 #
-# @see https://github.com/hyperledger-labs/minifabric
+# @see https://github.com/alanveloso/minindy
 #
 FROM alpine/git:v2.30.1 AS BUILD
 
 RUN cd /tmp && git init minifabric && cd minifabric                && \
-    git remote add origin https://github.com/hyperledger-labs/minifabric   && \
+    git remote add origin https://github.com/alanveloso/minindy   && \
     git pull --depth=1 origin main && mv plugins /tmp            && \
     mv pypatch /tmp && \
     rm -f .dockerignore .gitignore Dockerfile DockerfileHub 

@@ -1,32 +1,8 @@
-fabric:
-  cas:
-  - "ca1.org0.example.com"
-  - "ca1.org1.example.com"
-  peers: 
-  - "peer1.org0.example.com"
-  - "peer2.org0.example.com"
-  - "peer1.org1.example.com"
-  - "peer2.org1.example.com"
-  orderers:
-  - "orderer1.example.com"
-  - "orderer2.example.com"
-  - "orderer3.example.com"
-  settings:
-    ca:
-      FABRIC_LOGGING_SPEC: DEBUG
-    peer:
-      FABRIC_LOGGING_SPEC: DEBUG
-    orderer:
-      FABRIC_LOGGING_SPEC: DEBUG
-  ### use go proxy when default go proxy is restricted in some of the regions.
-  ### the default goproxy
-  # goproxy: "https://proxy.golang.org,direct"
-  ### the goproxy in China area
-  # goproxy: "https://goproxy.cn,direct"
-  ### set the endpoint address to override the automatically detected IP address
-  ### could be a public IP address or a dns name
-  # endpoint_address: 104.196.45.144
-  ### set the docker network name to override the automatically generated name.
-  netname: "mysite"
-  ### set the extra optins for docker run command
-  # container_options: "--restart=always --log-opt max-size=10m --log-opt max-file=3"
+indy:
+  validators:
+  - "validator.org0.example.com"
+  - "validator.org1.example.com"
+  - "validator.org2.example.com"
+  - "validator.org3.example.com"
+
+  netname: "sandbox"

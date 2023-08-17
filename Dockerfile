@@ -1,6 +1,6 @@
 FROM alpine:3.13
 
-LABEL maintainer="litong01@us.ibm.com"
+LABEL maintainer="aveloso@ufpa.com"
 
 ENV PYTHONUNBUFFERED=1
 
