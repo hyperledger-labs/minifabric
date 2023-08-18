@@ -1,10 +1,10 @@
-# Dockerfile for hyperledger minifabric
+# Dockerfile for minindy
 #
 # @see https://github.com/alanveloso/minindy
 #
 FROM alpine/git:v2.30.1 AS BUILD
 
-RUN cd /tmp && git init minifabric && cd minifabric                && \
+RUN cd /tmp && git init minindy && cd minindy                && \
     git remote add origin https://github.com/alanveloso/minindy   && \
     git pull --depth=1 origin main && mv plugins /tmp            && \
     mv pypatch /tmp && \
@@ -12,7 +12,7 @@ RUN cd /tmp && git init minifabric && cd minifabric                && \
 
 FROM alpine:3.13
 
-LABEL maintainer="litong01@us.ibm.com"
+LABEL maintainer="aveloso@ufpa.com"
 
 ENV PYTHONUNBUFFERED=1
 
@@ -21,7 +21,7 @@ RUN apk add --no-cache py-pip bash docker-cli openssl xxd dos2unix py3-cryptogra
     mkdir -p /usr/lib/python3.8/site-packages/Crypto/Random/Fortuna \
              /usr/lib/python3.8/site-packages/ansible/plugins
 
-COPY --from=build /tmp/minifabric /home
+COPY --from=build /tmp/minindy /home
 COPY --from=build /tmp/plugins /usr/lib/python3.8/site-packages/ansible/plugins
 COPY --from=build /tmp/pypatch /usr/lib/python3.8/site-packages/Crypto/Random/Fortuna
 RUN rm -rf /var/cache/apk/* && rm -rf /tmp/* && apk update && \

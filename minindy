@@ -23,4 +23,4 @@ minindy_opt="${minindy_opt} -e K8S_AUTH_PROXY=${K8S_AUTH_PROXY} -e K8S_AUTH_PROX
 minindy_opt="${minindy_opt} -e https_proxy=${https_proxy} -e no_proxy=${no_proxy}"
 
 docker run --rm --name minindy -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd)/vars:/home/vars \
-            -e "ADDRS=$ADDRS" ${minindy_opt} gercom-ufpa/minindy:latest /home/main.sh "$@"
+            -e "ADDRS=$ADDRS" ${minindy_opt} alanveloso/minindy:latest /home/main.sh "$@"

@@ -11,7 +11,7 @@ grade servers. MinIndy has been tested on Linux.
 
 ##### If you are using Linux (Ubuntu, Fedora, CentOS), or OS X
 ```
-mkdir -p ~/mywork && cd ~/mywork && curl -o minindy -sL https://github.com/alanveloso/minindy/blob/main/minindy && chmod +x minindy
+mkdir -p ~/mywork && cd ~/mywork && curl -o minindy -sL https://raw.githubusercontent.com/alanveloso/minindy/develop/minindy && chmod +x minindy
 ```
 
 ##### Make minifab available system wide
