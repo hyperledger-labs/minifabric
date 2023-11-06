@@ -1,3 +1,5 @@
+![Status Badge](https://img.shields.io/badge/Status-archived-red)
+
 # 迷你Fabric
 
 如果您想学习Hyperledger Fabric或开发智能合约，或者只是想了解Hyperledger Fabric，迷你Fabric是让您快速开始的良好工具。迷你Fabric可以用来在配置很低的电脑像VirtualBox上的一个虚拟机上为您搭建Fabric网络，但也可以在多个大型机器上部署多节点Fabric网络。
